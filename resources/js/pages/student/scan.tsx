@@ -1,7 +1,8 @@
 import { router, usePage } from '@inertiajs/react';
 import { type IDetectedBarcode, type IScannerError, Scanner, setZXingModuleOverrides } from '@yudiel/react-qr-scanner';
-import { AlertTriangle, Camera, FlaskConical, LocateFixed, Smartphone } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { BarcodeDetector } from 'barcode-detector/ponyfill';
+import { AlertTriangle, Camera, FlaskConical, ImageUp, LocateFixed, Smartphone } from 'lucide-react';
+import { type ChangeEvent, useCallback, useRef, useState } from 'react';
 import wasmUrl from 'zxing-wasm/reader/zxing_reader.wasm?url';
 
 import { FormField } from '@/components/app/form-field';
@@ -45,6 +46,8 @@ export default function Scan({ maxAccuracy, device, devTools }: Props) {
   const location = useCurrentLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
   const [devPayload, setDevPayload] = useState('');
   const [devRoomId, setDevRoomId] = useState<string>('');
 
@@ -63,6 +66,23 @@ export default function Scan({ maxAccuracy, device, devTools }: Props) {
   const onScan = (codes: IDetectedBarcode[]) => {
     const value = codes[0]?.rawValue;
     if (value) submit(value);
+  };
+
+  const onFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setFileError(null);
+    try {
+      const bitmap = await createImageBitmap(file);
+      const codes = await new BarcodeDetector({ formats: ['qr_code'] }).detect(bitmap);
+      bitmap.close();
+      const value = codes[0]?.rawValue;
+      if (value) submit(value);
+      else setFileError('QR Code tidak ditemukan pada gambar. Pastikan gambar jelas dan QR terlihat utuh.');
+    } catch {
+      setFileError('Gambar tidak bisa dibaca. Gunakan file gambar (JPG, PNG, atau WebP).');
+    }
   };
 
   const isAccuracyOk = fix !== null && fix.accuracy <= maxAccuracy;
@@ -113,6 +133,16 @@ export default function Scan({ maxAccuracy, device, devTools }: Props) {
               </div>
             )}
           </div>
+          <input ref={fileInput} type="file" accept="image/*" className="hidden" onChange={onFileChange} />
+          <Button variant="secondary" onClick={() => fileInput.current?.click()} disabled={isSubmitting || !fix}>
+            <ImageUp aria-hidden />
+            Unggah gambar QR
+          </Button>
+          {fileError && (
+            <p className="px-1 text-center text-sm text-red-300" role="alert">
+              {fileError}
+            </p>
+          )}
           <p className="px-1 text-center text-sm text-white/70">
             Pastikan Anda berada di dalam kelas dan dalam radius titik presensi ruang.
           </p>
