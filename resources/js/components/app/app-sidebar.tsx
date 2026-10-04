@@ -85,9 +85,12 @@ export function AppNavigation({ onNavigate }: { onNavigate?: () => void }) {
 
 export function AppSidebar() {
   return (
-    <aside className="sticky top-4 hidden h-[calc(100vh-2rem)] w-64 shrink-0 flex-col gap-8 overflow-y-auto rounded-3xl border bg-card p-5 lg:flex print:hidden">
-      <AppLogo />
-      <AppNavigation />
+    <aside className="sticky top-4 hidden h-[calc(100vh-2rem)] w-64 shrink-0 flex-col gap-6 overflow-hidden rounded-3xl border bg-card p-5 lg:flex print:hidden">
+      <AppLogo className="shrink-0" />
+      {/* Hanya menu yang bisa di-scroll; logo tetap di atas. */}
+      <div className="-mr-2 min-h-0 flex-1 overflow-y-auto pr-2">
+        <AppNavigation />
+      </div>
     </aside>
   );
 }
