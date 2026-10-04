@@ -29,7 +29,9 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
         <AppSidebar />
 
         <div className="flex min-w-0 flex-1 flex-col gap-4">
-          <header className="flex h-[72px] items-center gap-3 rounded-3xl border bg-card px-4 sm:px-6 print:hidden">
+          {/* Pembungkus menutup celah 16px di atas header; konten yang lewat di bawahnya diburamkan. */}
+          <div className="sticky top-0 z-30 -mt-4 bg-background/60 pt-4 pb-1 backdrop-blur-md print:hidden">
+          <header className="flex h-[72px] shrink-0 items-center gap-3 rounded-3xl border bg-card/80 px-4 shadow-sm backdrop-blur-md sm:px-6">
             <button
               type="button"
               onClick={() => setIsMenuOpen(true)}
@@ -51,6 +53,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
               <UserMenu />
             </div>
           </header>
+          </div>
 
           <main className="flex flex-col gap-5 px-1 pb-8 sm:px-2">{children}</main>
         </div>
