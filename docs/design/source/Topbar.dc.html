@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Bilah atas</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<header style="width: 1136px; height: 72px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 20px; padding: 0 12px 0 16px; display: flex; align-items: center; gap: 12px; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827">
+<label style="width: 380px; height: 44px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 0 8px 0 14px; border-radius: 12px; background: #F8FAFC; border: 1px solid #E5E7EB; color: #6B7280">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+<input type="search" aria-label="{{searchPlaceholder}}" placeholder="{{searchPlaceholder}}" style="flex-grow: 1; min-width: 0; border: 0; outline: none; background: transparent; font: inherit; font-size: 14px; color: #111827">
+<kbd style="font-family: inherit; font-size: 11px; font-weight: 600; color: #4B5563; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 6px; padding: 3px 7px">⌘ K</kbd>
+</label>
+<div style="flex-grow: 1"></div>
+<button type="button" aria-label="Bantuan" title="Bantuan" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #4B5563; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"></path></svg></button>
+<button type="button" aria-label="Notifikasi, 3 belum dibaca" title="Notifikasi" style="position: relative; width: 44px; height: 44px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #4B5563; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 999px; background: #DC2626; border: 2px solid #FFFFFF"></span></button>
+<span style="width: 1px; height: 32px; background: #E5E7EB"></span>
+<a href="{{profileHref}}" style="display: flex; align-items: center; gap: 12px; padding: 4px 8px 4px 4px; border-radius: 14px; text-decoration: none; color: #111827">
+<span style="width: 44px; height: 44px; border-radius: 999px; background: #D1FAE5; color: #065F46; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{initials}}</span>
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; font-weight: 700">{{userName}}</span>
+<span style="font-size: 12px; color: #6B7280">{{userRole}}</span>
+</span>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+</a>
+</header>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"userName":{"editor":null,"default":"Gusmayeni, S.Kom., M.Kom"},"userRole":{"editor":null,"default":"Dosen · Fakultas Ilmu Komputer"},"initials":{"editor":null,"default":"G"},"searchPlaceholder":{"editor":null,"default":"Cari mata kuliah, kelas, mahasiswa…"},"profileHref":{"editor":null,"default":"Profile.dc.html"},"$preview":{"width":1136,"height":72}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      userName: this.props.userName || 'Gusmayeni, S.Kom., M.Kom',
+      userRole: this.props.userRole || 'Dosen · Fakultas Ilmu Komputer',
+      initials: this.props.initials || 'G',
+      searchPlaceholder: this.props.searchPlaceholder || 'Cari mata kuliah, kelas, mahasiswa…',
+      profileHref: this.props.profileHref || 'Profile.dc.html'
+    };
+  }
+}
+</script>
+</body>
+</html>

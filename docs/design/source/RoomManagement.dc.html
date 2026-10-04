@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Ruang &amp; titik presensi · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="position: relative; width: 1440px; height: 1120px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827; overflow: hidden">
+<dc-import name="Sidebar" role="admin" active="rooms" height="1088" hint-size="256px,1088px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Niken" user-role="Administrator · Bagian Akademik" initials="N" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 18px; padding: 0 8px">
+
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Ruang &amp; Titik Presensi</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">Setiap ruang punya satu titik koordinat. Jarak mahasiswa saat memindai QR diukur dari titik ini.</p>
+</div>
+<button type="button" onClick="{{openAdd}}" style="flex-shrink: 0; height: 46px; padding: 0 20px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Tambah Ruang</button>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{tiles}}" as="t" hint-placeholder-count="4">
+<div style="padding: 16px 18px; border-radius: 18px; background: {{t.bg}}; border: 1px solid {{t.border}}; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; color: {{t.labelFg}}">{{t.label}}</span>
+<span style="font-size: 28px; font-weight: 800; line-height: 1; color: {{t.fg}}">{{t.value}}</span>
+<span style="font-size: 12px; color: {{t.labelFg}}">{{t.sub}}</span>
+</div>
+</sc-for>
+</div>
+
+<section style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; gap: 12px; align-items: center">
+<label style="width: 280px; height: 44px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 0 14px; border-radius: 12px; border: 1px solid #E5E7EB; color: #6B7280"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><input type="search" aria-label="Cari kode atau nama ruang" placeholder="Cari kode atau nama ruang" value="{{q}}" onChange="{{onQ}}" style="flex-grow: 1; min-width: 0; border: 0; outline: none; font: inherit; font-size: 14px; color: #111827; background: transparent"></label>
+<select aria-label="Filter gedung" value="{{fBuilding}}" onChange="{{onBuilding}}" style="height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option value="">Semua gedung</option><sc-for list="{{buildings}}" as="b" hint-placeholder-count="3"><option value="{{b}}">{{b}}</option></sc-for></select>
+<select aria-label="Filter status" value="{{fStatus}}" onChange="{{onStatus}}" style="height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option value="">Semua status</option><option value="Siap presensi">Siap presensi</option><option value="Belum ada titik">Belum ada titik</option><option value="Nonaktif">Nonaktif</option></select>
+<sc-if value="{{isFiltered}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{resetFilters}}" style="height: 44px; padding: 0 12px; border: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 600; color: #047857; cursor: pointer">Atur ulang</button></sc-if>
+<div style="flex-grow: 1"></div>
+<span role="status" style="font-size: 13px; color: #6B7280">{{resultText}}</span>
+</div>
+
+<table style="width: 100%; border-collapse: collapse; font-size: 14px">
+<thead><tr style="text-align: left; color: #6B7280; font-size: 12px">
+<th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB">Ruang</th>
+<th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB">Gedung · lantai</th>
+<th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB">Kapasitas</th>
+<th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB">Titik presensi</th>
+<th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB">Radius</th>
+<th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB">Dipakai</th>
+<th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB">Status</th>
+<th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB; text-align: right">Aksi</th>
+</tr></thead>
+<tbody>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+<tr style="background: {{r.rowBg}}">
+<td style="padding: 10px; border-bottom: 1px solid #F3F4F6"><div style="display: flex; flex-direction: column"><span style="font-weight: 700">{{r.name}}</span><span style="font-size: 12px; color: #6B7280">{{r.code}}</span></div></td>
+<td style="padding: 10px; border-bottom: 1px solid #F3F4F6; color: #4B5563">{{r.building}} · lt. {{r.floor}}</td>
+<td style="padding: 10px; border-bottom: 1px solid #F3F4F6; color: #4B5563; font-variant-numeric: tabular-nums">{{r.capacity}}</td>
+<td style="padding: 10px; border-bottom: 1px solid #F3F4F6">
+<sc-if value="{{r.hasPoint}}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-family: ui-monospace, Menlo, monospace; color: #111827">{{r.coordText}}</span><span style="font-size: 12px; color: #6B7280">{{r.pointMeta}}</span></div></sc-if>
+<sc-if value="{{r.noPoint}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{r.edit}}" style="height: 30px; padding: 0 12px; border-radius: 999px; border: 1px dashed #F59E0B; background: #FFFBEB; font: inherit; font-size: 12px; font-weight: 700; color: #92400E; cursor: pointer">Atur titik</button></sc-if>
+</td>
+<td style="padding: 10px; border-bottom: 1px solid #F3F4F6; color: #4B5563; font-variant-numeric: tabular-nums">{{r.radiusText}}</td>
+<td style="padding: 10px; border-bottom: 1px solid #F3F4F6; color: #4B5563">{{r.usageText}}</td>
+<td style="padding: 10px; border-bottom: 1px solid #F3F4F6"><span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; background: {{r.bBg}}; color: {{r.bFg}}"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{r.dot}}"></span>{{r.status}}</span></td>
+<td style="padding: 8px 10px; border-bottom: 1px solid #F3F4F6"><div style="display: flex; justify-content: flex-end; gap: 6px">
+<button type="button" onClick="{{r.edit}}" aria-label="Ubah {{r.name}}" title="Ubah" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path></svg></button>
+<button type="button" onClick="{{r.del}}" aria-label="Hapus {{r.name}}" title="Hapus" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid #FECACA; background: #FFFFFF; color: #B91C1C; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"></path></svg></button>
+</div></td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+<sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}"><div style="padding: 36px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center"><strong style="font-size: 15px">Tidak ada ruang yang cocok</strong><span style="font-size: 13px; color: #6B7280">Coba kata kunci atau filter lain.</span></div></sc-if>
+<p style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 13px; color: #6B7280"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path></svg>Ruang tanpa titik presensi masih bisa dipetakan, tetapi dosen tidak bisa membuka sesi QR di ruang itu.</p>
+</section>
+</main>
+</div>
+
+<sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
+<div onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; background: rgba(17,24,39,0.4)"></div>
+<aside role="dialog" aria-modal="true" aria-labelledby="rm-title" style="position: absolute; top: 16px; right: 16px; bottom: 16px; width: 560px; box-sizing: border-box; background: #FFFFFF; border-radius: 24px; display: flex; flex-direction: column; box-shadow: -12px 0 40px rgba(17,24,39,0.16); overflow: hidden">
+<div style="padding: 24px 28px 16px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; border-bottom: 1px solid #F3F4F6">
+<div style="display: flex; flex-direction: column; gap: 4px"><h2 id="rm-title" style="margin: 0; font-size: 22px; font-weight: 800">{{sheetTitle}}</h2><span style="font-size: 14px; color: #6B7280">Kolom bertanda * wajib diisi.</span></div>
+<button type="button" onClick="{{closeSheet}}" aria-label="Tutup panel" style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+
+<div style="flex-grow: 1; overflow-y: auto; padding: 18px 28px; display: flex; flex-direction: column; gap: 16px">
+<sc-if value="{{hasErrors}}" hint-placeholder-val="{{ false }}"><div role="alert" style="padding: 10px 14px; border-radius: 12px; background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; font-size: 13px">Data ruang belum bisa disimpan. Periksa isian yang ditandai merah.</div></sc-if>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{basicFields}}" as="f" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="{{f.id}}" style="font-size: 13px; font-weight: 600">{{f.label}}<span style="color: #B91C1C"> *</span></label>
+<sc-if value="{{f.isSelect}}" hint-placeholder-val="{{ false }}"><select id="{{f.id}}" value="{{f.value}}" onChange="{{f.onChange}}" aria-invalid="{{f.invalid}}" style="height: 42px; padding: 0 10px; border-radius: 12px; border: 1px solid {{f.border}}; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option value="">Pilih…</option><sc-for list="{{f.options}}" as="o" hint-placeholder-count="3"><option value="{{o}}">{{o}}</option></sc-for></select></sc-if>
+<sc-if value="{{f.isInput}}" hint-placeholder-val="{{ true }}"><input id="{{f.id}}" type="{{f.type}}" value="{{f.value}}" onChange="{{f.onChange}}" placeholder="{{f.placeholder}}" aria-invalid="{{f.invalid}}" style="height: 42px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid {{f.border}}; font: inherit; font-size: 14px; color: #111827"></sc-if>
+<sc-if value="{{f.hasError}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #B91C1C">{{f.error}}</span></sc-if>
+</div>
+</sc-for>
+</div>
+
+<section aria-labelledby="pt-title" style="border-radius: 18px; border: 1px solid #E5E7EB; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px"><h3 id="pt-title" style="margin: 0; font-size: 15px; font-weight: 800">Titik presensi</h3><span style="font-size: 12px; color: #6B7280">Berdiri di depan kelas (dekat layar QR), lalu ambil lokasi.</span></div>
+<button type="button" onClick="{{capture}}" disabled="{{capturing}}" style="flex-shrink: 0; height: 40px; padding: 0 14px; border-radius: 999px; border: 0; background: {{captureBg}}; color: #FFFFFF; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path></svg>{{captureLabel}}</button>
+</div>
+
+<sc-if value="{{capturing}}" hint-placeholder-val="{{ false }}"><div role="status" style="display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border-radius: 12px; background: #F0FDF4; font-size: 12px; color: #065F46"><span>Mengambil sampel lokasi {{sample.n}}/8 · akurasi terakhir {{sample.acc}}</span><div style="height: 6px; border-radius: 999px; background: #D1FAE5; overflow: hidden"><div style="width: {{sample.pct}}%; height: 100%; background: #15803D; border-radius: 999px"></div></div></div></sc-if>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="rm-lat" style="font-size: 13px; font-weight: 600">Latitude</label><input id="rm-lat" type="text" inputMode="decimal" value="{{form.lat}}" onChange="{{onLat}}" placeholder="-6.3452100" aria-invalid="{{latInv}}" style="height: 42px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid {{latBorder}}; font: inherit; font-size: 14px; font-family: ui-monospace, Menlo, monospace; color: #111827"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="rm-lng" style="font-size: 13px; font-weight: 600">Longitude</label><input id="rm-lng" type="text" inputMode="decimal" value="{{form.lng}}" onChange="{{onLng}}" placeholder="106.6917400" aria-invalid="{{lngInv}}" style="height: 42px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid {{lngBorder}}; font: inherit; font-size: 14px; font-family: ui-monospace, Menlo, monospace; color: #111827"></div>
+</div>
+<span style="margin-top: -4px; font-size: 12px; color: {{pointMsgFg}}">{{pointMsg}}</span>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start">
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="rm-radius" style="font-size: 13px; font-weight: 600">Radius presensi (meter)<span style="color: #B91C1C"> *</span></label><input id="rm-radius" type="number" min="3" max="50" value="{{form.radius}}" onChange="{{onRadius}}" aria-invalid="{{radiusInv}}" style="height: 42px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid {{radiusBorder}}; font: inherit; font-size: 14px; color: #111827"><span style="font-size: 12px; color: {{radiusFg}}">{{radiusHelp}}</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; font-weight: 600">Akurasi titik</span><span style="height: 42px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E7EB; background: #F9FAFB; display: flex; align-items: center; font-size: 14px; font-weight: 700; color: {{accFg}}">{{accText}}</span><span style="font-size: 12px; color: #6B7280">{{accHelp}}</span></div>
+</div>
+
+<div role="img" aria-label="{{mapLabel}}" style="position: relative; height: 210px; border-radius: 14px; background: #F0FDF4; border: 1px solid #D1FAE5; overflow: hidden">
+<svg width="100%" height="210" viewBox="0 0 470 210" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style="position: absolute; inset: 0">
+<path d="M0 42h470M0 84h470M0 126h470M0 168h470M47 0v210M94 0v210M141 0v210M188 0v210M235 0v210M282 0v210M329 0v210M376 0v210M423 0v210" stroke="#D1FAE5"></path>
+<sc-for list="{{map.others}}" as="o" hint-placeholder-count="4"><circle cx="{{o.x}}" cy="{{o.y}}" r="4" fill="{{o.fill}}"></circle><text x="{{o.tx}}" y="{{o.ty}}" font-size="10" fill="#6B7280" font-family="Plus Jakarta Sans, system-ui, sans-serif">{{o.label}}</text></sc-for>
+<sc-if value="{{map.has}}" hint-placeholder-val="{{ true }}"><circle cx="235" cy="105" r="{{map.r}}" fill="#15803D" fill-opacity="0.1" stroke="#15803D" stroke-width="1.5" stroke-dasharray="5 4"></circle><circle cx="235" cy="105" r="8" fill="#065F46"></circle><circle cx="235" cy="105" r="3.5" fill="#FFFFFF"></circle></sc-if>
+</svg>
+<span style="position: absolute; left: 10px; bottom: 8px; font-size: 11px; color: #4B5563; background: rgba(255,255,255,0.85); border-radius: 6px; padding: 2px 6px">Skala: 1 kotak = {{map.cell}} m</span>
+<sc-if value="{{map.empty}}" hint-placeholder-val="{{ false }}"><span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #6B7280">Belum ada titik. Ambil lokasi atau isi koordinat.</span></sc-if>
+<sc-if value="{{map.has}}" hint-placeholder-val="{{ true }}"><a href="{{map.gmaps}}" target="_blank" rel="noopener noreferrer" style="position: absolute; right: 10px; top: 8px; font-size: 12px; font-weight: 700; text-decoration: none; background: #FFFFFF; border: 1px solid #D1FAE5; border-radius: 999px; padding: 4px 10px">Buka di Google Maps</a></sc-if>
+</div>
+<sc-if value="{{hasOverlap}}" hint-placeholder-val="{{ false }}"><div role="note" style="padding: 10px 12px; border-radius: 12px; background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; font-size: 12px; line-height: 1.5">{{overlapText}}</div></sc-if>
+</section>
+</div>
+
+<div style="padding: 16px 28px 22px; border-top: 1px solid #F3F4F6; display: flex; justify-content: flex-end; gap: 10px">
+<button type="button" onClick="{{closeSheet}}" style="height: 46px; padding: 0 18px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; color: #111827; cursor: pointer">Batal</button>
+<button type="button" onClick="{{save}}" style="height: 46px; padding: 0 22px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">{{saveLabel}}</button>
+</div>
+</aside>
+</sc-if>
+
+<sc-if value="{{confirmOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; background: rgba(17,24,39,0.45); display: flex; align-items: center; justify-content: center">
+<div role="alertdialog" aria-modal="true" aria-labelledby="rd-title" aria-describedby="rd-desc" style="width: 460px; box-sizing: border-box; background: #FFFFFF; border-radius: 24px; padding: 28px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 40px rgba(17,24,39,0.18)">
+<h2 id="rd-title" style="margin: 0; font-size: 20px; font-weight: 800">{{del.title}}</h2>
+<p id="rd-desc" style="margin: 0; font-size: 14px; line-height: 1.6; color: #4B5563">{{del.text}}</p>
+<sc-if value="{{del.allowed}}" hint-placeholder-val="{{ true }}"><div style="display: flex; justify-content: flex-end; gap: 10px"><button type="button" onClick="{{cancelDel}}" autoFocus="{{ true }}" style="height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; color: #111827; cursor: pointer">Batal</button><button type="button" onClick="{{confirmDel}}" style="height: 44px; padding: 0 20px; border-radius: 999px; border: 0; background: #B91C1C; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Ya, hapus</button></div></sc-if>
+<sc-if value="{{del.blocked}}" hint-placeholder-val="{{ false }}"><div style="display: flex; justify-content: flex-end; gap: 10px"><a href="ClassMapping.dc.html" style="height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #E5E7EB; color: #111827; font-size: 14px; font-weight: 600; text-decoration: none; display: flex; align-items: center">Buka Pemetaan Kelas</a><button type="button" onClick="{{cancelDel}}" autoFocus="{{ true }}" style="height: 44px; padding: 0 20px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Mengerti</button></div></sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{toastOn}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; right: 32px; bottom: 32px; width: 420px; box-sizing: border-box; display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: #111827; color: #FFFFFF; box-shadow: 0 12px 28px rgba(17,24,39,0.25)">
+<span style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 999px; background: #16A34A; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<span style="flex-grow: 1; font-size: 14px">{{toastMsg}}</span>
+<sc-if value="{{canUndo}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{undo}}" style="flex-shrink: 0; height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid #4B5563; background: transparent; color: #FFFFFF; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Urungkan</button></sc-if>
+<button type="button" onClick="{{dismissToast}}" aria-label="Tutup notifikasi" style="flex-shrink: 0; width: 28px; height: 28px; border: 0; background: transparent; color: #D1D5DB; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1120}}'>
+class Component extends DCLogic {
+  /*
+   * Master Ruang & Titik Presensi.
+   * Titik koordinat milik RUANG (bukan kelas): satu titik dipakai semua kelas yang kuliah di ruang itu.
+   * - Ambil lokasi: 8 sampel GPS, buang yang akurasinya > 15 m, rata-rata berbobot 1/akurasi².
+   *   (Di prototipe disimulasikan; di aplikasi memakai navigator.geolocation.watchPosition.)
+   * - Validasi: koordinat lengkap & dalam rentang, maks. 500 m dari pusat kampus, radius 3–50 m.
+   * - Peringatan bila radius beririsan dengan titik ruang lain (mahasiswa di ruang sebelah bisa ikut terhitung).
+   * - Ruang yang masih dipakai jadwal periode aktif tidak bisa dihapus / dinonaktifkan.
+   */
+  constructor(props) {
+    super(props);
+    var r = function (code, name, building, floor, capacity, lat, lng, radius, acc, setAt, usage, active) {
+      return { id: code, code: code, name: name, building: building, floor: floor, capacity: capacity, lat: lat, lng: lng, radius: radius, acc: acc, setAt: setAt, usage: usage, active: active !== false };
+    };
+    this.state = {
+      rooms: [
+        r('R105', 'Ruang 105', 'Gedung A', 1, 40, null, null, 5, null, '', 1),
+        r('R106', 'Ruang 106', 'Gedung A', 1, 40, -6.3450400, 106.6911900, 5, 6.8, '5 Agu 2026', 0, false),
+        r('AULA', 'Aula Utama', 'Gedung A', 2, 300, -6.3449800, 106.6911200, 20, 9.5, '5 Agu 2026', 0),
+        r('R204', 'Ruang 204', 'Gedung B', 2, 40, -6.3451700, 106.6916800, 5, 4.8, '12 Agu 2026', 2),
+        r('R208', 'Ruang 208', 'Gedung B', 2, 35, -6.3452600, 106.6918300, 5, 6.1, '12 Agu 2026', 2),
+        r('R210', 'Ruang 210', 'Gedung B', 2, 35, -6.3453100, 106.6919000, 5, 5.2, '12 Agu 2026', 1),
+        r('R301', 'Ruang 301', 'Gedung B', 3, 40, -6.3452100, 106.6917400, 5, 3.9, '12 Agu 2026', 3),
+        r('R302', 'Ruang 302', 'Gedung B', 3, 40, -6.3452800, 106.6918600, 5, 7.4, '12 Agu 2026', 1),
+        r('LAB1', 'Lab 1', 'Gedung C', 1, 36, -6.3455300, 106.6921900, 5, 8.9, '14 Agu 2026', 2),
+        r('LAB2', 'Lab 2', 'Gedung C', 1, 36, -6.3455900, 106.6922700, 5, 6.6, '14 Agu 2026', 3)
+      ],
+      q: '', fBuilding: '', fStatus: '',
+      mode: null, editId: null, form: {}, errors: {}, capturing: false, sampleN: 0, sampleAcc: 0,
+      delId: null, toast: null, flashId: null
+    };
+  }
+  componentWillUnmount() { clearTimeout(this.toastTimer); clearInterval(this.captureTimer); }
+
+  campus() { return { lat: -6.3452500, lng: 106.6917000, maxM: 500 }; }
+  buildingCenter(b) {
+    var C = { 'Gedung A': [-6.3450100, 106.6911500], 'Gedung B': [-6.3452400, 106.6917900], 'Gedung C': [-6.3455600, 106.6922300] };
+    return C[b] || [this.campus().lat, this.campus().lng];
+  }
+
+  // Jarak dua koordinat dalam meter (Haversine) — sama dengan perhitungan server.
+  dist(lat1, lng1, lat2, lng2) {
+    var R = 6371000, rad = Math.PI / 180;
+    var dLat = (lat2 - lat1) * rad, dLng = (lng2 - lng1) * rad;
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * rad) * Math.cos(lat2 * rad) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
+  }
+  num(v) { var n = Number(String(v == null ? '' : v).replace(',', '.').trim()); return String(v == null ? '' : v).trim() === '' || isNaN(n) ? null : n; }
+  fmtDec(n, d) { return n.toFixed(d).replace('.', ','); }
+
+  statusOf(r) {
+    if (!r.active) { return { status: 'Nonaktif', bBg: '#F3F4F6', bFg: '#374151', dot: '#6B7280' }; }
+    if (r.lat === null || r.lng === null) { return { status: 'Belum ada titik', bBg: '#FEF3C7', bFg: '#92400E', dot: '#F59E0B' }; }
+    return { status: 'Siap presensi', bBg: '#DCFCE7', bFg: '#166534', dot: '#16A34A' };
+  }
+
+  validate(form, rooms, editId) {
+    var self = this;
+    var e = {};
+    var code = String(form.code || '').trim().toUpperCase();
+    if (!code) { e.code = 'Wajib diisi.'; }
+    else if (!/^[A-Z0-9-]{2,10}$/.test(code)) { e.code = 'Huruf kapital/angka, 2–10 karakter.'; }
+    else if (rooms.some(function (r) { return r.id !== editId && r.code === code; })) { e.code = 'Kode sudah dipakai.'; }
+    var name = String(form.name || '').trim();
+    if (!name) { e.name = 'Wajib diisi.'; }
+    else if (rooms.some(function (r) { return r.id !== editId && r.name.toLowerCase() === name.toLowerCase(); })) { e.name = 'Nama ruang sudah ada.'; }
+    if (!form.building) { e.building = 'Pilih gedung.'; }
+    var floor = this.num(form.floor);
+    if (floor === null || floor < 1 || floor > 10 || Math.floor(floor) !== floor) { e.floor = 'Lantai 1–10.'; }
+    var cap = this.num(form.capacity);
+    if (cap === null || cap < 5 || cap > 500) { e.capacity = 'Kapasitas 5–500.'; }
+    if (!form.status) { e.status = 'Pilih status.'; }
+    var radius = this.num(form.radius);
+    if (radius === null || radius < 3 || radius > 50) { e.radius = 'Radius 3–50 meter.'; }
+    var lat = this.num(form.lat), lng = this.num(form.lng);
+    var latEmpty = String(form.lat || '').trim() === '', lngEmpty = String(form.lng || '').trim() === '';
+    if (latEmpty !== lngEmpty) { e.point = 'Latitude dan longitude harus diisi keduanya.'; }
+    else if (!latEmpty) {
+      if (lat === null || lat < -90 || lat > 90) { e.point = 'Latitude harus angka antara -90 dan 90.'; }
+      else if (lng === null || lng < -180 || lng > 180) { e.point = 'Longitude harus angka antara -180 dan 180.'; }
+      else {
+        var c = self.campus();
+        var d = self.dist(c.lat, c.lng, lat, lng);
+        if (d > c.maxM) { e.point = 'Titik berada ' + Math.round(d).toLocaleString('id-ID') + ' m dari kampus. Periksa lagi (mungkin latitude dan longitude tertukar).'; }
+      }
+    }
+    var cur = rooms.filter(function (r) { return r.id === editId; })[0];
+    if (form.status === 'Nonaktif' && cur && cur.usage > 0) { e.status = 'Masih dipakai di ' + cur.usage + ' jadwal periode aktif.'; }
+    return e;
+  }
+
+  showToast(msg, undoRooms) {
+    var self = this;
+    clearTimeout(this.toastTimer);
+    this.setState({ toast: { msg: msg, undo: undoRooms || null } });
+    this.toastTimer = setTimeout(function () { self.setState({ toast: null }); }, 6000);
+  }
+
+  renderVals() {
+    var self = this;
+    var st = this.state;
+    var rooms = st.rooms;
+    var BUILDINGS = ['Gedung A', 'Gedung B', 'Gedung C'];
+
+    var q = st.q.trim().toLowerCase();
+    var visible = rooms.filter(function (r) {
+      var s = self.statusOf(r).status;
+      return (!q || r.code.toLowerCase().indexOf(q) !== -1 || r.name.toLowerCase().indexOf(q) !== -1)
+        && (!st.fBuilding || r.building === st.fBuilding) && (!st.fStatus || s === st.fStatus);
+    });
+
+    var openForm = function (mode, r) {
+      clearInterval(self.captureTimer);
+      self.setState({
+        mode: mode, editId: r ? r.id : null, errors: {}, capturing: false,
+        form: r
+          ? { code: r.code, name: r.name, building: r.building, floor: String(r.floor), capacity: String(r.capacity), status: r.active ? 'Aktif' : 'Nonaktif', lat: r.lat === null ? '' : r.lat.toFixed(7), lng: r.lng === null ? '' : r.lng.toFixed(7), radius: String(r.radius), acc: r.acc, manual: false }
+          : { code: '', name: '', building: '', floor: '1', capacity: '40', status: 'Aktif', lat: '', lng: '', radius: '5', acc: null, manual: false }
+      });
+    };
+
+    var rowsOut = visible.map(function (r) {
+      var s = self.statusOf(r);
+      var has = r.lat !== null && r.lng !== null;
+      return Object.assign({}, s, {
+        name: r.name, code: r.code, building: r.building, floor: r.floor, capacity: r.capacity,
+        hasPoint: has, noPoint: !has,
+        coordText: has ? r.lat.toFixed(7) + ', ' + r.lng.toFixed(7) : '',
+        pointMeta: has ? (r.acc ? 'akurasi ' + self.fmtDec(r.acc, 1) + ' m · ' : 'diisi manual · ') + (r.setAt || 'baru') : '',
+        radiusText: r.radius + ' m',
+        usageText: r.usage ? r.usage + ' jadwal' : '—',
+        rowBg: r.id === st.flashId ? '#F0FDF4' : 'transparent',
+        edit: function () { openForm('edit', r); },
+        del: function () { self.setState({ delId: r.id }); }
+      });
+    });
+
+    var ready = rooms.filter(function (r) { return self.statusOf(r).status === 'Siap presensi'; }).length;
+    var missing = rooms.filter(function (r) { return self.statusOf(r).status === 'Belum ada titik'; }).length;
+    var inactive = rooms.filter(function (r) { return !r.active; }).length;
+
+    // ----- Form & pratinjau titik -----
+    var f = st.form || {};
+    var errors = st.errors;
+    var setF = function (key) {
+      return function (e) {
+        var form = Object.assign({}, self.state.form);
+        form[key] = e.target.value;
+        // Koordinat diketik manual → akurasi tidak diketahui.
+        if (key === 'lat' || key === 'lng') { form.acc = null; form.manual = true; }
+        var errs = Object.assign({}, self.state.errors);
+        delete errs[key]; if (key === 'lat' || key === 'lng') { delete errs.point; }
+        self.setState({ form: form, errors: errs });
+      };
+    };
+    var FIELDS = [
+      { key: 'code', label: 'Kode ruang', placeholder: 'R303' },
+      { key: 'name', label: 'Nama ruang', placeholder: 'Ruang 303' },
+      { key: 'building', label: 'Gedung', select: BUILDINGS },
+      { key: 'floor', label: 'Lantai', type: 'number' },
+      { key: 'capacity', label: 'Kapasitas (orang)', type: 'number' },
+      { key: 'status', label: 'Status', select: ['Aktif', 'Nonaktif'] }
+    ];
+    var basicFields = FIELDS.map(function (d) {
+      var err = errors[d.key];
+      return {
+        id: 'rm-' + d.key, label: d.label, isSelect: !!d.select, isInput: !d.select, options: d.select || [],
+        type: d.type || 'text', placeholder: d.placeholder || '', value: f[d.key] == null ? '' : f[d.key],
+        hasError: !!err, error: err || '', invalid: err ? 'true' : 'false', border: err ? '#DC2626' : '#D1D5DB',
+        onChange: setF(d.key)
+      };
+    });
+
+    var lat = this.num(f.lat), lng = this.num(f.lng), radius = this.num(f.radius) || 5;
+    var hasPt = lat !== null && lng !== null && Math.abs(lat) <= 90 && Math.abs(lng) <= 180;
+    // Skala pratinjau: radius kecil diperbesar agar terlihat, maks. 70 px.
+    var pxPerM = Math.min(10, 70 / Math.max(radius, 3));
+    var others = [];
+    var overlaps = [];
+    if (hasPt) {
+      rooms.forEach(function (o) {
+        if (o.id === st.editId || o.lat === null || !o.active) { return; }
+        var d = self.dist(lat, lng, o.lat, o.lng);
+        if (d < radius + o.radius && d < 60) { overlaps.push(o.name + ' (' + self.fmtDec(d, 1) + ' m)'); }
+        var dx = (o.lng - lng) * 111320 * Math.cos(lat * Math.PI / 180);
+        var dy = (o.lat - lat) * 110540;
+        var x = 235 + dx * pxPerM, y = 105 - dy * pxPerM;
+        if (x > 6 && x < 464 && y > 6 && y < 204) {
+          others.push({ x: x.toFixed(1), y: y.toFixed(1), tx: (x + 7).toFixed(1), ty: (y + 3).toFixed(1), label: o.name, fill: d < radius ? '#F59E0B' : '#9CA3AF' });
+        }
+      });
+    }
+    var pointErr = errors.point || '';
+    var accOk = f.acc != null && f.acc <= 10;
+    var c = this.campus();
+    var dCampus = hasPt ? this.dist(c.lat, c.lng, lat, lng) : null;
+
+    var delRoom = st.delId ? rooms.filter(function (r) { return r.id === st.delId; })[0] : null;
+
+    return {
+      tiles: [
+        { label: 'Total ruang', value: String(rooms.length), sub: '3 gedung', dark: true },
+        { label: 'Siap presensi', value: String(ready), sub: 'Titik diatur & aktif' },
+        { label: 'Belum ada titik', value: String(missing), sub: 'Sesi QR tidak bisa dibuka', tone: missing ? 'warn' : '' },
+        { label: 'Nonaktif', value: String(inactive), sub: 'Tidak bisa dipetakan' }
+      ].map(function (t) {
+        var warn = t.tone === 'warn';
+        return Object.assign({}, t, {
+          bg: t.dark ? '#064E3B' : warn ? '#FFFBEB' : '#FFFFFF', border: t.dark ? '#064E3B' : warn ? '#FDE68A' : '#E5E7EB',
+          fg: t.dark ? '#FFFFFF' : warn ? '#B45309' : '#111827', labelFg: t.dark ? '#A7F3D0' : warn ? '#92400E' : '#6B7280'
+        });
+      }),
+      q: st.q, onQ: function (e) { self.setState({ q: e.target.value }); },
+      buildings: BUILDINGS,
+      fBuilding: st.fBuilding, onBuilding: function (e) { self.setState({ fBuilding: e.target.value }); },
+      fStatus: st.fStatus, onStatus: function (e) { self.setState({ fStatus: e.target.value }); },
+      isFiltered: !!(st.q || st.fBuilding || st.fStatus),
+      resetFilters: function () { self.setState({ q: '', fBuilding: '', fStatus: '' }); },
+      resultText: visible.length + ' ruang',
+      rows: rowsOut, isEmpty: rowsOut.length === 0,
+      openAdd: function () { openForm('add', null); },
+
+      sheetOpen: !!st.mode,
+      sheetTitle: st.mode === 'edit' ? 'Ubah ' + (f.name || 'ruang') : 'Tambah ruang',
+      saveLabel: st.mode === 'edit' ? 'Simpan perubahan' : 'Simpan ruang',
+      closeSheet: function () { clearInterval(self.captureTimer); self.setState({ mode: null, editId: null, errors: {}, capturing: false }); },
+      hasErrors: Object.keys(errors).length > 0,
+      basicFields: basicFields,
+      form: f,
+      onLat: setF('lat'), onLng: setF('lng'), onRadius: setF('radius'),
+      latInv: pointErr ? 'true' : 'false', lngInv: pointErr ? 'true' : 'false',
+      latBorder: pointErr ? '#DC2626' : '#D1D5DB', lngBorder: pointErr ? '#DC2626' : '#D1D5DB',
+      pointMsg: pointErr || (hasPt ? 'Titik berada ' + Math.round(dCampus) + ' m dari pusat kampus.' : 'Kosongkan bila belum diukur. Ruang akan berstatus "Belum ada titik".'),
+      pointMsgFg: pointErr ? '#B91C1C' : '#6B7280',
+      radiusInv: errors.radius ? 'true' : 'false', radiusBorder: errors.radius ? '#DC2626' : '#D1D5DB',
+      radiusFg: errors.radius ? '#B91C1C' : '#6B7280', radiusHelp: errors.radius || 'Default 5 m. Perbesar untuk aula/lab yang luas.',
+      accText: f.acc != null ? '± ' + this.fmtDec(f.acc, 1) + ' m' : (hasPt ? 'Tidak diketahui' : '—'),
+      accFg: f.acc == null ? '#6B7280' : accOk ? '#166534' : '#B45309',
+      accHelp: f.acc != null ? (accOk ? 'Baik. Titik bisa dipakai.' : 'Kurang baik, sebaiknya ambil ulang.') : (f.manual ? 'Diisi manual, sebaiknya diukur di lokasi.' : 'Terisi setelah ambil lokasi.'),
+
+      capturing: st.capturing,
+      captureBg: st.capturing ? '#9CA3AF' : '#065F46',
+      captureLabel: st.capturing ? 'Mengukur…' : (hasPt ? 'Ukur ulang lokasi' : 'Ambil lokasi saat ini'),
+      sample: { n: st.sampleN, acc: st.sampleAcc ? this.fmtDec(st.sampleAcc, 1) + ' m' : '—', pct: Math.round(st.sampleN / 8 * 100) },
+      capture: function () {
+        if (self.state.capturing) { return; }
+        // Prototipe: simulasi 8 sampel di sekitar pusat gedung terpilih (atau titik lama).
+        var form = self.state.form;
+        // Pakai titik lama hanya bila valid & di area kampus; selain itu pusat gedung terpilih.
+        var oldLat = self.num(form.lat), oldLng = self.num(form.lng), cp = self.campus();
+        var oldOk = oldLat !== null && oldLng !== null && Math.abs(oldLat) <= 90 && Math.abs(oldLng) <= 180 && self.dist(cp.lat, cp.lng, oldLat, oldLng) <= cp.maxM;
+        var base = oldOk ? [oldLat, oldLng] : self.buildingCenter(form.building);
+        var samples = [];
+        self.setState({ capturing: true, sampleN: 0, sampleAcc: 0 });
+        self.captureTimer = setInterval(function () {
+          var i = samples.length;
+          var acc = [14.2, 9.8, 7.1, 6.0, 5.4, 18.5, 4.9, 4.6][i];
+          samples.push({ lat: base[0] + (Math.sin(i * 1.7) * 0.0000045), lng: base[1] + (Math.cos(i * 1.3) * 0.0000045), acc: acc });
+          if (samples.length < 8) { self.setState({ sampleN: samples.length, sampleAcc: acc }); return; }
+          clearInterval(self.captureTimer);
+          // Buang sampel akurasi > 15 m, rata-rata berbobot 1/akurasi².
+          var good = samples.filter(function (s) { return s.acc <= 15; });
+          var w = 0, sl = 0, sg = 0;
+          good.forEach(function (s) { var k = 1 / (s.acc * s.acc); w += k; sl += s.lat * k; sg += s.lng * k; });
+          var best = Math.min.apply(null, good.map(function (s) { return s.acc; }));
+          var nf = Object.assign({}, self.state.form, { lat: (sl / w).toFixed(7), lng: (sg / w).toFixed(7), acc: Math.round(best * 10) / 10, manual: false });
+          var errs = Object.assign({}, self.state.errors); delete errs.point;
+          self.setState({ capturing: false, sampleN: 8, form: nf, errors: errs });
+          self.showToast('Lokasi diambil dari ' + good.length + ' sampel; ' + (samples.length - good.length) + ' sampel berakurasi buruk dibuang.');
+        }, 350);
+      },
+
+      map: {
+        has: hasPt, empty: !hasPt, r: (radius * pxPerM).toFixed(1), others: others,
+        cell: (47 / pxPerM).toFixed(0),
+        gmaps: hasPt ? 'https://www.google.com/maps?q=' + lat.toFixed(7) + ',' + lng.toFixed(7) : '#'
+      },
+      mapLabel: hasPt ? 'Pratinjau titik presensi dengan radius ' + radius + ' meter dan ' + others.length + ' ruang di sekitarnya' : 'Belum ada titik presensi',
+      hasOverlap: overlaps.length > 0,
+      overlapText: 'Radius beririsan dengan ' + overlaps.join(', ') + '. Mahasiswa di ruang sebelah bisa ikut berada di dalam radius. Pertimbangkan radius lebih kecil; validasi utama tetap QR yang hanya tampil di ruang ini.',
+
+      save: function () {
+        if (self.state.capturing) { return; }
+        var cur = self.state.rooms;
+        var form = self.state.form;
+        var errs = self.validate(form, cur, self.state.editId);
+        if (Object.keys(errs).length) { self.setState({ errors: errs }); return; }
+        var la = self.num(form.lat), ln = self.num(form.lng);
+        var prev = cur.filter(function (r) { return r.id === self.state.editId; })[0];
+        var pointChanged = !prev || prev.lat !== la || prev.lng !== ln;
+        var data = {
+          code: String(form.code).trim().toUpperCase(), name: String(form.name).trim(), building: form.building,
+          floor: self.num(form.floor), capacity: self.num(form.capacity), active: form.status === 'Aktif',
+          lat: la, lng: ln, radius: self.num(form.radius), acc: la === null ? null : form.acc,
+          setAt: la === null ? '' : (pointChanged ? '3 Okt 2026' : prev.setAt)
+        };
+        if (self.state.mode === 'add') {
+          var row = Object.assign({ id: data.code, usage: 0 }, data);
+          self.setState({ rooms: cur.concat([row]), mode: null, editId: null, flashId: row.id });
+          self.showToast(data.name + ' ditambahkan.');
+        } else {
+          var eid = self.state.editId;
+          self.setState({ rooms: cur.map(function (r) { return r.id === eid ? Object.assign({}, r, data) : r; }), mode: null, editId: null, flashId: eid });
+          self.showToast(pointChanged && la !== null ? 'Titik presensi ' + data.name + ' diperbarui. Berlaku untuk sesi berikutnya.' : 'Perubahan ' + data.name + ' disimpan.');
+        }
+      },
+
+      confirmOpen: !!delRoom,
+      del: delRoom ? (delRoom.usage > 0
+        ? { title: delRoom.name + ' tidak bisa dihapus', text: 'Ruang ini masih dipakai di ' + delRoom.usage + ' jadwal periode aktif. Pindahkan jadwalnya ke ruang lain di Pemetaan Kelas terlebih dahulu.', allowed: false, blocked: true }
+        : { title: 'Hapus ' + delRoom.name + '?', text: 'Ruang dan titik presensinya dihapus. Sesi presensi lama tetap menyimpan titik yang dipakai saat itu.', allowed: true, blocked: false })
+        : { title: '', text: '', allowed: false, blocked: false },
+      cancelDel: function () { self.setState({ delId: null }); },
+      confirmDel: function () {
+        var before = self.state.rooms;
+        var target = delRoom;
+        self.setState({ rooms: before.filter(function (r) { return r.id !== target.id; }), delId: null });
+        self.showToast(target.name + ' dihapus.', before);
+      },
+
+      toastOn: !!st.toast,
+      toastMsg: st.toast ? st.toast.msg : '',
+      canUndo: !!(st.toast && st.toast.undo),
+      undo: function () { if (self.state.toast && self.state.toast.undo) { self.setState({ rooms: self.state.toast.undo }); self.showToast('Penghapusan dibatalkan.'); } },
+      dismissToast: function () { clearTimeout(self.toastTimer); self.setState({ toast: null }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

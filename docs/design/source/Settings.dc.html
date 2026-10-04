@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Pengaturan · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="position: relative; width: 1440px; height: 1200px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827">
+<dc-import name="Sidebar" role="admin" active="settings" height="1168" hint-size="256px,1168px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Niken" user-role="Administrator · Bagian Akademik" initials="N" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 20px; padding: 0 8px">
+<div style="display: flex; align-items: flex-end; justify-content: space-between">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Pengaturan</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">Aturan yang berlaku untuk setiap sesi presensi.</p>
+</div>
+<button type="button" onClick="{{saveAll}}" style="height: 46px; padding: 0 22px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Simpan perubahan</button>
+</div>
+
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px; align-items: start">
+<section aria-labelledby="policy-title" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 8px 28px">
+<h2 id="policy-title" style="margin: 0; padding: 20px 0 8px; font-size: 18px; font-weight: 700">Kebijakan presensi</h2>
+<sc-for list="{{rules}}" as="r" hint-placeholder-count="7">
+<div style="display: flex; align-items: center; gap: 20px; padding: 18px 0; border-top: 1px solid #F3F4F6">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px">{{r.title}}<sc-if value="{{r.locked}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: #374151; background: #F3F4F6; border-radius: 999px; padding: 2px 8px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Kebijakan kampus</span></sc-if></span><span style="font-size: 13px; line-height: 1.5; color: #6B7280">{{r.desc}}</span></div>
+<sc-if value="{{r.isValue}}" hint-placeholder-val="{{ true }}"><span style="flex-shrink: 0; min-width: 120px; height: 44px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; border: 1px solid #E5E7EB; background: #F9FAFB; font-size: 14px; font-weight: 700; color: #111827; display: flex; align-items: center; justify-content: center">{{r.value}}</span></sc-if>
+<sc-if value="{{r.isSelect}}" hint-placeholder-val="{{ false }}"><select aria-label="{{r.title}}" value="{{lateAfter}}" onChange="{{onLate}}" style="flex-shrink: 0; min-width: 140px; height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid #D1D5DB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option value="15">15 menit</option><option value="10">10 menit</option><option value="5">5 menit</option></select></sc-if>
+<sc-if value="{{r.isSwitch}}" hint-placeholder-val="{{ false }}"><button type="button" role="switch" aria-checked="{{r.checked}}" aria-label="{{r.title}}" onClick="{{r.flip}}" disabled="{{r.locked}}" style="flex-shrink: 0; width: 52px; height: 30px; border-radius: 999px; border: 0; padding: 3px; background: {{r.track}}; display: flex; justify-content: {{r.justify}}; cursor: {{r.cursor}}"><span style="width: 24px; height: 24px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(17,24,39,0.2)"></span></button></sc-if>
+</div>
+</sc-for>
+</section>
+
+<section aria-labelledby="loc-title" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<h2 id="loc-title" style="margin: 0; font-size: 17px; font-weight: 700">Titik presensi ruang</h2>
+<p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B7280">Koordinat dan radius tiap ruang dikelola di master Ruang &amp; Titik Presensi. Sesi QR hanya bisa dibuka di ruang yang titiknya sudah diatur.</p>
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{roomStats}}" as="m" hint-placeholder-count="3"><div style="padding: 12px; border-radius: 14px; background: {{m.bg}}; display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 12px; color: {{m.labelFg}}">{{m.label}}</dt><dd style="margin: 0; font-size: 22px; font-weight: 800; color: {{m.fg}}">{{m.value}}</dd></div></sc-for>
+</dl>
+<sc-if value="{{hasMissing}}" hint-placeholder-val="{{ true }}"><div role="note" style="padding: 10px 12px; border-radius: 12px; background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; font-size: 13px; line-height: 1.5">Ruang 105 belum punya titik. Jadwal Proyek Akhir SI-7A tidak bisa dibuka sesinya.</div></sc-if>
+<a href="RoomManagement.dc.html" style="height: 44px; border-radius: 999px; border: 1.5px solid #065F46; color: #065F46; font-size: 14px; font-weight: 700; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px">Kelola Ruang &amp; Titik Presensi<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+</section>
+</div>
+</main>
+</div>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; right: 32px; bottom: 32px; width: 380px; box-sizing: border-box; display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: #111827; color: #FFFFFF; box-shadow: 0 12px 28px rgba(17,24,39,0.25)">
+<span style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 999px; background: #16A34A; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<span style="flex-grow: 1; font-size: 14px">{{toast}}</span>
+<button type="button" onClick="{{dismiss}}" aria-label="Tutup notifikasi" style="flex-shrink: 0; width: 28px; height: 28px; border: 0; background: transparent; color: #D1D5DB; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1200}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { manual: true, notify: true, lateAfter: '15', toast: '' };
+  }
+  renderVals() {
+    var self = this;
+    var st = this.state;
+    var sw = function (on, locked) {
+      return { isSwitch: true, checked: on ? 'true' : 'false', track: on ? (locked ? '#6EE7B7' : '#15803D') : '#D1D5DB', justify: on ? 'flex-end' : 'flex-start', cursor: locked ? 'not-allowed' : 'pointer' };
+    };
+    var rules = [
+      { title: 'Masa berlaku QR Code', desc: 'QR otomatis nonaktif saat timer berakhir.', locked: true, isValue: true, value: '20 menit' },
+      { title: 'Pembuatan QR', desc: 'Dosen tidak dapat memperbarui atau membuat ulang QR untuk sesi yang sama.', locked: true, isValue: true, value: 'Sekali per sesi' },
+      { title: 'Radius default titik presensi', desc: 'Dipakai untuk ruang baru. Radius tiap ruang bisa diatur di Ruang & Titik Presensi.', locked: true, isValue: true, value: '5 meter' },
+      { title: 'Batas akurasi lokasi', desc: 'Pindaian dengan akurasi GPS lebih buruk dari batas ini ditolak dan mahasiswa diminta mengulang.', locked: true, isValue: true, value: '25 meter' },
+      { title: 'Tandai Terlambat setelah', desc: 'Pindaian setelah menit ini dalam jendela 20 menit dicatat Terlambat.', locked: false, isSelect: true },
+      { title: 'Batas minimal kehadiran', desc: 'Syarat ikut UAS. Izin dan sakit yang disetujui dihitung hadir. Dipakai di Rekap Kehadiran.', locked: true, isValue: true, value: '75%' },
+      { title: 'Batas pengajuan izin/sakit', desc: 'Mahasiswa bisa mengajukan mulai 7 hari sebelum sampai 2 hari setelah pertemuan.', locked: true, isValue: true, value: 'H-7 s.d. H+2' },
+      Object.assign({ title: 'Hanya pada jam kuliah', desc: 'Sesi tidak bisa dimulai, dan QR tidak berlaku, di luar jadwal kuliah.', locked: true }, sw(true, true)),
+      Object.assign({ title: 'Izinkan presensi manual', desc: 'Dosen dapat menetapkan Hadir, Terlambat, Tidak Hadir, atau Izin. Tercatat sebagai “Manual”.', locked: false, flip: function () { self.setState({ manual: !self.state.manual }); } }, sw(st.manual, false)),
+      Object.assign({ title: 'Kirim ringkasan sesi ke email dosen', desc: 'Dikirim saat sesi berakhir.', locked: false, flip: function () { self.setState({ notify: !self.state.notify }); } }, sw(st.notify, false))
+    ];
+    // Ringkasan dari master Ruang & Titik Presensi (data sama dengan halaman itu).
+    var stats = [
+      { label: 'Siap presensi', value: 8, tone: 'ok' },
+      { label: 'Belum ada titik', value: 1, tone: 'warn' },
+      { label: 'Nonaktif', value: 1, tone: '' }
+    ];
+    return {
+      rules: rules.map(function (r) { return Object.assign({ isValue: false, isSelect: false, isSwitch: false, flip: undefined }, r); }),
+      lateAfter: st.lateAfter,
+      onLate: function (e) { self.setState({ lateAfter: e.target.value }); },
+      saveAll: function () { self.setState({ toast: 'Pengaturan presensi disimpan.' }); },
+      roomStats: stats.map(function (m) {
+        return { label: m.label, value: String(m.value), bg: m.tone === 'ok' ? '#F0FDF4' : m.tone === 'warn' ? '#FFFBEB' : '#F9FAFB', fg: m.tone === 'ok' ? '#166534' : m.tone === 'warn' ? '#B45309' : '#111827', labelFg: m.tone === 'warn' ? '#92400E' : '#6B7280' };
+      }),
+      hasMissing: true,
+      hasToast: !!st.toast,
+      toast: st.toast,
+      dismiss: function () { self.setState({ toast: '' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Panel profil mahasiswa</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: {{w}}; display: grid; grid-template-columns: {{cols}}; gap: 16px; align-items: start; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827">
+
+<section aria-labelledby="sp-name" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: {{radius}}; padding: {{pad}}; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+<span style="width: {{avatar}}; height: {{avatar}}; border-radius: 999px; background: #D1FAE5; color: #065F46; font-size: {{avatarFont}}; font-weight: 800; display: flex; align-items: center; justify-content: center">RP</span>
+<div style="display: flex; flex-direction: column; gap: 4px"><h2 id="sp-name" style="margin: 0; font-size: 20px; font-weight: 800">Ray Pengki</h2><span style="font-size: 14px; color: #6B7280">Mahasiswa · Sistem Informasi</span></div>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 12px; border-radius: 999px; font-size: 12px; font-weight: 700; background: #DCFCE7; color: #166534"><span style="width: 6px; height: 6px; border-radius: 999px; background: #16A34A"></span>Aktif · Ganjil 2026/2027</span>
+<dl style="width: 100%; margin: 6px 0 0; display: flex; flex-direction: column; text-align: left">
+<sc-for list="{{identity}}" as="d" hint-placeholder-count="6"><div style="display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-top: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">{{d.label}}</dt><dd style="margin: 0; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums">{{d.value}}</dd></div></sc-for>
+</dl>
+<span style="font-size: 12px; line-height: 1.5; color: #6B7280; text-align: left">Data akademik diambil dari sistem kampus. Jika ada yang salah, hubungi bagian akademik.</span>
+</section>
+
+<div style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+
+<section aria-labelledby="sp-contact" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: {{radius}}; padding: {{pad}}; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px"><h2 id="sp-contact" style="margin: 0; font-size: 17px; font-weight: 800">Kontak</h2><button type="button" onClick="{{savePhone}}" disabled="{{phoneClean}}" style="height: 38px; padding: 0 16px; border-radius: 999px; border: 0; background: {{phoneBtnBg}}; color: {{phoneBtnFg}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Simpan</button></div>
+<div style="display: grid; grid-template-columns: {{fieldCols}}; gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="sp-email" style="font-size: 13px; font-weight: 600">Email kampus</label><input id="sp-email" type="email" value="ray.0032@student.unpam.ac.id" readonly aria-describedby="sp-email-hint" style="height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E7EB; background: #F9FAFB; font: inherit; font-size: 14px; color: #4B5563"><span id="sp-email-hint" style="font-size: 12px; color: #6B7280">Dipakai untuk masuk dan notifikasi. Tidak bisa diubah.</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="sp-phone" style="font-size: 13px; font-weight: 600">No. HP (WhatsApp)</label><input id="sp-phone" type="tel" value="{{phone}}" onChange="{{onPhone}}" placeholder="08xxxxxxxxxx" aria-invalid="{{phoneInv}}" style="height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid {{phoneBorder}}; font: inherit; font-size: 14px; color: #111827"><span style="font-size: 12px; color: {{phoneHintFg}}">{{phoneHint}}</span></div>
+</div>
+</section>
+
+<section aria-labelledby="sp-device" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: {{radius}}; padding: {{pad}}; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 4px"><h2 id="sp-device" style="margin: 0; font-size: 17px; font-weight: 800">Perangkat presensi</h2><span style="font-size: 13px; line-height: 1.5; color: #6B7280">Presensi hanya bisa dilakukan dari perangkat ini, untuk mencegah titip absen.</span></div>
+<div style="display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 16px; background: #F9FAFB; border: 1px solid #E5E7EB">
+<span style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px; background: #ECFDF5; color: #047857; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"></rect><path d="M11 18h2"></path></svg></span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><strong style="font-size: 15px">Samsung Galaxy A54 · Android 14</strong><span style="font-size: 12px; color: #6B7280">Terikat sejak 31 Agu 2026, 07.58 · terakhir dipakai 28 Sep 2026, 08.05</span></div>
+<span style="flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: {{dev.bBg}}; color: {{dev.bFg}}"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{dev.dot}}"></span>{{dev.status}}</span>
+</div>
+<sc-if value="{{dev.pending}}" hint-placeholder-val="{{ false }}"><div role="status" style="display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: 14px; background: #FFFBEB; border: 1px solid #FDE68A; font-size: 13px; line-height: 1.5; color: #92400E"><strong>Permintaan reset menunggu admin</strong><span>Alasan: {{dev.reason}}. Setelah disetujui, perangkat yang dipakai saat masuk berikutnya akan terdaftar sebagai perangkat presensi baru.</span><button type="button" onClick="{{cancelReset}}" style="align-self: flex-start; height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid #FDE68A; background: #FFFFFF; font: inherit; font-size: 12px; font-weight: 700; color: #92400E; cursor: pointer">Batalkan permintaan</button></div></sc-if>
+<sc-if value="{{dev.canRequest}}" hint-placeholder-val="{{ true }}"><div style="display: flex; justify-content: space-between; align-items: center; gap: 12px"><span style="font-size: 13px; color: #4B5563">Ganti ponsel atau ponsel hilang?</span><button type="button" onClick="{{openReset}}" style="flex-shrink: 0; height: 40px; padding: 0 16px; border-radius: 999px; border: 1.5px solid #065F46; background: #FFFFFF; font: inherit; font-size: 13px; font-weight: 700; color: #065F46; cursor: pointer">Ajukan reset perangkat</button></div></sc-if>
+</section>
+
+<section aria-labelledby="sp-pw" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: {{radius}}; padding: {{pad}}; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px"><h2 id="sp-pw" style="margin: 0; font-size: 17px; font-weight: 800">Ubah kata sandi</h2><button type="button" onClick="{{togglePw}}" style="height: 32px; padding: 0 10px; border: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 600; color: #047857; cursor: pointer">{{pwToggle}}</button></div>
+<div style="display: grid; grid-template-columns: {{pwCols}}; gap: 14px">
+<sc-for list="{{pwFields}}" as="f" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="{{f.id}}" style="font-size: 13px; font-weight: 600">{{f.label}}</label><input id="{{f.id}}" type="{{pwType}}" value="{{f.value}}" onChange="{{f.onChange}}" autocomplete="{{f.auto}}" aria-invalid="{{f.invalid}}" style="height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid {{f.border}}; font: inherit; font-size: 14px; color: #111827"><sc-if value="{{f.hasError}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #B91C1C">{{f.error}}</span></sc-if></div>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px"><span style="font-size: 12px; color: #6B7280">Minimal 8 karakter, campuran huruf besar, huruf kecil, dan angka.</span><button type="button" onClick="{{savePw}}" style="flex-shrink: 0; height: 42px; padding: 0 18px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Perbarui kata sandi</button></div>
+</section>
+</div>
+
+<sc-if value="{{resetOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: fixed; inset: 0; background: rgba(17,24,39,0.45); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 30">
+<div role="dialog" aria-modal="true" aria-labelledby="rs-title" aria-describedby="rs-desc" style="width: 100%; max-width: 460px; box-sizing: border-box; background: #FFFFFF; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 20px 40px rgba(17,24,39,0.18)">
+<h2 id="rs-title" style="margin: 0; font-size: 20px; font-weight: 800">Ajukan reset perangkat</h2>
+<p id="rs-desc" style="margin: 0; font-size: 14px; line-height: 1.6; color: #4B5563">Admin akan meninjau permintaan ini. Selama menunggu, Anda tetap bisa presensi dari perangkat lama bila masih ada.</p>
+<div role="radiogroup" aria-label="Alasan reset" style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{reasons}}" as="r" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{r.on}}" onClick="{{r.pick}}" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1.5px solid {{r.border}}; background: {{r.bg}}; font: inherit; font-size: 14px; text-align: left; cursor: pointer; color: #111827"><span style="width: 16px; height: 16px; border-radius: 999px; border: 2px solid {{r.dotBorder}}; box-sizing: border-box; display: flex; align-items: center; justify-content: center"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{r.dot}}"></span></span>{{r.label}}</button></sc-for>
+</div>
+<sc-if value="{{resetError}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #B91C1C">Pilih alasan reset.</span></sc-if>
+<div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px"><button type="button" onClick="{{closeReset}}" style="height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; color: #111827; cursor: pointer">Batal</button><button type="button" onClick="{{submitReset}}" style="height: 44px; padding: 0 20px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Kirim permintaan</button></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{toastOn}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: fixed; right: {{toastInset}}; bottom: {{toastInset}}; left: {{toastLeft}}; width: {{toastW}}; box-sizing: border-box; display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: #111827; color: #FFFFFF; box-shadow: 0 12px 28px rgba(17,24,39,0.25); z-index: 31">
+<span style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 999px; background: #16A34A; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<span style="flex-grow: 1; font-size: 14px">{{toastMsg}}</span>
+<button type="button" onClick="{{dismissToast}}" aria-label="Tutup notifikasi" style="flex-shrink: 0; width: 28px; height: 28px; border: 0; background: transparent; color: #D1D5DB; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"layout":{"editor":"enum","options":["desktop","mobile"],"default":"desktop"},"$preview":{"width":1104,"height":760}}'>
+class Component extends DCLogic {
+  /*
+   * StudentProfilePanel — profil mahasiswa, dipakai versi desktop & mobile.
+   * - Data akademik: baca saja (sumber: sistem kampus).
+   * - No. HP: bisa diubah, format 08 + 8–11 digit.
+   * - Perangkat presensi: satu perangkat terikat; reset lewat permintaan ke admin.
+   * - Kata sandi: aturan sama dengan form Daftar.
+   */
+  constructor(props) {
+    super(props);
+    this.state = {
+      phone: '081234567890', savedPhone: '081234567890', phoneError: '',
+      reset: null, resetOpen: false, resetReason: '', resetError: false,
+      pw: { cur: '', nw: '', nw2: '' }, pwErrors: {}, showPw: false,
+      toast: ''
+    };
+  }
+  componentWillUnmount() { clearTimeout(this.toastTimer); }
+
+  showToast(msg) {
+    var self = this;
+    clearTimeout(this.toastTimer);
+    this.setState({ toast: msg });
+    this.toastTimer = setTimeout(function () { self.setState({ toast: '' }); }, 5000);
+  }
+
+  validatePw(pw) {
+    var e = {};
+    if (!pw.cur) { e.cur = 'Masukkan kata sandi saat ini.'; }
+    if (!pw.nw) { e.nw = 'Masukkan kata sandi baru.'; }
+    else if (pw.nw.length < 8 || !/[a-z]/.test(pw.nw) || !/[A-Z]/.test(pw.nw) || !/\d/.test(pw.nw)) { e.nw = 'Belum memenuhi aturan kata sandi.'; }
+    else if (pw.nw === pw.cur) { e.nw = 'Harus berbeda dari kata sandi saat ini.'; }
+    if (!e.nw && pw.nw2 !== pw.nw) { e.nw2 = 'Kata sandi tidak sama.'; }
+    return e;
+  }
+
+  renderVals() {
+    var self = this;
+    var st = this.state;
+    var mobile = this.props.layout === 'mobile';
+    var phoneDirty = st.phone.trim() !== st.savedPhone;
+    var REASONS = ['Ganti ponsel baru', 'Ponsel hilang atau rusak', 'Reset pabrik / instal ulang aplikasi'];
+
+    var PW = [
+      { key: 'cur', label: 'Kata sandi saat ini', auto: 'current-password' },
+      { key: 'nw', label: 'Kata sandi baru', auto: 'new-password' },
+      { key: 'nw2', label: 'Ulangi kata sandi baru', auto: 'new-password' }
+    ];
+
+    return {
+      w: mobile ? '350px' : '1104px',
+      cols: mobile ? 'minmax(0, 1fr)' : '340px minmax(0, 1fr)',
+      fieldCols: mobile ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
+      pwCols: mobile ? 'minmax(0, 1fr)' : 'repeat(3, minmax(0, 1fr))',
+      radius: mobile ? '20px' : '24px',
+      pad: mobile ? '18px' : '22px 24px',
+      avatar: mobile ? '72px' : '96px', avatarFont: mobile ? '24px' : '32px',
+      toastInset: mobile ? '12px' : '32px', toastLeft: mobile ? '12px' : 'auto', toastW: mobile ? 'auto' : '380px',
+
+      identity: [
+        { label: 'NIM', value: '221011450032' },
+        { label: 'Program studi', value: 'Sistem Informasi' },
+        { label: 'Kelas', value: 'SI-5A' },
+        { label: 'Angkatan', value: '2024' },
+        { label: 'Dosen wali', value: 'Gusmayeni, S.Kom., M.Kom' },
+        { label: 'Semester', value: '5' }
+      ],
+
+      phone: st.phone,
+      onPhone: function (e) { self.setState({ phone: e.target.value, phoneError: '' }); },
+      phoneClean: !phoneDirty,
+      phoneBtnBg: phoneDirty ? '#065F46' : '#F3F4F6', phoneBtnFg: phoneDirty ? '#FFFFFF' : '#9CA3AF',
+      phoneInv: st.phoneError ? 'true' : 'false',
+      phoneBorder: st.phoneError ? '#DC2626' : '#D1D5DB',
+      phoneHintFg: st.phoneError ? '#B91C1C' : '#6B7280',
+      phoneHint: st.phoneError || 'Diawali 08, 10–13 digit.',
+      savePhone: function () {
+        var v = self.state.phone.trim();
+        if (!/^08\d{8,11}$/.test(v)) { self.setState({ phoneError: 'Nomor harus diawali 08 dan 10–13 digit.' }); return; }
+        self.setState({ phone: v, savedPhone: v, phoneError: '' });
+        self.showToast('No. HP disimpan.');
+      },
+
+      dev: st.reset
+        ? { status: 'Menunggu reset', bBg: '#FEF3C7', bFg: '#92400E', dot: '#F59E0B', pending: true, canRequest: false, reason: st.reset }
+        : { status: 'Terikat', bBg: '#DCFCE7', bFg: '#166534', dot: '#16A34A', pending: false, canRequest: true, reason: '' },
+      openReset: function () { self.setState({ resetOpen: true, resetReason: '', resetError: false }); },
+      closeReset: function () { self.setState({ resetOpen: false }); },
+      resetOpen: st.resetOpen,
+      resetError: st.resetError,
+      reasons: REASONS.map(function (r) {
+        var on = r === st.resetReason;
+        return {
+          label: r, on: on ? 'true' : 'false',
+          border: on ? '#15803D' : '#E5E7EB', bg: on ? '#F0FDF4' : '#FFFFFF',
+          dotBorder: on ? '#15803D' : '#D1D5DB', dot: on ? '#15803D' : 'transparent',
+          pick: function () { self.setState({ resetReason: r, resetError: false }); }
+        };
+      }),
+      submitReset: function () {
+        if (!self.state.resetReason) { self.setState({ resetError: true }); return; }
+        self.setState({ reset: self.state.resetReason.toLowerCase(), resetOpen: false });
+        self.showToast('Permintaan reset perangkat dikirim ke admin.');
+      },
+      cancelReset: function () { self.setState({ reset: null }); self.showToast('Permintaan reset dibatalkan.'); },
+
+      pwType: st.showPw ? 'text' : 'password',
+      pwToggle: st.showPw ? 'Sembunyikan' : 'Tampilkan',
+      togglePw: function () { self.setState({ showPw: !self.state.showPw }); },
+      pwFields: PW.map(function (f) {
+        var err = st.pwErrors[f.key];
+        return {
+          id: 'sp-' + f.key, label: f.label, auto: f.auto, value: st.pw[f.key],
+          hasError: !!err, error: err || '', invalid: err ? 'true' : 'false', border: err ? '#DC2626' : '#D1D5DB',
+          onChange: function (e) {
+            var pw = Object.assign({}, self.state.pw);
+            pw[f.key] = e.target.value;
+            var errs = Object.assign({}, self.state.pwErrors);
+            delete errs[f.key];
+            self.setState({ pw: pw, pwErrors: errs });
+          }
+        };
+      }),
+      savePw: function () {
+        var errs = self.validatePw(self.state.pw);
+        if (Object.keys(errs).length) { self.setState({ pwErrors: errs }); return; }
+        self.setState({ pw: { cur: '', nw: '', nw2: '' }, pwErrors: {} });
+        self.showToast('Kata sandi diperbarui.');
+      },
+
+      toastOn: !!st.toast,
+      toastMsg: st.toast,
+      dismissToast: function () { clearTimeout(self.toastTimer); self.setState({ toast: '' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

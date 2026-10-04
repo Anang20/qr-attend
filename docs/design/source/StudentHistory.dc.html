@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Riwayat presensi saya · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 1200px; box-sizing: border-box; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827; overflow: hidden">
+<header style="padding: 116px 20px 8px; display: flex; flex-direction: column; gap: 4px">
+<h1 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.02em">Riwayat Presensi</h1>
+<p style="margin: 0; font-size: 13px; color: #6B7280">Semester Ganjil 2026/2027</p>
+</header>
+<main style="padding: 8px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+
+<section aria-label="Ringkasan presensi" style="border-radius: 22px; background: #064E3B; color: #FFFFFF; padding: 18px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: flex-end"><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; color: #A7F3D0">Persentase kehadiran</span><span style="font-size: 40px; font-weight: 800; letter-spacing: -0.02em; line-height: 1">94%</span></div><span style="font-size: 13px; color: #D1FAE5">31 dari 33 pertemuan</span></div>
+<div role="img" aria-label="Hadir 30, Terlambat 1, Tidak hadir 1, Izin 1" style="display: flex; gap: 2px; height: 10px; border-radius: 999px; overflow: hidden; background: #065F46"><span style="width: 90.9%; background: #6EE7B7"></span><span style="width: 3%; background: #FCD34D"></span><span style="width: 3%; background: #FCA5A5"></span><span style="width: 3%; background: #93C5FD"></span></div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; font-size: 12px; color: #D1FAE5">
+<span style="display: flex; flex-direction: column; gap: 2px"><strong style="font-size: 16px; color: #FFFFFF">30</strong>Hadir</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><strong style="font-size: 16px; color: #FFFFFF">1</strong>Terlambat</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><strong style="font-size: 16px; color: #FFFFFF">1</strong>Tidak hadir</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><strong style="font-size: 16px; color: #FFFFFF">1</strong>Izin</span>
+</div>
+</section>
+
+<div role="group" aria-label="Filter" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-weight: 700; color: #4B5563">Tanggal<select value="{{f.range}}" onChange="{{on.range}}" style="height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 13px; font-weight: 600; color: #111827; background: #FFFFFF"><option value="">Semester ini</option><option value="week">Pekan ini</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-weight: 700; color: #4B5563">Mata kuliah<select value="{{f.course}}" onChange="{{on.course}}" style="height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 13px; font-weight: 600; color: #111827; background: #FFFFFF"><option value="">Semua</option><sc-for list="{{courses}}" as="c" hint-placeholder-count="4"><option value="{{c}}">{{c}}</option></sc-for></select></label>
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-weight: 700; color: #4B5563">Kelas<select value="{{f.cls}}" onChange="{{on.cls}}" style="height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 13px; font-weight: 600; color: #111827; background: #FFFFFF"><option value="">Semua</option><option value="SI-5A">SI-5A</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-weight: 700; color: #4B5563">Status<select value="{{f.status}}" onChange="{{on.status}}" style="height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 13px; font-weight: 600; color: #111827; background: #FFFFFF"><option value="">Semua</option><option value="Hadir">Hadir</option><option value="Terlambat">Terlambat</option><option value="Tidak Hadir">Tidak Hadir</option><option value="Izin">Izin</option></select></label>
+</div>
+
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{items}}" as="h" hint-placeholder-count="7">
+<li>
+<a href="AttendanceDetail.dc.html" style="display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 18px; background: #FFFFFF; border: 1px solid #E5E7EB; text-decoration: none; color: #111827">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px"><div style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 700">{{h.course}}</span><span style="font-size: 12px; color: #6B7280">{{h.date}} · {{h.cls}} · {{h.sched}}</span></div><span style="flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: {{h.bBg}}; color: {{h.bFg}}"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{h.dot}}"></span>{{h.status}}</span></div>
+<div style="display: flex; gap: 16px; font-size: 12px; color: #4B5563"><span>Waktu presensi <strong style="color: #111827; font-variant-numeric: tabular-nums">{{h.time}}</strong></span><span>Metode <strong style="color: #111827">{{h.method}}</strong></span></div>
+</a>
+</li>
+</sc-for>
+</ul>
+<sc-if value="{{empty}}" hint-placeholder-val="{{ false }}"><div style="padding: 28px 16px; text-align: center; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 18px; display: flex; flex-direction: column; gap: 10px; align-items: center"><strong style="font-size: 15px">Tidak ada riwayat yang cocok</strong><button type="button" onClick="{{reset}}" style="height: 40px; padding: 0 16px; border-radius: 999px; border: 0; background: #ECFDF5; color: #065F46; font: inherit; font-size: 13px; font-weight: 700">Atur ulang filter</button></div></sc-if>
+</main>
+
+<div style="position: absolute; inset: 0; pointer-events: none; z-index: 20">
+<dc-import name="StudentMobileNav" active="history" height="1200" hint-size="390px,100px"></dc-import>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1200}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { range: '', course: '', cls: '', status: '' };
+  }
+  renderVals() {
+    var self = this;
+    var st = this.state;
+    var ST = {
+      Hadir: { bBg: '#DCFCE7', bFg: '#166534', dot: '#16A34A' },
+      Terlambat: { bBg: '#FEF3C7', bFg: '#92400E', dot: '#F59E0B' },
+      'Tidak Hadir': { bBg: '#FEE2E2', bFg: '#991B1B', dot: '#DC2626' },
+      Izin: { bBg: '#DBEAFE', bFg: '#1E40AF', dot: '#2563EB' }
+    };
+    var items = [
+      { course: 'Pemrograman Web', date: 'Sen, 28 Sep', week: true, cls: 'SI-5A', sched: '08.00–09.40', time: '08.05.17', method: 'QR Code', status: 'Hadir' },
+      { course: 'Interaksi Manusia dan Komputer', date: 'Kam, 24 Sep', cls: 'SI-5A', sched: '13.00–14.40', time: '13.03.40', method: 'QR Code', status: 'Hadir' },
+      { course: 'Statistika', date: 'Rab, 23 Sep', cls: 'SI-5A', sched: '10.00–11.40', time: '10.32.05', method: 'Manual', status: 'Izin' },
+      { course: 'Pemrograman Mobile', date: 'Sen, 21 Sep', cls: 'SI-5A', sched: '13.00–14.40', time: '13.02.11', method: 'QR Code', status: 'Hadir' },
+      { course: 'Pemrograman Web', date: 'Sen, 21 Sep', cls: 'SI-5A', sched: '08.00–09.40', time: '08.19.48', method: 'QR Code', status: 'Terlambat' },
+      { course: 'Manajemen Proses Bisnis', date: 'Jum, 18 Sep', cls: 'SI-5A', sched: '10.00–11.40', time: '—', method: '—', status: 'Tidak Hadir' },
+      { course: 'Interaksi Manusia dan Komputer', date: 'Kam, 17 Sep', cls: 'SI-5A', sched: '13.00–14.40', time: '13.01.56', method: 'QR Code', status: 'Hadir' }
+    ];
+    var list = items.filter(function (h) {
+      return (!st.range || h.week) && (!st.course || h.course === st.course) && (!st.cls || h.cls === st.cls) && (!st.status || h.status === st.status);
+    });
+    var set = function (k) { return function (e) { var o = {}; o[k] = e.target.value; self.setState(o); }; };
+    return {
+      f: st,
+      on: { range: set('range'), course: set('course'), cls: set('cls'), status: set('status') },
+      courses: ['Pemrograman Web', 'Interaksi Manusia dan Komputer', 'Statistika', 'Pemrograman Mobile', 'Manajemen Proses Bisnis'],
+      items: list.map(function (h) { return Object.assign({}, h, ST[h.status]); }),
+      empty: list.length === 0,
+      reset: function () { self.setState({ range: '', course: '', cls: '', status: '' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

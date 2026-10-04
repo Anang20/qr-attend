@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Riwayat presensi saya (desktop) · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1040px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827">
+<dc-import name="Sidebar" role="student" active="history" height="1008" hint-size="256px,1008px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Ray Pengki" user-role="Mahasiswa · SI-5A" initials="RP" search-placeholder="Cari mata kuliah atau riwayat presensi…" profile-href="StudentProfileDesktop.dc.html" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 18px; padding: 0 8px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Riwayat Presensi</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">Semester Ganjil 2026/2027 · Kelas SI-5A</p>
+</div>
+
+<div style="display: grid; grid-template-columns: 1.3fr repeat(4, minmax(0, 1fr)); gap: 12px">
+<div style="padding: 16px 18px; border-radius: 18px; background: #064E3B; color: #FFFFFF; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 13px; color: #A7F3D0">Persentase kehadiran</span><span style="font-size: 12px; color: #D1FAE5">31/33</span></div>
+<strong style="font-size: 30px; line-height: 1">94%</strong>
+<div role="img" aria-label="Hadir 30, Terlambat 1, Tidak hadir 1, Izin 1" style="display: flex; gap: 2px; height: 8px; border-radius: 999px; overflow: hidden; background: #065F46"><span style="width: 90.9%; background: #6EE7B7"></span><span style="width: 3%; background: #FCD34D"></span><span style="width: 3%; background: #FCA5A5"></span><span style="width: 3%; background: #93C5FD"></span></div>
+</div>
+<sc-for list="{{tiles}}" as="t" hint-placeholder-count="4">
+<div style="padding: 16px 18px; border-radius: 18px; background: #FFFFFF; border: 1px solid #E5E7EB; display: flex; flex-direction: column; gap: 6px"><span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #6B7280"><span style="width: 8px; height: 8px; border-radius: 999px; background: {{t.dot}}"></span>{{t.label}}</span><strong style="font-size: 28px">{{t.n}}</strong></div>
+</sc-for>
+</div>
+
+<section style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; gap: 12px; align-items: flex-end">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #374151">Tanggal<select value="{{f.range}}" onChange="{{on.range}}" style="height: 44px; min-width: 180px; padding: 0 10px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option value="">Semester ini</option><option value="week">Pekan ini</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #374151">Mata kuliah<select value="{{f.course}}" onChange="{{on.course}}" style="height: 44px; min-width: 260px; padding: 0 10px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option value="">Semua mata kuliah</option><sc-for list="{{courses}}" as="c" hint-placeholder-count="5"><option value="{{c}}">{{c}}</option></sc-for></select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #374151">Kelas<select value="{{f.cls}}" onChange="{{on.cls}}" style="height: 44px; min-width: 130px; padding: 0 10px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option value="">Semua kelas</option><option value="SI-5A">SI-5A</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #374151">Status<select value="{{f.status}}" onChange="{{on.status}}" style="height: 44px; min-width: 150px; padding: 0 10px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option value="">Semua status</option><option value="Hadir">Hadir</option><option value="Terlambat">Terlambat</option><option value="Tidak Hadir">Tidak Hadir</option><option value="Izin">Izin</option></select></label>
+<div style="flex-grow: 1"></div>
+<button type="button" onClick="{{reset}}" style="height: 44px; padding: 0 14px; border: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 600; color: #047857; cursor: pointer">Atur ulang</button>
+</div>
+<table style="width: 100%; border-collapse: collapse; font-size: 14px">
+<thead><tr style="text-align: left; color: #6B7280; font-size: 12px"><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB">Tanggal</th><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB">Mata kuliah</th><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB">Kelas</th><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB">Jadwal</th><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB">Waktu presensi</th><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB">Metode</th><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB">Status</th><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB; text-align: right">Aksi</th></tr></thead>
+<tbody>
+<sc-for list="{{rows}}" as="h" hint-placeholder-count="8">
+<tr>
+<td style="padding: 11px 10px; border-bottom: 1px solid #F3F4F6; color: #4B5563; white-space: nowrap">{{h.date}}</td>
+<td style="padding: 11px 10px; border-bottom: 1px solid #F3F4F6; font-weight: 600">{{h.course}}</td>
+<td style="padding: 11px 10px; border-bottom: 1px solid #F3F4F6; color: #4B5563">{{h.cls}}</td>
+<td style="padding: 11px 10px; border-bottom: 1px solid #F3F4F6; color: #4B5563; font-variant-numeric: tabular-nums">{{h.sched}}</td>
+<td style="padding: 11px 10px; border-bottom: 1px solid #F3F4F6; font-variant-numeric: tabular-nums">{{h.time}}</td>
+<td style="padding: 11px 10px; border-bottom: 1px solid #F3F4F6; color: #4B5563">{{h.method}}</td>
+<td style="padding: 11px 10px; border-bottom: 1px solid #F3F4F6"><span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: {{h.bBg}}; color: {{h.bFg}}"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{h.dot}}"></span>{{h.status}}</span></td>
+<td style="padding: 8px 10px; border-bottom: 1px solid #F3F4F6; text-align: right"><a href="AttendanceDetailDesktop.dc.html" aria-label="Detail presensi {{h.course}} {{h.date}}" style="font-size: 13px; font-weight: 600; text-decoration: none">Detail</a></td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+<sc-if value="{{empty}}" hint-placeholder-val="{{ false }}"><div style="padding: 30px 0; display: flex; flex-direction: column; align-items: center; gap: 10px"><strong style="font-size: 15px">Tidak ada riwayat yang cocok</strong><button type="button" onClick="{{reset}}" style="height: 40px; padding: 0 16px; border-radius: 999px; border: 0; background: #ECFDF5; color: #065F46; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Atur ulang filter</button></div></sc-if>
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="font-size: 13px; color: #6B7280">{{rangeText}}</span>
+<nav aria-label="Halaman" style="display: flex; gap: 6px"><sc-for list="{{pages}}" as="p" hint-placeholder-count="2"><button type="button" onClick="{{p.go}}" aria-current="{{p.cur}}" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid {{p.border}}; background: {{p.bg}}; color: {{p.fg}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">{{p.n}}</button></sc-for></nav>
+</div>
+</section>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1040}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { range: '', course: '', cls: '', status: '', page: 1 };
+  }
+  renderVals() {
+    var self = this;
+    var st = this.state;
+    var ST = {
+      Hadir: { bBg: '#DCFCE7', bFg: '#166534', dot: '#16A34A' },
+      Terlambat: { bBg: '#FEF3C7', bFg: '#92400E', dot: '#F59E0B' },
+      'Tidak Hadir': { bBg: '#FEE2E2', bFg: '#991B1B', dot: '#DC2626' },
+      Izin: { bBg: '#DBEAFE', bFg: '#1E40AF', dot: '#2563EB' }
+    };
+    var items = [
+      { course: 'Pemrograman Web', date: 'Sen, 28 Sep', week: true, sched: '08.00–09.40', time: '08.05.17', method: 'QR Code', status: 'Hadir' },
+      { course: 'Interaksi Manusia dan Komputer', date: 'Kam, 24 Sep', sched: '13.00–14.40', time: '13.03.40', method: 'QR Code', status: 'Hadir' },
+      { course: 'Statistika', date: 'Rab, 23 Sep', sched: '10.00–11.40', time: '10.32.05', method: 'Manual', status: 'Izin' },
+      { course: 'Pemrograman Mobile', date: 'Sen, 21 Sep', sched: '13.00–14.40', time: '13.02.11', method: 'QR Code', status: 'Hadir' },
+      { course: 'Manajemen Proses Bisnis', date: 'Sen, 21 Sep', sched: '10.00–11.40', time: '10.04.37', method: 'QR Code', status: 'Hadir' },
+      { course: 'Pemrograman Web', date: 'Sen, 21 Sep', sched: '08.00–09.40', time: '08.19.48', method: 'QR Code', status: 'Terlambat' },
+      { course: 'Manajemen Proses Bisnis', date: 'Jum, 18 Sep', sched: '10.00–11.40', time: '—', method: '—', status: 'Tidak Hadir' },
+      { course: 'Interaksi Manusia dan Komputer', date: 'Kam, 17 Sep', sched: '13.00–14.40', time: '13.01.56', method: 'QR Code', status: 'Hadir' },
+      { course: 'Statistika', date: 'Rab, 16 Sep', sched: '10.00–11.40', time: '10.03.12', method: 'QR Code', status: 'Hadir' },
+      { course: 'Pemrograman Web', date: 'Sen, 14 Sep', sched: '08.00–09.40', time: '08.04.50', method: 'QR Code', status: 'Hadir' }
+    ];
+    var list = items.filter(function (h) {
+      return (!st.range || h.week) && (!st.course || h.course === st.course) && (!st.cls || st.cls === 'SI-5A') && (!st.status || h.status === st.status);
+    });
+    var size = 8;
+    var pc = Math.max(1, Math.ceil(list.length / size));
+    var page = Math.min(st.page, pc);
+    var start = (page - 1) * size;
+    var visible = list.slice(start, start + size);
+    var set = function (k) { return function (e) { var o = { page: 1 }; o[k] = e.target.value; self.setState(o); }; };
+    return {
+      tiles: [
+        { label: 'Hadir', n: 30, dot: '#16A34A' }, { label: 'Terlambat', n: 1, dot: '#F59E0B' },
+        { label: 'Tidak hadir', n: 1, dot: '#DC2626' }, { label: 'Izin', n: 1, dot: '#2563EB' }
+      ],
+      f: st,
+      on: { range: set('range'), course: set('course'), cls: set('cls'), status: set('status') },
+      courses: ['Pemrograman Web', 'Interaksi Manusia dan Komputer', 'Statistika', 'Pemrograman Mobile', 'Manajemen Proses Bisnis'],
+      rows: visible.map(function (h) { return Object.assign({ cls: 'SI-5A' }, h, ST[h.status]); }),
+      empty: list.length === 0,
+      reset: function () { self.setState({ range: '', course: '', cls: '', status: '', page: 1 }); },
+      rangeText: list.length ? 'Menampilkan ' + (start + 1) + '–' + (start + visible.length) + ' dari ' + list.length + ' riwayat' : 'Menampilkan 0 riwayat',
+      pages: Array.apply(null, Array(pc)).map(function (_, i) {
+        var on = i + 1 === page;
+        return { n: i + 1, cur: on ? 'page' : undefined, bg: on ? '#065F46' : '#FFFFFF', fg: on ? '#FFFFFF' : '#111827', border: on ? '#065F46' : '#E5E7EB', go: function () { self.setState({ page: i + 1 }); } };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

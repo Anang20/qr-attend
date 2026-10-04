@@ -1,0 +1,540 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "AcademicPeriod.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Admin · Periode Akademik",
+      "w": 1440,
+      "x": 12160,
+      "y": 6700
+    },
+    "ActiveQR.dc.html": {
+      "h": 1080,
+      "is_interactive": true,
+      "title": "Dosen · Sesi QR Aktif",
+      "w": 1440,
+      "x": 4560,
+      "y": 1300
+    },
+    "AdminDashboard.dc.html": {
+      "h": 1160,
+      "is_interactive": true,
+      "title": "Admin · Dasbor",
+      "w": 1440,
+      "x": 0,
+      "y": 6700
+    },
+    "AttendanceDetail.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Mahasiswa (mobile) · Detail Presensi",
+      "w": 390,
+      "x": 2820,
+      "y": 4220
+    },
+    "AttendanceDetailDesktop.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Mahasiswa (desktop) · Detail Presensi",
+      "w": 1440,
+      "x": 9120,
+      "y": 2780
+    },
+    "AttendanceFailed.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Mahasiswa (mobile) · Presensi Gagal",
+      "w": 390,
+      "x": 1880,
+      "y": 4220
+    },
+    "AttendanceFailedDesktop.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Mahasiswa (desktop) · Presensi Gagal",
+      "w": 1440,
+      "x": 6080,
+      "y": 2780
+    },
+    "AttendanceRecap.dc.html": {
+      "h": 1240,
+      "is_interactive": true,
+      "title": "Admin · Rekap Kehadiran",
+      "w": 1440,
+      "x": 13680,
+      "y": 6700
+    },
+    "AttendanceReports.dc.html": {
+      "h": 1300,
+      "is_interactive": true,
+      "title": "Admin · Laporan Presensi",
+      "w": 1440,
+      "x": 9120,
+      "y": 6700
+    },
+    "AttendanceSuccess.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Mahasiswa (mobile) · Presensi Berhasil",
+      "w": 390,
+      "x": 1410,
+      "y": 4220
+    },
+    "AttendanceSuccessDesktop.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Mahasiswa (desktop) · Presensi Berhasil",
+      "w": 1440,
+      "x": 4560,
+      "y": 2780
+    },
+    "ClassManagement.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Admin · Manajemen Kelas",
+      "w": 1440,
+      "x": 6080,
+      "y": 6700
+    },
+    "ClassMapping.dc.html": {
+      "h": 1400,
+      "is_interactive": true,
+      "title": "Admin · Pemetaan Kelas",
+      "w": 1440,
+      "x": 10640,
+      "y": 6700
+    },
+    "CourseManagement.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Admin · Manajemen Mata Kuliah",
+      "w": 1440,
+      "x": 4560,
+      "y": 6700
+    },
+    "CrudPage.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Komponen · Halaman CRUD",
+      "w": 1440,
+      "x": 1552,
+      "y": 10220
+    },
+    "ExpiredAttendance.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "title": "Dosen · Sesi Kedaluwarsa",
+      "w": 1440,
+      "x": 6080,
+      "y": 1300
+    },
+    "ForgotPassword.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Autentikasi · Lupa Kata Sandi",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "LeaveApproval.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Dosen · Persetujuan Izin",
+      "w": 1440,
+      "x": 12160,
+      "y": 1300
+    },
+    "LeaveRequest.dc.html": {
+      "h": 2440,
+      "is_interactive": true,
+      "title": "Mahasiswa (mobile) · Pengajuan Izin",
+      "w": 390,
+      "x": 3760,
+      "y": 4220
+    },
+    "LeaveRequestDesktop.dc.html": {
+      "h": 1400,
+      "is_interactive": true,
+      "title": "Mahasiswa (desktop) · Pengajuan Izin",
+      "w": 1440,
+      "x": 10640,
+      "y": 2780
+    },
+    "LeaveRequestPanel.dc.html": {
+      "h": 1200,
+      "is_interactive": true,
+      "title": "Komponen · Panel pengajuan izin",
+      "w": 1104,
+      "x": 3072,
+      "y": 10220
+    },
+    "LecturerDashboard.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Dosen · Dasbor",
+      "w": 1440,
+      "x": 0,
+      "y": 1300
+    },
+    "LecturerHistory.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "title": "Dosen · Riwayat Presensi",
+      "w": 1440,
+      "x": 9120,
+      "y": 1300
+    },
+    "LecturerManagement.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Admin · Manajemen Dosen",
+      "w": 1440,
+      "x": 3040,
+      "y": 6700
+    },
+    "LecturerRecap.dc.html": {
+      "h": 1240,
+      "is_interactive": true,
+      "title": "Dosen · Rekap Kehadiran",
+      "w": 1440,
+      "x": 13680,
+      "y": 1300
+    },
+    "LecturerSchedule.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "title": "Dosen · Jadwal",
+      "w": 1440,
+      "x": 1520,
+      "y": 1300
+    },
+    "LecturerStudents.dc.html": {
+      "h": 1040,
+      "is_interactive": true,
+      "title": "Dosen · Mahasiswa (pilih kelas dulu)",
+      "w": 1440,
+      "x": 10640,
+      "y": 1300
+    },
+    "Main.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Autentikasi · Masuk",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "ManualAttendance.dc.html": {
+      "h": 1040,
+      "is_interactive": true,
+      "title": "Dosen · Presensi Manual",
+      "w": 1440,
+      "x": 7600,
+      "y": 1300
+    },
+    "Profile.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "title": "Sistem · Profil",
+      "w": 1440,
+      "x": 1520,
+      "y": 8500
+    },
+    "QRScanner.dc.html": {
+      "h": 920,
+      "is_interactive": true,
+      "title": "Mahasiswa (mobile) · Pemindai QR",
+      "w": 390,
+      "x": 940,
+      "y": 4220
+    },
+    "QRScannerDesktop.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Mahasiswa (desktop) · Pindai QR",
+      "w": 1440,
+      "x": 3040,
+      "y": 2780
+    },
+    "Register.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Autentikasi · Daftar",
+      "w": 1440,
+      "x": 3040,
+      "y": 0
+    },
+    "RoomManagement.dc.html": {
+      "h": 1120,
+      "is_interactive": true,
+      "title": "Admin · Ruang & Titik Presensi",
+      "w": 1440,
+      "x": 15200,
+      "y": 6700
+    },
+    "ScheduleManagement.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Admin · Jadwal Akademik (baca saja, dari Pemetaan)",
+      "w": 1440,
+      "x": 7600,
+      "y": 6700
+    },
+    "Settings.dc.html": {
+      "h": 1200,
+      "is_interactive": true,
+      "title": "Sistem · Pengaturan",
+      "w": 1440,
+      "x": 0,
+      "y": 8500
+    },
+    "Sidebar.dc.html": {
+      "h": 928,
+      "is_interactive": true,
+      "title": "Komponen · Sidebar",
+      "w": 256,
+      "x": 0,
+      "y": 10220
+    },
+    "StartAttendance.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "title": "Dosen · Mulai Presensi",
+      "w": 1440,
+      "x": 3040,
+      "y": 1300
+    },
+    "StudentDashboard.dc.html": {
+      "h": 1480,
+      "is_interactive": true,
+      "title": "Mahasiswa (mobile) · Beranda",
+      "w": 390,
+      "x": 0,
+      "y": 4220
+    },
+    "StudentDashboardDesktop.dc.html": {
+      "h": 1060,
+      "is_interactive": true,
+      "title": "Mahasiswa (desktop) · Beranda",
+      "w": 1440,
+      "x": 0,
+      "y": 2780
+    },
+    "StudentHistory.dc.html": {
+      "h": 1200,
+      "is_interactive": true,
+      "title": "Mahasiswa (mobile) · Riwayat Presensi",
+      "w": 390,
+      "x": 2350,
+      "y": 4220
+    },
+    "StudentHistoryDesktop.dc.html": {
+      "h": 1040,
+      "is_interactive": true,
+      "title": "Mahasiswa (desktop) · Riwayat Presensi",
+      "w": 1440,
+      "x": 7600,
+      "y": 2780
+    },
+    "StudentManagement.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Admin · Manajemen Mahasiswa",
+      "w": 1440,
+      "x": 1520,
+      "y": 6700
+    },
+    "StudentMobileNav.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Komponen · Drawer menu mobile mahasiswa",
+      "w": 390,
+      "x": 3290,
+      "y": 4220
+    },
+    "StudentProfile.dc.html": {
+      "h": 1900,
+      "is_interactive": true,
+      "title": "Mahasiswa (mobile) · Profil",
+      "w": 390,
+      "x": 4230,
+      "y": 4220
+    },
+    "StudentProfileDesktop.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Mahasiswa (desktop) · Profil",
+      "w": 1440,
+      "x": 12160,
+      "y": 2780
+    },
+    "StudentProfilePanel.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Komponen · Panel profil mahasiswa",
+      "w": 1104,
+      "x": 4256,
+      "y": 10220
+    },
+    "TodayClass.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Mahasiswa (mobile) · Kelas Hari Ini",
+      "w": 390,
+      "x": 470,
+      "y": 4220
+    },
+    "TodayClassDesktop.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Mahasiswa (desktop) · Kelas Hari Ini",
+      "w": 1440,
+      "x": 1520,
+      "y": 2780
+    },
+    "Topbar.dc.html": {
+      "h": 72,
+      "title": "Komponen · Bilah Atas",
+      "w": 1136,
+      "x": 336,
+      "y": 10220
+    },
+    "UXStates.dc.html": {
+      "h": 1320,
+      "title": "Sistem · State UX",
+      "w": 1440,
+      "x": 3040,
+      "y": 8500
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-09-27T16:35:13Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "shape-z9s7dj": {
+      "h": 96,
+      "kind": "oval",
+      "w": 96,
+      "x": 1822,
+      "y": 6336
+    },
+    "tAdmin": {
+      "kind": "title1",
+      "maxW": 8000,
+      "text": "Administrator — dasbor, master data (CRUD), periode akademik, ruang & titik presensi, laporan, rekap, pemetaan kelas",
+      "w": 240,
+      "x": 0,
+      "y": 6440
+    },
+    "tAuth": {
+      "kind": "title1",
+      "maxW": 4480,
+      "text": "Autentikasi — masuk, lupa kata sandi, daftar (mahasiswa / dosen)",
+      "w": 240,
+      "x": 0,
+      "y": -260
+    },
+    "tComponents": {
+      "kind": "title1",
+      "maxW": 3000,
+      "text": "Komponen bersama",
+      "w": 240,
+      "x": 0,
+      "y": 9960
+    },
+    "tLecturer": {
+      "kind": "title1",
+      "maxW": 8000,
+      "text": "Dosen — jadwal → mulai → QR aktif → kedaluwarsa → manual → riwayat → mahasiswa → rekap → persetujuan izin",
+      "w": 240,
+      "x": 0,
+      "y": 1040
+    },
+    "tStudent": {
+      "kind": "title1",
+      "maxW": 8000,
+      "text": "Mahasiswa · Desktop — beranda → kelas → pindai → hasil (berhasil/gagal) → riwayat → pengajuan izin → profil",
+      "w": 240,
+      "x": 0,
+      "y": 2520
+    },
+    "tStudentMobile": {
+      "kind": "title1",
+      "maxW": 3680,
+      "text": "Mahasiswa · Mobile — menu lewat drawer hamburger",
+      "w": 240,
+      "x": 0,
+      "y": 3960
+    },
+    "tSystem": {
+      "kind": "title1",
+      "maxW": 4480,
+      "text": "Sistem — pengaturan, profil, state UX",
+      "w": 240,
+      "x": 0,
+      "y": 8240
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "ForgotPassword.dc.html",
+    "Register.dc.html",
+    "LecturerDashboard.dc.html",
+    "LecturerSchedule.dc.html",
+    "StartAttendance.dc.html",
+    "ActiveQR.dc.html",
+    "ExpiredAttendance.dc.html",
+    "ManualAttendance.dc.html",
+    "LecturerHistory.dc.html",
+    "LecturerStudents.dc.html",
+    "LeaveApproval.dc.html",
+    "LecturerRecap.dc.html",
+    "StudentDashboardDesktop.dc.html",
+    "TodayClassDesktop.dc.html",
+    "QRScannerDesktop.dc.html",
+    "AttendanceSuccessDesktop.dc.html",
+    "AttendanceFailedDesktop.dc.html",
+    "StudentHistoryDesktop.dc.html",
+    "AttendanceDetailDesktop.dc.html",
+    "LeaveRequestDesktop.dc.html",
+    "StudentProfileDesktop.dc.html",
+    "StudentDashboard.dc.html",
+    "TodayClass.dc.html",
+    "QRScanner.dc.html",
+    "AttendanceSuccess.dc.html",
+    "AttendanceFailed.dc.html",
+    "StudentHistory.dc.html",
+    "AttendanceDetail.dc.html",
+    "LeaveRequest.dc.html",
+    "StudentProfile.dc.html",
+    "StudentMobileNav.dc.html",
+    "AdminDashboard.dc.html",
+    "AcademicPeriod.dc.html",
+    "StudentManagement.dc.html",
+    "LecturerManagement.dc.html",
+    "CourseManagement.dc.html",
+    "ClassManagement.dc.html",
+    "RoomManagement.dc.html",
+    "ScheduleManagement.dc.html",
+    "AttendanceReports.dc.html",
+    "AttendanceRecap.dc.html",
+    "ClassMapping.dc.html",
+    "Settings.dc.html",
+    "Profile.dc.html",
+    "UXStates.dc.html",
+    "Sidebar.dc.html",
+    "Topbar.dc.html",
+    "CrudPage.dc.html",
+    "LeaveRequestPanel.dc.html",
+    "StudentProfilePanel.dc.html"
+  ],
+  "pages": [],
+  "title": "Sistem Manajemen Presensi QR"
+}

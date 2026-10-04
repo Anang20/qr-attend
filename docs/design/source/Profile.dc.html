@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Profil · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="position: relative; width: 1440px; height: 960px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827">
+<dc-import name="Sidebar" role="lecturer" active="none" height="928" hint-size="256px,928px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Gusmayeni, S.Kom., M.Kom" user-role="Dosen · Fakultas Ilmu Komputer" initials="G" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 20px; padding: 0 8px">
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Profil</h1>
+
+<div style="display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 16px; align-items: start">
+<section style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 28px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center">
+<span style="width: 96px; height: 96px; border-radius: 999px; background: #D1FAE5; color: #065F46; font-size: 32px; font-weight: 800; display: flex; align-items: center; justify-content: center">G</span>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 20px; font-weight: 800">{{name}}</span><span style="font-size: 14px; color: #6B7280">Dosen · Sistem Informasi</span></div>
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 12px; border-radius: 999px; font-size: 12px; font-weight: 700; background: #DCFCE7; color: #166534">Aktif</span>
+<dl style="width: 100%; margin: 8px 0 0; display: flex; flex-direction: column; text-align: left">
+<div style="display: flex; justify-content: space-between; padding: 12px 0; border-top: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">NIDN</dt><dd style="margin: 0; font-weight: 600">0412088501</dd></div>
+<div style="display: flex; justify-content: space-between; padding: 12px 0; border-top: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">Kelas diampu</dt><dd style="margin: 0; font-weight: 600">8 semester ini</dd></div>
+<div style="display: flex; justify-content: space-between; padding: 12px 0; border-top: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">Sesi dibuka</dt><dd style="margin: 0; font-weight: 600">42</dd></div>
+</dl>
+</section>
+
+<div style="display: flex; flex-direction: column; gap: 16px">
+<section aria-labelledby="pi-title" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 24px 28px; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; justify-content: space-between; align-items: center"><h2 id="pi-title" style="margin: 0; font-size: 18px; font-weight: 700">Data pribadi</h2><button type="button" onClick="{{save}}" style="height: 40px; padding: 0 18px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Simpan</button></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="p-name" style="font-size: 13px; font-weight: 600">Nama lengkap</label><input id="p-name" type="text" value="{{draftName}}" onChange="{{onName}}" style="height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid #D1D5DB; font: inherit; font-size: 14px"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="p-email" style="font-size: 13px; font-weight: 600">Email kampus</label><input id="p-email" type="email" value="gusmayeni@unpam.ac.id" readonly aria-describedby="p-email-hint" style="height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E7EB; background: #F9FAFB; font: inherit; font-size: 14px; color: #4B5563"><span id="p-email-hint" style="font-size: 12px; color: #6B7280">Dikelola oleh bagian akademik.</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="p-phone" style="font-size: 13px; font-weight: 600">No. HP</label><input id="p-phone" type="tel" value="{{phone}}" onChange="{{onPhone}}" placeholder="08xxxxxxxxxx" aria-invalid="{{phoneInv}}" style="height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid {{phoneBorder}}; font: inherit; font-size: 14px"><sc-if value="{{hasPhoneErr}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #B91C1C">Nomor HP diawali 08, 10–13 digit.</span></sc-if></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="p-lang" style="font-size: 13px; font-weight: 600">Bahasa</label><select id="p-lang" style="height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid #D1D5DB; font: inherit; font-size: 14px; background: #FFFFFF"><option>Bahasa Indonesia</option><option>English</option></select></div>
+</div>
+</section>
+
+<section aria-labelledby="sec-title" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 24px 28px; display: flex; flex-direction: column; gap: 4px">
+<h2 id="sec-title" style="margin: 0 0 10px; font-size: 18px; font-weight: 700">Keamanan</h2>
+<div style="display: flex; align-items: center; gap: 16px; padding: 14px 0; border-top: 1px solid #F3F4F6"><div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Kata sandi</span><span style="font-size: 13px; color: #6B7280">Terakhir diubah 3 bulan lalu</span></div><a href="ForgotPassword.dc.html" style="height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid #D1D5DB; background: #FFFFFF; font-size: 14px; font-weight: 600; color: #111827; text-decoration: none; display: flex; align-items: center">Ubah kata sandi</a></div>
+<div style="display: flex; align-items: center; gap: 16px; padding: 14px 0; border-top: 1px solid #F3F4F6"><div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Perangkat yang masuk</span><span style="font-size: 13px; color: #6B7280">{{devices}}</span></div><button type="button" onClick="{{signOutOthers}}" disabled="{{noOthers}}" style="height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid #FECACA; background: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; color: #B91C1C; cursor: pointer; opacity: {{othersOpacity}}">Keluarkan perangkat lain</button></div>
+</section>
+</div>
+</div>
+</main>
+</div>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; right: 32px; bottom: 32px; width: 360px; box-sizing: border-box; display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: #111827; color: #FFFFFF; box-shadow: 0 12px 28px rgba(17,24,39,0.25)">
+<span style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 999px; background: #16A34A; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<span style="flex-grow: 1; font-size: 14px">{{toast}}</span>
+<button type="button" onClick="{{dismiss}}" aria-label="Tutup notifikasi" style="flex-shrink: 0; width: 28px; height: 28px; border: 0; background: transparent; color: #D1D5DB; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { name: 'Gusmayeni, S.Kom., M.Kom', draftName: 'Gusmayeni, S.Kom., M.Kom', phone: '', phoneErr: false, others: true, toast: '' };
+  }
+  renderVals() {
+    var self = this;
+    var st = this.state;
+    return {
+      name: st.name,
+      draftName: st.draftName,
+      onName: function (e) { self.setState({ draftName: e.target.value }); },
+      phone: st.phone,
+      onPhone: function (e) { self.setState({ phone: e.target.value, phoneErr: false }); },
+      hasPhoneErr: st.phoneErr, phoneInv: st.phoneErr ? 'true' : 'false', phoneBorder: st.phoneErr ? '#DC2626' : '#D1D5DB',
+      save: function () {
+        var p = self.state.phone.trim();
+        if (p && !/^08\d{8,11}$/.test(p)) { self.setState({ phoneErr: true }); return; }
+        var n = self.state.draftName.trim() || self.state.name;
+        self.setState({ name: n, draftName: n, toast: 'Data pribadi disimpan.' });
+      },
+      devices: st.others ? 'Laptop ini · Chrome, dan 1 ponsel' : 'Hanya laptop ini · Chrome',
+      noOthers: !st.others, othersOpacity: st.others ? 1 : 0.45,
+      signOutOthers: function () { self.setState({ others: false, toast: 'Perangkat lain sudah dikeluarkan.' }); },
+      hasToast: !!st.toast, toast: st.toast,
+      dismiss: function () { self.setState({ toast: '' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

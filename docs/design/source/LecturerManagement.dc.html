@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Manajemen Dosen · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; background: #F8FAFC">
+<dc-import name="CrudPage" config="{{config}}" height="1000" hint-size="1440px,1000px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var mk = function (name, nidn, email, dept, jab, status) {
+      return { name: name, nidn: nidn, email: email, dept: dept, jabatan: jab, status: status, phone: '' };
+    };
+    return {
+      config: {
+        title: 'Dosen', subtitle: '{n} dosen terdaftar', entity: 'dosen', addLabel: 'Tambah Dosen', active: 'lecturers',
+        searchPlaceholder: 'Cari nama, NIDN, atau email', searchKeys: ['name', 'nidn', 'email'], labelKey: 'name', pageSize: 8,
+        deleteNote: 'Dosen akan dihapus dari daftar pengampu. Jadwal yang masih memakai dosen ini perlu dipetakan ulang di menu Pemetaan Kelas.',
+        filters: [
+          { key: 'dept', label: 'Filter program studi', allLabel: 'Semua prodi', options: ['Sistem Informasi', 'Teknik Informatika'] },
+          { key: 'status', label: 'Filter status', allLabel: 'Semua status', options: ['Aktif', 'Cuti', 'Nonaktif'] }
+        ],
+        columns: [
+          { key: 'name', label: 'Dosen', type: 'person', subKey: 'email' },
+          { key: 'nidn', label: 'NIDN', type: 'text' },
+          { key: 'dept', label: 'Program studi', type: 'text' },
+          { key: 'jabatan', label: 'Jabatan fungsional', type: 'text' },
+          { key: 'status', label: 'Status', type: 'badge' }
+        ],
+        fields: [
+          { key: 'name', label: 'Nama lengkap & gelar', type: 'text', required: true, span: 2, placeholder: 'contoh: Gusmayeni, S.Kom., M.Kom' },
+          { key: 'nidn', label: 'NIDN', type: 'text', required: true, unique: true, pattern: '^\\d{10}$', patternMsg: 'NIDN harus 10 digit angka.', placeholder: '10 digit' },
+          { key: 'status', label: 'Status', type: 'select', required: true, options: ['Aktif', 'Cuti', 'Nonaktif'] },
+          { key: 'email', label: 'Email kampus', type: 'email', required: true, unique: true, span: 2, placeholder: 'nama@unpam.ac.id' },
+          { key: 'dept', label: 'Program studi', type: 'select', required: true, options: ['Sistem Informasi', 'Teknik Informatika'] },
+          { key: 'jabatan', label: 'Jabatan fungsional', type: 'select', required: true, options: ['Tenaga Pengajar', 'Asisten Ahli', 'Lektor', 'Lektor Kepala', 'Guru Besar'] },
+          { key: 'phone', label: 'No. HP', type: 'text', span: 2, pattern: '^08\\d{8,11}$', patternMsg: 'Nomor HP diawali 08, 10–13 digit.', placeholder: '08xxxxxxxxxx' }
+        ],
+        defaults: { status: 'Aktif' },
+        badges: {
+          Aktif: { bg: '#DCFCE7', fg: '#166534', dot: '#16A34A' },
+          Cuti: { bg: '#FEF3C7', fg: '#92400E', dot: '#F59E0B' },
+          Nonaktif: { bg: '#F3F4F6', fg: '#374151', dot: '#6B7280' }
+        },
+        rows: [
+          mk('Gusmayeni, S.Kom., M.Kom', '0412088501', 'gusmayeni@unpam.ac.id', 'Sistem Informasi', 'Lektor Kepala', 'Aktif'),
+          mk('Budi Wicaksono, M.T.', '0415078202', 'budi.w@unpam.ac.id', 'Sistem Informasi', 'Lektor', 'Aktif'),
+          mk('Sari Anggraini, M.Sc.', '0420119003', 'sari.a@unpam.ac.id', 'Teknik Informatika', 'Asisten Ahli', 'Aktif'),
+          mk('Ahmad Fauzi, M.Kom', '0402038704', 'ahmad.fauzi@unpam.ac.id', 'Teknik Informatika', 'Lektor', 'Aktif'),
+          mk('Dewi Novitasari, M.M.', '0417128805', 'dewi.n@unpam.ac.id', 'Sistem Informasi', 'Asisten Ahli', 'Cuti'),
+          mk('Yusuf Permana, Ph.D.', '0409057906', 'yusuf.p@unpam.ac.id', 'Teknik Informatika', 'Lektor Kepala', 'Aktif'),
+          mk('Lina Marlina, M.Kom', '0425069107', 'lina.m@unpam.ac.id', 'Sistem Informasi', 'Lektor', 'Aktif'),
+          mk('Taufik Hidayat, M.T.', '0411108608', 'taufik.h@unpam.ac.id', 'Teknik Informatika', 'Asisten Ahli', 'Aktif'),
+          mk('Wulan Sari, M.Kom', '0403019209', 'wulan.s@unpam.ac.id', 'Sistem Informasi', 'Tenaga Pengajar', 'Aktif')
+        ]
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

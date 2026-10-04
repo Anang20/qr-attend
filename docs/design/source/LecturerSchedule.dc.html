@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Jadwal mengajar · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="width: 1440px; height: 960px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827">
+<dc-import name="Sidebar" role="lecturer" active="schedule" height="928" hint-size="256px,928px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Gusmayeni, S.Kom., M.Kom" user-role="Dosen · Fakultas Ilmu Komputer" initials="G" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 20px; padding: 0 8px">
+
+<div style="display: flex; align-items: flex-end; justify-content: space-between">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Jadwal Mengajar</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">Pekan ke-5 · 28 Sep – 2 Okt 2026</p>
+</div>
+<div style="display: flex; gap: 8px; align-items: center">
+<button type="button" aria-label="Pekan sebelumnya" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+<button type="button" style="height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #111827; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Pekan ini</button>
+<button type="button" aria-label="Pekan berikutnya" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+</div>
+</div>
+
+<div role="note" style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 16px; background: #ECFDF5; border: 1px solid #A7F3D0; color: #065F46; font-size: 14px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<span>Presensi hanya bisa dimulai di dalam jam kuliah yang dijadwalkan. Setiap sesi mendapat satu QR Code yang berlaku 20 menit.</span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; align-items: start">
+<sc-for list="{{days}}" as="d" hint-placeholder-count="5">
+<section aria-label="{{d.full}}" style="border-radius: 20px; background: {{d.colBg}}; border: 1px solid {{d.colBorder}}; padding: 12px; display: flex; flex-direction: column; gap: 10px; min-height: 560px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding: 4px 6px 6px">
+<h2 style="margin: 0; font-size: 15px; font-weight: 700; color: {{d.headFg}}">{{d.name}}</h2>
+<span style="font-size: 13px; color: #6B7280">{{d.date}}</span>
+</div>
+<sc-for list="{{d.items}}" as="c" hint-placeholder-count="2">
+<article style="background: #FFFFFF; border: 1px solid {{c.border}}; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums">{{c.time}}</span><span style="display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-weight: 700; background: {{c.bBg}}; color: {{c.bFg}}">{{c.badge}}</span></div>
+<div style="display: flex; flex-direction: column; gap: 3px"><span style="font-size: 14px; font-weight: 700; line-height: 1.3">{{c.course}}</span><span style="font-size: 12px; color: #6B7280">{{c.cls}} · {{c.room}}</span></div>
+<sc-if value="{{c.live}}" hint-placeholder-val="{{ false }}"><a href="ActiveQR.dc.html" style="height: 36px; border-radius: 999px; background: #065F46; color: #FFFFFF; font-size: 12px; font-weight: 700; text-decoration: none; display: flex; align-items: center; justify-content: center">Buka QR</a></sc-if>
+<sc-if value="{{c.locked}}" hint-placeholder-val="{{ true }}"><span style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6B7280"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Presensi dibuka {{c.opens}}</span></sc-if>
+</article>
+</sc-for>
+</section>
+</sc-for>
+</div>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var B = {
+      live: { badge: 'Live', bBg: '#DCFCE7', bFg: '#166534', border: '#86EFAC' },
+      today: { badge: 'Hari ini', bBg: '#FEF3C7', bFg: '#92400E', border: '#E5E7EB' },
+      later: { badge: 'Akan datang', bBg: '#F3F4F6', bFg: '#374151', border: '#E5E7EB' }
+    };
+    var days = [
+      { name: 'Senin', date: '28 Sep', today: true, items: [
+        { time: '08.00–09.40', course: 'Pemrograman Web', cls: 'SI-5A', room: 'Ruang 301', s: 'live' },
+        { time: '10.00–11.40', course: 'Sistem Basis Data', cls: 'SI-3B', room: 'Ruang 204', s: 'today', opens: 'Sen 10.00' },
+        { time: '13.00–14.40', course: 'Interaksi Manusia dan Komputer', cls: 'SI-5C', room: 'Lab 2', s: 'today', opens: 'Sen 13.00' },
+        { time: '15.30–17.10', course: 'Pemrograman Web', cls: 'SI-5B', room: 'Ruang 301', s: 'today', opens: 'Sen 15.30' }
+      ] },
+      { name: 'Selasa', date: '29 Sep', items: [
+        { time: '08.00–09.40', course: 'Sistem Basis Data', cls: 'SI-3A', room: 'Ruang 204', s: 'later', opens: 'Sel 08.00' },
+        { time: '10.00–11.40', course: 'Interaksi Manusia dan Komputer', cls: 'SI-5D', room: 'Lab 2', s: 'later', opens: 'Sel 10.00' }
+      ] },
+      { name: 'Rabu', date: '30 Sep', items: [
+        { time: '08.00–09.40', course: 'Pemrograman Web', cls: 'SI-5C', room: 'Ruang 302', s: 'later', opens: 'Rab 08.00' }
+      ] },
+      { name: 'Kamis', date: '1 Okt', items: [
+        { time: '13.00–14.40', course: 'Interaksi Manusia dan Komputer', cls: 'SI-5A', room: 'Lab 2', s: 'later', opens: 'Kam 13.00' }
+      ] },
+      { name: 'Jumat', date: '2 Okt', items: [
+        { time: '08.00–09.40', course: 'Pemrograman Web', cls: 'SI-5D', room: 'Ruang 301', s: 'later', opens: 'Jum 08.00' }
+      ] }
+    ];
+    return {
+      days: days.map(function (d) {
+        return {
+          name: d.name,
+          full: d.name + ', ' + d.date,
+          date: d.date,
+          colBg: d.today ? '#F0FDF4' : '#FFFFFF',
+          colBorder: d.today ? '#A7F3D0' : '#E5E7EB',
+          headFg: d.today ? '#065F46' : '#111827',
+          items: d.items.map(function (c) {
+            return Object.assign({}, c, B[c.s], { live: c.s === 'live', locked: c.s !== 'live' });
+          })
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

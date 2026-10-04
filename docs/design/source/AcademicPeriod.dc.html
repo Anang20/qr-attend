@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Periode Akademik · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; background: #F8FAFC">
+<dc-import name="CrudPage" config="{{config}}" height="1000" hint-size="1440px,1000px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  /*
+   * Master Periode Akademik — dasar untuk Pemetaan Kelas, Jadwal Akademik, dan Laporan.
+   * Aturan: kombinasi tahun ajaran + semester unik, rentang tanggal tidak beririsan,
+   * hanya satu periode Aktif, dan periode yang sudah punya sesi presensi tidak bisa dihapus.
+   */
+  renderVals() {
+    var YEARS = ['2024/2025', '2025/2026', '2026/2027', '2027/2028'];
+    var TERMS = ['Ganjil', 'Genap', 'Antara'];
+    var mk = function (term, year, startDate, endDate, status, mappings, sessions) {
+      return { name: term + ' ' + year, term: term, year: year, startDate: startDate, endDate: endDate, status: status, mappings: String(mappings), sessions: String(sessions) };
+    };
+    return {
+      config: {
+        title: 'Periode Akademik', subtitle: '{n} periode · aktif: Ganjil 2026/2027', entity: 'periode', addLabel: 'Tambah Periode', active: 'periods',
+        searchPlaceholder: 'Cari periode atau tahun ajaran', searchKeys: ['name', 'year'], labelKey: 'name', pageSize: 8,
+        notice: 'Hanya satu periode yang bisa Aktif. Mengaktifkan periode baru otomatis mengubah periode aktif sebelumnya menjadi Selesai.',
+        deleteNote: 'Periode ini belum punya sesi presensi. Pemetaan kelas dan jadwal di dalamnya ikut terhapus.',
+        deleteGuard: { key: 'sessions', message: 'Periode ini sudah memiliki {n} sesi presensi. Agar laporan tetap utuh, periode tidak bisa dihapus. Ubah statusnya menjadi Selesai.' },
+        filters: [
+          { key: 'year', label: 'Filter tahun ajaran', allLabel: 'Semua tahun ajaran', options: YEARS },
+          { key: 'status', label: 'Filter status', allLabel: 'Semua status', options: ['Aktif', 'Akan datang', 'Selesai'] }
+        ],
+        columns: [
+          { key: 'name', label: 'Periode', type: 'strong', subKey: 'year' },
+          { key: 'startDate', label: 'Mulai', type: 'date' },
+          { key: 'endDate', label: 'Selesai', type: 'date' },
+          { key: 'mappings', label: 'Kelas terpetakan', type: 'text' },
+          { key: 'sessions', label: 'Sesi presensi', type: 'text' },
+          { key: 'status', label: 'Status', type: 'badge' }
+        ],
+        fields: [
+          { key: 'year', label: 'Tahun ajaran', type: 'select', required: true, options: YEARS },
+          { key: 'term', label: 'Semester', type: 'select', required: true, options: TERMS, hint: 'Antara = semester pendek.' },
+          { key: 'startDate', label: 'Tanggal mulai', type: 'date', required: true },
+          { key: 'endDate', label: 'Tanggal selesai', type: 'date', required: true, afterDate: 'startDate' },
+          { key: 'status', label: 'Status', type: 'select', required: true, span: 2, options: ['Akan datang', 'Aktif', 'Selesai'], hint: 'Presensi QR hanya bisa dibuka pada periode Aktif.' }
+        ],
+        uniqueBy: { keys: ['year', 'term'], field: 'term', message: 'Periode dengan tahun ajaran dan semester ini sudah ada.' },
+        noOverlap: { start: 'startDate', end: 'endDate' },
+        singleActive: { key: 'status', value: 'Aktif', demoteTo: 'Selesai' },
+        derive: function (row) { return { name: row.term + ' ' + row.year }; },
+        defaults: { status: 'Akan datang', mappings: '0', sessions: '0' },
+        badges: {
+          Aktif: { bg: '#DCFCE7', fg: '#166534', dot: '#16A34A' },
+          'Akan datang': { bg: '#DBEAFE', fg: '#1E40AF', dot: '#2563EB' },
+          Selesai: { bg: '#F3F4F6', fg: '#374151', dot: '#6B7280' }
+        },
+        rows: [
+          mk('Genap', '2026/2027', '2027-02-15', '2027-07-09', 'Akan datang', 0, 0),
+          mk('Ganjil', '2026/2027', '2026-08-31', '2027-01-29', 'Aktif', 44, 132),
+          mk('Genap', '2025/2026', '2026-02-16', '2026-07-10', 'Selesai', 42, 671),
+          mk('Ganjil', '2025/2026', '2025-09-01', '2026-01-30', 'Selesai', 41, 655),
+          mk('Antara', '2024/2025', '2025-07-21', '2025-08-29', 'Selesai', 6, 48),
+          mk('Genap', '2024/2025', '2025-02-17', '2025-07-11', 'Selesai', 40, 640),
+          mk('Ganjil', '2024/2025', '2024-09-02', '2025-01-31', 'Selesai', 38, 612)
+        ]
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

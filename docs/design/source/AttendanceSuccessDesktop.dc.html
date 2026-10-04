@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Presensi berhasil (desktop) · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827">
+<dc-import name="Sidebar" role="student" active="scan" height="868" hint-size="256px,868px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Ray Pengki" user-role="Mahasiswa · SI-5A" initials="RP" search-placeholder="Cari mata kuliah atau riwayat presensi…" profile-href="StudentProfileDesktop.dc.html" hint-size="1136px,72px"></dc-import>
+<main style="flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 0 8px 24px">
+<section style="width: 680px; box-sizing: border-box; border-radius: 28px; background: #FFFFFF; border: 1px solid #E5E7EB; padding: 40px 44px; display: flex; flex-direction: column; align-items: center; gap: 22px">
+<div style="position: relative; width: 104px; height: 104px; display: flex; align-items: center; justify-content: center">
+<span style="position: absolute; inset: 0; border-radius: 999px; background: #D1FAE5"></span>
+<span style="position: relative; width: 74px; height: 74px; border-radius: 999px; background: #15803D; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+</div>
+<div role="status" style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+<h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Presensi Berhasil</h1>
+<p style="margin: 0; font-size: 16px; color: #4B5563">Anda tercatat <strong style="color: #166534">Hadir</strong>.</p>
+</div>
+<dl style="width: 100%; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+<div style="padding: 14px 16px; border-radius: 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 3px"><dt style="font-size: 12px; color: #6B7280">Mata kuliah</dt><dd style="margin: 0; font-size: 15px; font-weight: 700">Pemrograman Web</dd></div>
+<div style="padding: 14px 16px; border-radius: 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 3px"><dt style="font-size: 12px; color: #6B7280">Kelas</dt><dd style="margin: 0; font-size: 15px; font-weight: 700">SI-5A</dd></div>
+<div style="padding: 14px 16px; border-radius: 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 3px"><dt style="font-size: 12px; color: #6B7280">Tanggal</dt><dd style="margin: 0; font-size: 15px; font-weight: 700">Senin, 28 Sep 2026</dd></div>
+<div style="padding: 14px 16px; border-radius: 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 3px"><dt style="font-size: 12px; color: #6B7280">Waktu</dt><dd style="margin: 0; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums">08.05.17</dd></div>
+<div style="padding: 14px 16px; border-radius: 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 3px"><dt style="font-size: 12px; color: #6B7280">Metode presensi</dt><dd style="margin: 0; font-size: 15px; font-weight: 700">QR Code</dd></div>
+<div style="padding: 14px 16px; border-radius: 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 3px"><dt style="font-size: 12px; color: #6B7280">Lokasi</dt><dd style="margin: 0; font-size: 15px; font-weight: 700">Terverifikasi · 3,2 m</dd></div>
+</dl>
+<div style="display: flex; gap: 12px">
+<a href="AttendanceDetailDesktop.dc.html" style="height: 50px; padding: 0 22px; border-radius: 999px; border: 1px solid #E5E7EB; color: #111827; font-size: 15px; font-weight: 600; text-decoration: none; display: flex; align-items: center">Lihat detail presensi</a>
+<a href="StudentDashboardDesktop.dc.html" style="height: 50px; padding: 0 24px; border-radius: 999px; background: #065F46; color: #FFFFFF; font-size: 15px; font-weight: 700; text-decoration: none; display: flex; align-items: center">Kembali ke beranda</a>
+</div>
+</section>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Pemetaan Kelas · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="position: relative; width: 1440px; height: 1400px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827; overflow: hidden">
+<dc-import name="Sidebar" role="admin" active="mapping" height="1368" hint-size="256px,1368px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Niken" user-role="Administrator · Bagian Akademik" initials="N" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 18px; padding: 0 8px">
+
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Pemetaan Kelas</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">Hubungkan setiap kelas dengan mata kuliah, dosen pengampu, ruang, dan jadwalnya per periode akademik. Hasilnya otomatis tampil di <a href="ScheduleManagement.dc.html" style="font-weight: 700; text-decoration: none">Jadwal Akademik</a>.</p>
+</div>
+<div style="flex-shrink: 0; display: flex; align-items: flex-end; gap: 10px">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #374151">Periode akademik<select value="{{period.id}}" onChange="{{onPeriod}}" style="height: 44px; min-width: 220px; padding: 0 12px; border-radius: 12px; border: 1px solid #15803D; font: inherit; font-size: 14px; font-weight: 600; color: #111827; background: #F0FDF4"><sc-for list="{{periodOptions}}" as="o" hint-placeholder-count="3"><option value="{{o.id}}">{{o.label}}</option></sc-for></select></label>
+<span style="height: 44px; display: inline-flex; align-items: center; gap: 6px; padding: 0 12px; border-radius: 12px; font-size: 12px; font-weight: 700; white-space: nowrap; background: {{period.bBg}}; color: {{period.bFg}}"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{period.dot}}"></span>{{period.status}}</span>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 16px; align-items: start">
+
+<aside aria-label="Daftar kelas" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 22px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-size: 16px; font-weight: 700">Pilih kelas</h2>
+<label style="height: 42px; box-sizing: border-box; display: flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E7EB; color: #6B7280"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><input type="search" aria-label="Cari kelas" placeholder="Cari kelas" value="{{classQ}}" onChange="{{onClassQ}}" style="flex-grow: 1; min-width: 0; border: 0; outline: none; font: inherit; font-size: 14px; background: transparent; color: #111827"></label>
+<div role="listbox" aria-label="Kelas" style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{classList}}" as="c" hint-placeholder-count="7">
+<button type="button" role="option" aria-selected="{{c.sel}}" onClick="{{c.pick}}" style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 14px; border: 1.5px solid {{c.border}}; background: {{c.bg}}; font: inherit; text-align: left; cursor: pointer; color: #111827">
+<span style="width: 42px; height: 42px; border-radius: 12px; background: {{c.chipBg}}; color: {{c.chipFg}}; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0">{{c.short}}</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 14px; font-weight: 700">{{c.cls}}</span><span style="font-size: 12px; color: #6B7280">{{c.meta}}</span></span>
+<sc-if value="{{c.hasIssue}}" hint-placeholder-val="{{ false }}"><span title="Ada pemetaan yang perlu diperiksa" aria-label="Perlu perhatian" style="width: 10px; height: 10px; border-radius: 999px; background: #F59E0B; flex-shrink: 0"></span></sc-if>
+</button>
+</sc-for>
+<sc-if value="{{noClass}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 12px 4px; font-size: 13px; color: #6B7280">Kelas tidak ditemukan.</p></sc-if>
+</div>
+</aside>
+
+<div style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+<section aria-label="Ringkasan kelas" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 22px; padding: 20px 22px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #047857">KELAS TERPILIH</span><h2 style="margin: 0; font-size: 24px; font-weight: 800">{{cur.cls}}</h2><span style="font-size: 13px; color: #6B7280">{{cur.prodi}} · Angkatan {{cur.angkatan}} · {{cur.students}} mahasiswa · Wali: {{cur.advisor}}</span></div>
+<sc-if value="{{canEdit}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{openAdd}}" style="flex-shrink: 0; height: 46px; padding: 0 20px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Petakan Mata Kuliah</button></sc-if>
+<sc-if value="{{readOnly}}" hint-placeholder-val="{{ false }}"><span role="note" style="flex-shrink: 0; max-width: 300px; display: flex; gap: 8px; align-items: center; padding: 10px 14px; border-radius: 14px; background: #F3F4F6; color: #374151; font-size: 13px; line-height: 1.4"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Periode sudah selesai. Pemetaan hanya bisa dilihat.</span></sc-if>
+</div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+<div style="padding: 12px 14px; border-radius: 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #6B7280">Mata kuliah</span><strong style="font-size: 20px">{{sum.courses}}</strong></div>
+<div style="padding: 12px 14px; border-radius: 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #6B7280">Total SKS</span><strong style="font-size: 20px">{{sum.sks}}</strong></div>
+<div style="padding: 12px 14px; border-radius: 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #6B7280">Dosen pengampu</span><strong style="font-size: 20px">{{sum.lecturers}}</strong></div>
+<div style="padding: 12px 14px; border-radius: 14px; background: {{sum.issueBg}}; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: {{sum.issueLabel}}">Perlu perhatian</span><strong style="font-size: 20px; color: {{sum.issueFg}}">{{sum.issues}}</strong></div>
+</div>
+</section>
+
+<section aria-label="Mata kuliah terpetakan" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 22px; padding: 18px 22px; display: flex; flex-direction: column; gap: 10px">
+<h3 style="margin: 0; font-size: 16px; font-weight: 700">Mata kuliah, dosen &amp; jadwal</h3>
+<sc-if value="{{hasRows}}" hint-placeholder-val="{{ true }}">
+<table style="width: 100%; border-collapse: collapse; font-size: 13px">
+<thead><tr style="text-align: left; color: #6B7280; font-size: 12px"><th scope="col" style="font-weight: 600; padding: 10px 8px; background: #F9FAFB">Mata kuliah</th><th scope="col" style="font-weight: 600; padding: 10px 8px; background: #F9FAFB">Dosen pengampu</th><th scope="col" style="font-weight: 600; padding: 10px 8px; background: #F9FAFB">Jadwal</th><th scope="col" style="font-weight: 600; padding: 10px 8px; background: #F9FAFB">Ruang</th><th scope="col" style="font-weight: 600; padding: 10px 8px; background: #F9FAFB">Status</th><th scope="col" style="font-weight: 600; padding: 10px 8px; background: #F9FAFB; text-align: right">Aksi</th></tr></thead>
+<tbody>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="5">
+<tr style="background: {{r.bg}}">
+<td style="padding: 10px 8px; border-bottom: 1px solid #F3F4F6"><div style="display: flex; flex-direction: column"><span style="font-weight: 700; font-size: 14px">{{r.courseName}}</span><span style="font-size: 12px; color: #6B7280">{{r.code}} · {{r.sks}} SKS</span></div></td>
+<td style="padding: 10px 8px; border-bottom: 1px solid #F3F4F6; color: #374151">{{r.lecturer}}</td>
+<td style="padding: 10px 8px; border-bottom: 1px solid #F3F4F6; color: #374151; white-space: nowrap">{{r.day}}, {{r.start}}–{{r.end}}</td>
+<td style="padding: 10px 8px; border-bottom: 1px solid #F3F4F6; color: #374151; white-space: nowrap">{{r.room}}</td>
+<td style="padding: 10px 8px; border-bottom: 1px solid #F3F4F6"><span title="{{r.statusTip}}" style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; background: {{r.bBg}}; color: {{r.bFg}}"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{r.dot}}"></span>{{r.status}}</span></td>
+<td style="padding: 8px; border-bottom: 1px solid #F3F4F6"><div style="display: flex; justify-content: flex-end; gap: 6px; min-height: 34px; align-items: center">
+<sc-if value="{{canEdit}}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{r.edit}}" aria-label="Ubah pemetaan {{r.courseName}}" title="Ubah" style="width: 34px; height: 34px; border-radius: 10px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path></svg></button>
+<button type="button" onClick="{{r.del}}" aria-label="Lepas {{r.courseName}} dari kelas" title="Lepas dari kelas" style="width: 34px; height: 34px; border-radius: 10px; border: 1px solid #FECACA; background: #FFFFFF; color: #B91C1C; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"></path></svg></button>
+</sc-if>
+<sc-if value="{{readOnly}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #9CA3AF">—</span></sc-if>
+</div></td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+</sc-if>
+<sc-if value="{{noRows}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 28px 0; text-align: center">
+<span style="width: 52px; height: 52px; border-radius: 16px; background: #ECFDF5; color: #047857; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"></path></svg></span>
+<strong style="font-size: 15px">Belum ada mata kuliah di {{cur.cls}} pada {{period.name}}</strong>
+<span style="font-size: 13px; color: #6B7280">{{emptyText}}</span>
+<sc-if value="{{canEdit}}" hint-placeholder-val="{{ true }}"><div style="display: flex; gap: 8px">
+<sc-if value="{{canCopy}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{copyPrev}}" style="height: 40px; padding: 0 16px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Salin {{prevCount}} pemetaan dari {{prevName}}</button></sc-if>
+<button type="button" onClick="{{openAdd}}" style="height: 40px; padding: 0 16px; border-radius: 999px; border: 0; background: #ECFDF5; color: #065F46; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Petakan Mata Kuliah</button>
+</div></sc-if>
+</div>
+</sc-if>
+</section>
+
+<section aria-label="Pratinjau jadwal mingguan" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 22px; padding: 18px 22px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center"><h3 style="margin: 0; font-size: 16px; font-weight: 700">Jadwal mingguan {{cur.cls}}</h3><span style="font-size: 12px; color: #6B7280">07.00 – 18.00</span></div>
+<div style="display: grid; grid-template-columns: 44px repeat(5, minmax(0, 1fr)); gap: 6px">
+<span></span>
+<sc-for list="{{days}}" as="d" hint-placeholder-count="5"><span style="text-align: center; font-size: 12px; font-weight: 700; color: #374151">{{d.name}}</span></sc-for>
+<div style="position: relative; height: 374px">
+<sc-for list="{{hours}}" as="hr" hint-placeholder-count="6"><span style="position: absolute; top: {{hr.top}}px; right: 6px; font-size: 11px; color: #6B7280; transform: translateY(-50%)">{{hr.label}}</span></sc-for>
+</div>
+<sc-for list="{{days}}" as="d" hint-placeholder-count="5">
+<div style="position: relative; height: 374px; border-radius: 12px; background: #F9FAFB; border: 1px solid #F3F4F6">
+<sc-for list="{{d.blocks}}" as="b" hint-placeholder-count="1">
+<div title="{{b.tip}}" style="position: absolute; left: 4px; right: 4px; top: {{b.top}}px; height: {{b.h}}px; box-sizing: border-box; border-radius: 10px; padding: 6px 8px; background: {{b.bg}}; border: 1px solid {{b.border}}; overflow: hidden; display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: 11px; font-weight: 700; color: {{b.fg}}; line-height: 1.25">{{b.name}}</span>
+<span style="font-size: 10px; color: #4B5563">{{b.time}} · {{b.room}}</span>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</section>
+</div>
+</div>
+</main>
+</div>
+
+<sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
+<div onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; background: rgba(17,24,39,0.4)"></div>
+<aside role="dialog" aria-modal="true" aria-labelledby="map-title" style="position: absolute; top: 16px; right: 16px; bottom: 16px; width: 500px; box-sizing: border-box; background: #FFFFFF; border-radius: 24px; display: flex; flex-direction: column; box-shadow: -12px 0 40px rgba(17,24,39,0.16); overflow: hidden">
+<div style="padding: 26px 28px 18px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; border-bottom: 1px solid #F3F4F6">
+<div style="display: flex; flex-direction: column; gap: 4px"><h2 id="map-title" style="margin: 0; font-size: 22px; font-weight: 800">{{sheetTitle}}</h2><span style="font-size: 14px; color: #6B7280">Kelas {{cur.cls}} · {{period.name}}</span></div>
+<button type="button" onClick="{{closeSheet}}" aria-label="Tutup panel" style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+
+<div style="flex-grow: 1; overflow-y: auto; padding: 20px 28px; display: flex; flex-direction: column; gap: 16px">
+<sc-if value="{{hasErrors}}" hint-placeholder-val="{{ false }}"><div role="alert" style="display: flex; gap: 10px; padding: 12px 14px; border-radius: 12px; background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; font-size: 13px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path></svg><span>Pemetaan belum bisa disimpan. Periksa isian yang ditandai merah.</span></div></sc-if>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="m-course" style="font-size: 13px; font-weight: 600">Mata kuliah<span style="color: #B91C1C"> *</span></label>
+<select id="m-course" value="{{form.code}}" onChange="{{on.code}}" aria-invalid="{{inv.code}}" style="height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid {{bd.code}}; font: inherit; font-size: 14px; background: #FFFFFF; color: #111827"><option value="">Pilih mata kuliah…</option><sc-for list="{{courseOptions}}" as="o" hint-placeholder-count="5"><option value="{{o.value}}">{{o.label}}</option></sc-for></select>
+<sc-if value="{{err.hasCode}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #B91C1C">{{err.code}}</span></sc-if>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="m-lect" style="font-size: 13px; font-weight: 600">Dosen pengampu<span style="color: #B91C1C"> *</span></label>
+<select id="m-lect" value="{{form.lecturer}}" onChange="{{on.lecturer}}" aria-invalid="{{inv.lecturer}}" style="height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid {{bd.lecturer}}; font: inherit; font-size: 14px; background: #FFFFFF; color: #111827"><option value="">Pilih dosen…</option><sc-for list="{{lecturerOptions}}" as="o" hint-placeholder-count="4"><option value="{{o.value}}">{{o.label}}</option></sc-for></select>
+<label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #4B5563"><input type="checkbox" checked="{{showAllLect}}" onChange="{{toggleAllLect}}" style="width: 16px; height: 16px; margin: 0; accent-color: #15803D">Tampilkan semua dosen (bukan hanya pengampu mata kuliah ini)</label>
+<sc-if value="{{err.hasLecturer}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #B91C1C">{{err.lecturer}}</span></sc-if>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="m-day" style="font-size: 13px; font-weight: 600">Hari<span style="color: #B91C1C"> *</span></label><select id="m-day" value="{{form.day}}" onChange="{{on.day}}" aria-invalid="{{inv.day}}" style="height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid {{bd.day}}; font: inherit; font-size: 14px; background: #FFFFFF; color: #111827"><option value="">Pilih…</option><sc-for list="{{days}}" as="d" hint-placeholder-count="5"><option value="{{d.name}}">{{d.name}}</option></sc-for></select></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="m-start" style="font-size: 13px; font-weight: 600">Jam mulai<span style="color: #B91C1C"> *</span></label><input id="m-start" type="text" inputMode="numeric" placeholder="08.00" value="{{form.start}}" onChange="{{on.start}}" aria-invalid="{{inv.start}}" style="height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid {{bd.start}}; font: inherit; font-size: 14px; color: #111827"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="m-end" style="font-size: 13px; font-weight: 600">Jam selesai<span style="color: #B91C1C"> *</span></label><input id="m-end" type="text" inputMode="numeric" placeholder="09.40" value="{{form.end}}" onChange="{{on.end}}" aria-invalid="{{inv.end}}" style="height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid {{bd.end}}; font: inherit; font-size: 14px; color: #111827"></div>
+</div>
+<sc-if value="{{err.hasTime}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #B91C1C; margin-top: -8px">{{err.time}}</span></sc-if>
+<span style="font-size: 12px; color: #6B7280; margin-top: -8px">Format 24 jam (contoh 08.00). Jam selesai terisi otomatis sesuai SKS dan tetap bisa diubah.</span>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="m-room" style="font-size: 13px; font-weight: 600">Ruang<span style="color: #B91C1C"> *</span></label>
+<select id="m-room" value="{{form.room}}" onChange="{{on.room}}" aria-invalid="{{inv.room}}" style="height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid {{bd.room}}; font: inherit; font-size: 14px; background: #FFFFFF; color: #111827"><option value="">Pilih ruang…</option><sc-for list="{{roomOptions}}" as="o" hint-placeholder-count="5"><option value="{{o.value}}">{{o.label}}</option></sc-for></select>
+<sc-if value="{{err.hasRoom}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #B91C1C">{{err.room}}</span></sc-if>
+<sc-if value="{{roomWarn}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #92400E">Ruang ini belum punya titik presensi. Pemetaan tetap bisa disimpan, tetapi QR tidak bisa dipakai sampai titiknya diatur di <a href="RoomManagement.dc.html" style="font-weight: 700">Ruang &amp; Titik Presensi</a>.</span></sc-if>
+</div>
+
+<section aria-label="Pemeriksaan jadwal" aria-live="polite" style="border-radius: 16px; background: #F9FAFB; border: 1px solid #E5E7EB; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<strong style="font-size: 13px">Pemeriksaan otomatis</strong>
+<sc-for list="{{checks}}" as="k" hint-placeholder-count="4">
+<div style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px">
+<span style="flex-shrink: 0; width: 20px; height: 20px; border-radius: 999px; background: {{k.bg}}; color: {{k.fg}}; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center">{{k.mark}}</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">{{k.label}}</span><span style="color: {{k.noteFg}}">{{k.note}}</span></span>
+</div>
+</sc-for>
+</section>
+</div>
+
+<div style="padding: 16px 28px 24px; border-top: 1px solid #F3F4F6; display: flex; justify-content: flex-end; gap: 10px">
+<button type="button" onClick="{{closeSheet}}" style="height: 46px; padding: 0 18px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; color: #111827; cursor: pointer">Batal</button>
+<button type="button" onClick="{{save}}" style="height: 46px; padding: 0 22px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">{{saveLabel}}</button>
+</div>
+</aside>
+</sc-if>
+
+<sc-if value="{{confirmOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; background: rgba(17,24,39,0.45); display: flex; align-items: center; justify-content: center">
+<div role="alertdialog" aria-modal="true" aria-labelledby="unmap-title" aria-describedby="unmap-desc" style="width: 460px; box-sizing: border-box; background: #FFFFFF; border-radius: 24px; padding: 28px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 40px rgba(17,24,39,0.18)">
+<span style="width: 48px; height: 48px; border-radius: 14px; background: #FEE2E2; color: #B91C1C; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"></path></svg></span>
+<h2 id="unmap-title" style="margin: 0; font-size: 20px; font-weight: 800">Lepas {{delName}} dari {{cur.cls}}?</h2>
+<p id="unmap-desc" style="margin: 0; font-size: 14px; line-height: 1.6; color: #4B5563">Jadwal dan dosen pengampunya untuk kelas ini ikut dihapus. Sesi presensi yang sudah berjalan tetap tersimpan di laporan.</p>
+<div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px"><button type="button" onClick="{{cancelDel}}" style="height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; color: #111827; cursor: pointer">Batal</button><button type="button" onClick="{{confirmDel}}" style="height: 44px; padding: 0 20px; border-radius: 999px; border: 0; background: #B91C1C; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Ya, lepaskan</button></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{toastOn}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; right: 32px; bottom: 32px; width: 420px; box-sizing: border-box; display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: #111827; color: #FFFFFF; box-shadow: 0 12px 28px rgba(17,24,39,0.25)">
+<span style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 999px; background: #16A34A; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<span style="flex-grow: 1; font-size: 14px">{{toastMsg}}</span>
+<sc-if value="{{canUndo}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{undo}}" style="flex-shrink: 0; height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid #4B5563; background: transparent; color: #FFFFFF; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Urungkan</button></sc-if>
+<button type="button" onClick="{{dismissToast}}" aria-label="Tutup notifikasi" style="flex-shrink: 0; width: 28px; height: 28px; border: 0; background: transparent; color: #D1D5DB; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1400}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var m = function (id, cls, code, lecturer, day, start, end, room, period) {
+      return { id: id, period: period || '2026-1', cls: cls, code: code, lecturer: lecturer, day: day, start: start, end: end, room: room };
+    };
+    this.state = {
+      period: '2026-1',
+      selected: 'SI-5A',
+      classQ: '',
+      maps: [
+        m('m1', 'SI-5A', 'IF-305', 'Gusmayeni, S.Kom., M.Kom', 'Senin', '08.00', '09.40', 'Ruang 301'),
+        m('m2', 'SI-5A', 'SI-309', 'Budi Wicaksono, M.T.', 'Senin', '10.00', '11.40', 'Ruang 210'),
+        m('m3', 'SI-5A', 'IF-311', 'Ahmad Fauzi, M.Kom', 'Senin', '13.00', '14.40', 'Lab 1'),
+        m('m4', 'SI-5A', 'MA-210', 'Sari Anggraini, M.Sc.', 'Rabu', '10.00', '11.40', 'Ruang 208'),
+        m('m5', 'SI-5A', 'SI-307', 'Gusmayeni, S.Kom., M.Kom', 'Kamis', '13.00', '14.40', 'Lab 2'),
+        m('m6', 'SI-3B', 'SI-201', 'Gusmayeni, S.Kom., M.Kom', 'Senin', '10.00', '11.40', 'Ruang 204'),
+        m('m7', 'SI-3A', 'SI-201', 'Gusmayeni, S.Kom., M.Kom', 'Selasa', '08.00', '09.40', 'Ruang 204'),
+        m('m8', 'SI-5B', 'IF-305', 'Gusmayeni, S.Kom., M.Kom', 'Senin', '15.30', '17.10', 'Ruang 301'),
+        m('m9', 'SI-5B', 'IF-230', 'Taufik Hidayat, M.T.', 'Kamis', '13.00', '14.40', 'Lab 1'),
+        m('m10', 'SI-5B', 'MA-210', 'Sari Anggraini, M.Sc.', 'Rabu', '13.00', '14.40', 'Ruang 208'),
+        m('m11', 'SI-5C', 'SI-307', 'Gusmayeni, S.Kom., M.Kom', 'Senin', '13.00', '14.40', 'Lab 2'),
+        m('m12', 'SI-5C', 'IF-305', 'Gusmayeni, S.Kom., M.Kom', 'Rabu', '08.00', '09.40', 'Ruang 302'),
+        m('m13', 'SI-5D', 'SI-307', 'Gusmayeni, S.Kom., M.Kom', 'Selasa', '10.00', '11.40', 'Lab 2'),
+        m('m14', 'SI-5D', 'IF-305', 'Gusmayeni, S.Kom., M.Kom', 'Jumat', '08.00', '09.40', 'Ruang 301'),
+        m('m15', 'SI-7A', 'SI-401', 'Yusuf Permana, Ph.D.', 'Rabu', '13.00', '15.30', 'Ruang 105'),
+        // Periode sebelumnya (Genap 2025/2026) — hanya bisa dilihat.
+        m('p1', 'SI-5A', 'SI-201', 'Budi Wicaksono, M.T.', 'Senin', '08.00', '09.40', 'Ruang 204', '2025-2'),
+        m('p2', 'SI-5A', 'MA-210', 'Sari Anggraini, M.Sc.', 'Selasa', '10.00', '11.40', 'Ruang 208', '2025-2'),
+        m('p3', 'SI-5A', 'IF-230', 'Taufik Hidayat, M.T.', 'Kamis', '13.00', '14.40', 'Lab 1', '2025-2'),
+        m('p4', 'SI-5B', 'SI-201', 'Budi Wicaksono, M.T.', 'Rabu', '08.00', '09.40', 'Ruang 204', '2025-2')
+      ],
+      mode: null, editId: null, form: {}, errors: {}, showAllLect: false,
+      delId: null, toast: null, flashId: null
+    };
+  }
+  componentWillUnmount() { clearTimeout(this.toastTimer); }
+
+  data() {
+    return {
+      classes: [
+        { cls: 'SI-3A', prodi: 'Sistem Informasi', angkatan: '2025', students: 36, advisor: 'Lina Marlina, M.Kom' },
+        { cls: 'SI-3B', prodi: 'Sistem Informasi', angkatan: '2025', students: 40, advisor: 'Gusmayeni, S.Kom., M.Kom' },
+        { cls: 'SI-5A', prodi: 'Sistem Informasi', angkatan: '2024', students: 30, advisor: 'Gusmayeni, S.Kom., M.Kom' },
+        { cls: 'SI-5B', prodi: 'Sistem Informasi', angkatan: '2024', students: 30, advisor: 'Sari Anggraini, M.Sc.' },
+        { cls: 'SI-5C', prodi: 'Sistem Informasi', angkatan: '2024', students: 28, advisor: 'Ahmad Fauzi, M.Kom' },
+        { cls: 'SI-5D', prodi: 'Sistem Informasi', angkatan: '2024', students: 32, advisor: 'Lina Marlina, M.Kom' },
+        { cls: 'SI-7A', prodi: 'Sistem Informasi', angkatan: '2023', students: 18, advisor: 'Yusuf Permana, Ph.D.' },
+        { cls: 'SI-7B', prodi: 'Sistem Informasi', angkatan: '2023', students: 21, advisor: 'Taufik Hidayat, M.T.' }
+      ],
+      courses: [
+        { code: 'IF-305', name: 'Pemrograman Web', sks: 3 },
+        { code: 'SI-201', name: 'Sistem Basis Data', sks: 3 },
+        { code: 'SI-307', name: 'Interaksi Manusia dan Komputer', sks: 3 },
+        { code: 'SI-309', name: 'Manajemen Proses Bisnis', sks: 3 },
+        { code: 'MA-210', name: 'Statistika', sks: 2 },
+        { code: 'IF-311', name: 'Pemrograman Mobile', sks: 3 },
+        { code: 'SI-401', name: 'Proyek Akhir', sks: 4 },
+        { code: 'IF-230', name: 'Jaringan Komputer', sks: 3 }
+      ],
+      lecturers: [
+        { name: 'Gusmayeni, S.Kom., M.Kom', teaches: ['IF-305', 'SI-201', 'SI-307'] },
+        { name: 'Budi Wicaksono, M.T.', teaches: ['SI-309', 'SI-201'] },
+        { name: 'Sari Anggraini, M.Sc.', teaches: ['MA-210'] },
+        { name: 'Ahmad Fauzi, M.Kom', teaches: ['IF-311', 'IF-305'] },
+        { name: 'Yusuf Permana, Ph.D.', teaches: ['SI-401'] },
+        { name: 'Lina Marlina, M.Kom', teaches: ['SI-307', 'SI-309'] },
+        { name: 'Taufik Hidayat, M.T.', teaches: ['IF-230'] }
+      ],
+      rooms: [
+        // Dari master Ruang & Titik Presensi (hanya ruang aktif yang bisa dipetakan).
+        { name: 'Ruang 105', point: false, capacity: 40, radius: 5 }, { name: 'Aula Utama', point: true, capacity: 300, radius: 20 },
+        { name: 'Ruang 204', point: true, capacity: 40, radius: 5 }, { name: 'Ruang 208', point: true, capacity: 35, radius: 5 },
+        { name: 'Ruang 210', point: true, capacity: 35, radius: 5 }, { name: 'Ruang 301', point: true, capacity: 40, radius: 5 },
+        { name: 'Ruang 302', point: true, capacity: 40, radius: 5 }, { name: 'Lab 1', point: true, capacity: 36, radius: 5 },
+        { name: 'Lab 2', point: true, capacity: 36, radius: 5 }
+      ],
+      days: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'],
+      // Dari master Periode Akademik (urut lama → baru).
+      periods: [
+        { id: '2025-2', name: 'Genap 2025/2026', status: 'Selesai' },
+        { id: '2026-1', name: 'Ganjil 2026/2027', status: 'Aktif' },
+        { id: '2026-2', name: 'Genap 2026/2027', status: 'Akan datang' }
+      ]
+    };
+  }
+
+  mins(t) {
+    var m = /^(\d{1,2})[.:](\d{2})$/.exec(String(t || '').trim());
+    if (!m || Number(m[1]) > 23 || Number(m[2]) > 59) { return NaN; }
+    return Number(m[1]) * 60 + Number(m[2]);
+  }
+  fmt(total) {
+    var h = Math.floor(total / 60), mm = total % 60;
+    return (h < 10 ? '0' : '') + h + '.' + (mm < 10 ? '0' : '') + mm;
+  }
+  courseOf(code) { return this.data().courses.filter(function (c) { return c.code === code; })[0]; }
+
+  // Cari bentrok untuk satu pemetaan terhadap semua pemetaan lain (lintas kelas).
+  clashes(item, maps, ignoreId) {
+    var self = this;
+    var s = this.mins(item.start), e = this.mins(item.end);
+    var out = { cls: null, lecturer: null, room: null };
+    if (isNaN(s) || isNaN(e) || !item.day) { return out; }
+    maps.forEach(function (o) {
+      if (o.id === ignoreId || o.period !== item.period || o.day !== item.day) { return; }
+      if (!(self.mins(o.start) < e && s < self.mins(o.end))) { return; }
+      if (!out.cls && o.cls === item.cls) { out.cls = o; }
+      if (!out.lecturer && item.lecturer && o.lecturer === item.lecturer) { out.lecturer = o; }
+      if (!out.room && item.room && o.room === item.room) { out.room = o; }
+    });
+    return out;
+  }
+  describe(o) {
+    var c = this.courseOf(o.code);
+    return (c ? c.name : o.code) + ' (' + o.cls + ') ' + o.day + ' ' + o.start + '–' + o.end;
+  }
+
+  validate(form, maps, editId) {
+    var errors = {};
+    var s = this.mins(form.start), e = this.mins(form.end);
+    if (!form.code) { errors.code = 'Pilih mata kuliah.'; }
+    else if (maps.some(function (m) { return m.id !== editId && m.period === form.period && m.cls === form.cls && m.code === form.code; })) { errors.code = 'Mata kuliah ini sudah dipetakan ke kelas ' + form.cls + ' di periode ini.'; }
+    if (!form.lecturer) { errors.lecturer = 'Pilih dosen pengampu.'; }
+    if (!form.day) { errors.day = 'Pilih hari.'; }
+    if (!form.room) { errors.room = 'Pilih ruang.'; }
+    if (!form.start || isNaN(s)) { errors.start = 'Jam mulai tidak valid.'; }
+    if (!form.end || isNaN(e)) { errors.end = 'Jam selesai tidak valid.'; }
+    if (!errors.start && !errors.end) {
+      if (e <= s) { errors.end = 'Jam selesai harus setelah jam mulai.'; }
+      else if (s < 420 || e > 1080) { errors.start = 'Jadwal harus di antara 07.00 dan 18.00.'; }
+    }
+    if (!Object.keys(errors).length) {
+      var c = this.clashes(form, maps, editId);
+      if (c.cls) { errors.day = 'Kelas sudah ada kuliah: ' + this.describe(c.cls) + '.'; }
+      if (c.lecturer) { errors.lecturer = 'Dosen sedang mengajar ' + this.describe(c.lecturer) + '.'; }
+      if (c.room) { errors.room = 'Ruang dipakai ' + this.describe(c.room) + '.'; }
+    }
+    return errors;
+  }
+
+  showToast(msg, undoMaps) {
+    var self = this;
+    clearTimeout(this.toastTimer);
+    this.setState({ toast: { msg: msg, undo: undoMaps || null } });
+    this.toastTimer = setTimeout(function () { self.setState({ toast: null }); }, 6000);
+  }
+
+  renderVals() {
+    var self = this;
+    var D = this.data();
+    var st = this.state;
+    var allMaps = st.maps;
+    // Semua tampilan & pemeriksaan bentrok hanya untuk periode terpilih.
+    var maps = allMaps.filter(function (m) { return m.period === st.period; });
+    var pIdx = 0;
+    D.periods.forEach(function (p, i) { if (p.id === st.period) { pIdx = i; } });
+    var period = D.periods[pIdx];
+    var prev = pIdx > 0 ? D.periods[pIdx - 1] : null;
+    var readOnly = period.status === 'Selesai';
+    var PB = {
+      Aktif: { bBg: '#DCFCE7', bFg: '#166534', dot: '#16A34A' },
+      'Akan datang': { bBg: '#DBEAFE', bFg: '#1E40AF', dot: '#2563EB' },
+      Selesai: { bBg: '#F3F4F6', bFg: '#374151', dot: '#6B7280' }
+    };
+    var roomPoint = {};
+    D.rooms.forEach(function (r) { roomPoint[r.name] = r.point; });
+
+    var statusOf = function (m) {
+      var c = self.clashes(m, maps, m.id);
+      if (c.cls || c.lecturer || c.room) {
+        var who = c.cls || c.lecturer || c.room;
+        return { status: 'Bentrok', tip: 'Bentrok dengan ' + self.describe(who), bBg: '#FEE2E2', bFg: '#991B1B', dot: '#DC2626', issue: true };
+      }
+      if (!roomPoint[m.room]) {
+        return { status: 'Titik presensi belum ada', tip: m.room + ' belum punya titik presensi', bBg: '#FEF3C7', bFg: '#92400E', dot: '#F59E0B', issue: true };
+      }
+      return { status: 'Siap presensi', tip: 'Jadwal valid dan ruang punya titik presensi', bBg: '#DCFCE7', bFg: '#166534', dot: '#16A34A', issue: false };
+    };
+
+    var cq = st.classQ.trim().toLowerCase();
+    var classList = D.classes.filter(function (c) { return !cq || c.cls.toLowerCase().indexOf(cq) !== -1; }).map(function (c) {
+      var mine = maps.filter(function (m) { return m.cls === c.cls; });
+      var sks = mine.reduce(function (t, m) { var co = self.courseOf(m.code); return t + (co ? co.sks : 0); }, 0);
+      var on = c.cls === st.selected;
+      return {
+        cls: c.cls, short: c.cls.split('-')[1], sel: on ? 'true' : 'false',
+        meta: mine.length + ' mata kuliah · ' + sks + ' SKS',
+        hasIssue: mine.some(function (m) { return statusOf(m).issue; }),
+        border: on ? '#15803D' : '#E5E7EB', bg: on ? '#F0FDF4' : '#FFFFFF',
+        chipBg: on ? '#065F46' : '#ECFDF5', chipFg: on ? '#FFFFFF' : '#065F46',
+        pick: function () { self.setState({ selected: c.cls }); }
+      };
+    });
+
+    var cur = D.classes.filter(function (c) { return c.cls === st.selected; })[0] || D.classes[0];
+    var mine = maps.filter(function (m) { return m.cls === cur.cls; }).sort(function (a, b) {
+      return D.days.indexOf(a.day) - D.days.indexOf(b.day) || self.mins(a.start) - self.mins(b.start);
+    });
+
+    var openForm = function (mode, m) {
+      var form = m ? { code: m.code, lecturer: m.lecturer, day: m.day, start: m.start, end: m.end, room: m.room, cls: m.cls, period: m.period } : { code: '', lecturer: '', day: '', start: '', end: '', room: '', cls: cur.cls, period: st.period };
+      self.setState({ mode: mode, editId: m ? m.id : null, form: form, errors: {}, showAllLect: false });
+    };
+
+    var rows = mine.map(function (m) {
+      var co = self.courseOf(m.code) || { name: m.code, sks: 0 };
+      return Object.assign({
+        courseName: co.name, code: m.code, sks: co.sks, lecturer: m.lecturer, day: m.day, start: m.start, end: m.end, room: m.room,
+        bg: m.id === st.flashId ? '#F0FDF4' : 'transparent',
+        edit: function () { openForm('edit', m); },
+        del: function () { self.setState({ delId: m.id }); }
+      }, statusOf(m));
+    });
+
+    var issues = rows.filter(function (r) { return r.issue; }).length;
+    var sks = rows.reduce(function (t, r) { return t + r.sks; }, 0);
+    var lectSet = {};
+    rows.forEach(function (r) { lectSet[r.lecturer] = true; });
+
+    // Grid mingguan (07.00–18.00, 34px per jam)
+    var PX = 34;
+    var days = D.days.map(function (d) {
+      return {
+        name: d,
+        blocks: mine.filter(function (m) { return m.day === d; }).map(function (m) {
+          var s = self.mins(m.start), e = self.mins(m.end);
+          var stt = statusOf(m);
+          var co = self.courseOf(m.code) || { name: m.code };
+          var bad = stt.status === 'Bentrok';
+          return {
+            top: Math.round((s - 420) / 60 * PX), h: Math.max(28, Math.round((e - s) / 60 * PX)),
+            name: co.name, time: m.start + '–' + m.end, room: m.room, tip: co.name + ' · ' + m.lecturer,
+            bg: bad ? '#FEF2F2' : '#ECFDF5', border: bad ? '#FCA5A5' : '#86EFAC', fg: bad ? '#991B1B' : '#065F46'
+          };
+        })
+      };
+    });
+    var hours = [7, 9, 11, 13, 15, 17].map(function (h) { return { top: (h - 7) * PX, label: (h < 10 ? '0' : '') + h + '.00' }; });
+
+    // Form
+    var form = st.form;
+    var errors = st.errors;
+    var setField = function (key) {
+      return function (e) {
+        var val = e.target.value;
+        var next = Object.assign({}, self.state.form);
+        next[key] = val;
+        // Isi jam selesai otomatis dari SKS bila masih kosong.
+        if ((key === 'start' || key === 'code') && !self.state.form.end) {
+          var co = self.courseOf(next.code);
+          var s = self.mins(next.start);
+          if (co && !isNaN(s)) { next.end = self.fmt(s + (co.sks >= 4 ? 150 : 100)); }
+        }
+        if (key === 'code' && next.lecturer) {
+          var lec = D.lecturers.filter(function (l) { return l.name === next.lecturer; })[0];
+          if (lec && lec.teaches.indexOf(val) === -1 && !self.state.showAllLect) { next.lecturer = ''; }
+        }
+        var errs = Object.assign({}, self.state.errors);
+        delete errs[key];
+        if (key === 'start' || key === 'end') { delete errs.start; delete errs.end; }
+        self.setState({ form: next, errors: errs });
+      };
+    };
+    var inv = {}, bd = {};
+    ['code', 'lecturer', 'day', 'start', 'end', 'room'].forEach(function (k) {
+      inv[k] = errors[k] ? 'true' : 'false';
+      bd[k] = errors[k] ? '#DC2626' : '#D1D5DB';
+    });
+
+    var usedCodes = {};
+    maps.forEach(function (m) { if (m.cls === cur.cls && m.id !== st.editId) { usedCodes[m.code] = true; } });
+    var courseOptions = D.courses.map(function (c) {
+      return { value: c.code, label: c.code + ' · ' + c.name + ' (' + c.sks + ' SKS)' + (usedCodes[c.code] ? ' — sudah dipetakan' : '') };
+    });
+    var lecturerOptions = D.lecturers.filter(function (l) {
+      return st.showAllLect || !form.code || l.teaches.indexOf(form.code) !== -1 || l.name === form.lecturer;
+    }).map(function (l) {
+      var tag = form.code && l.teaches.indexOf(form.code) !== -1 ? ' — pengampu MK ini' : '';
+      return { value: l.name, label: l.name + tag };
+    });
+    var roomOf = function (n) { return D.rooms.filter(function (r) { return r.name === n; })[0]; };
+    var roomOptions = D.rooms.map(function (r) { return { value: r.name, label: r.name + ' · ' + r.capacity + ' kursi' + (r.point ? '' : ' (belum ada titik presensi)') }; });
+    var selRoom = form.room ? roomOf(form.room) : null;
+
+    // Pemeriksaan langsung saat form diisi
+    var ready = form.day && !isNaN(this.mins(form.start)) && !isNaN(this.mins(form.end)) && this.mins(form.end) > this.mins(form.start);
+    var cl = ready ? this.clashes(form, maps, st.editId) : { cls: null, lecturer: null, room: null };
+    var chk = function (label, pending, hit, okNote, badNote) {
+      if (pending) { return { label: label, mark: '–', bg: '#F3F4F6', fg: '#6B7280', note: 'Lengkapi hari dan jam terlebih dahulu.', noteFg: '#6B7280' }; }
+      if (hit) { return { label: label, mark: '✕', bg: '#FEE2E2', fg: '#991B1B', note: badNote + ' ' + self.describe(hit) + '.', noteFg: '#991B1B' }; }
+      return { label: label, mark: '✓', bg: '#DCFCE7', fg: '#166534', note: okNote, noteFg: '#6B7280' };
+    };
+    var checks = [
+      chk('Jadwal kelas ' + cur.cls + ' kosong', !ready, cl.cls, 'Tidak ada kuliah lain di jam ini.', 'Bentrok dengan'),
+      chk('Dosen tersedia', !ready || !form.lecturer, cl.lecturer, 'Dosen tidak mengajar di jam ini.', 'Dosen sedang mengajar'),
+      chk('Ruang tersedia', !ready || !form.room, cl.room, 'Ruang kosong di jam ini.', 'Ruang dipakai'),
+      selRoom ? (selRoom.capacity >= cur.students
+        ? { label: 'Kapasitas ruang', mark: '✓', bg: '#DCFCE7', fg: '#166534', note: selRoom.capacity + ' kursi untuk ' + cur.students + ' mahasiswa.', noteFg: '#6B7280' }
+        : { label: 'Kapasitas ruang', mark: '!', bg: '#FEF3C7', fg: '#92400E', note: 'Hanya ' + selRoom.capacity + ' kursi untuk ' + cur.students + ' mahasiswa.', noteFg: '#92400E' })
+        : { label: 'Kapasitas ruang', mark: '–', bg: '#F3F4F6', fg: '#6B7280', note: 'Pilih ruang terlebih dahulu.', noteFg: '#6B7280' },
+      form.room ? (roomPoint[form.room]
+        ? { label: 'Titik presensi ruang', mark: '✓', bg: '#DCFCE7', fg: '#166534', note: 'Titik diatur · radius ' + (selRoom ? selRoom.radius : 5) + ' m.', noteFg: '#6B7280' }
+        : { label: 'Titik presensi ruang', mark: '!', bg: '#FEF3C7', fg: '#92400E', note: 'Belum diatur — QR belum bisa dipakai.', noteFg: '#92400E' })
+        : { label: 'Titik presensi ruang', mark: '–', bg: '#F3F4F6', fg: '#6B7280', note: 'Pilih ruang terlebih dahulu.', noteFg: '#6B7280' }
+    ];
+
+    var timeErr = errors.start || errors.end || '';
+    var delMap = st.delId ? maps.filter(function (m) { return m.id === st.delId; })[0] : null;
+    var prevMaps = prev ? allMaps.filter(function (m) { return m.period === prev.id && m.cls === cur.cls; }) : [];
+    var delCourse = delMap ? (this.courseOf(delMap.code) || { name: delMap.code }).name : '';
+
+    return {
+      period: Object.assign({ id: period.id, name: period.name, status: period.status }, PB[period.status]),
+      periodOptions: D.periods.map(function (p) { return { id: p.id, label: p.name + (p.status === 'Aktif' ? ' (aktif)' : '') }; }),
+      onPeriod: function (e) { self.setState({ period: e.target.value, mode: null, editId: null, delId: null, errors: {}, flashId: null }); },
+      readOnly: readOnly,
+      canEdit: !readOnly,
+      emptyText: readOnly ? 'Tidak ada pemetaan yang tercatat di periode ini.' : (prevMaps.length ? 'Mulai dari pemetaan ' + prev.name + ' lalu sesuaikan, atau petakan satu per satu.' : 'Petakan mata kuliah pertama beserta dosen dan jadwalnya.'),
+      canCopy: !readOnly && prevMaps.length > 0,
+      prevCount: prevMaps.length,
+      prevName: prev ? prev.name : '',
+      copyPrev: function () {
+        var before = self.state.maps;
+        var stamp = Date.now();
+        var copies = prevMaps.map(function (m, i) { return Object.assign({}, m, { id: 'c' + stamp + i, period: self.state.period }); });
+        self.setState({ maps: before.concat(copies) });
+        self.showToast(copies.length + ' pemetaan disalin dari ' + prev.name + '. Periksa status tiap baris.', before);
+      },
+      classQ: st.classQ,
+      onClassQ: function (e) { self.setState({ classQ: e.target.value }); },
+      classList: classList,
+      noClass: classList.length === 0,
+      cur: cur,
+      sum: {
+        courses: rows.length, sks: sks, lecturers: Object.keys(lectSet).length, issues: issues,
+        issueBg: issues ? '#FFFBEB' : '#F8FAFC', issueFg: issues ? '#92400E' : '#111827', issueLabel: issues ? '#92400E' : '#6B7280'
+      },
+      rows: rows, hasRows: rows.length > 0, noRows: rows.length === 0,
+      days: days, hours: hours,
+      openAdd: function () { openForm('add', null); },
+
+      sheetOpen: !!st.mode,
+      sheetTitle: st.mode === 'edit' ? 'Ubah pemetaan' : 'Petakan mata kuliah',
+      saveLabel: st.mode === 'edit' ? 'Simpan perubahan' : 'Simpan pemetaan',
+      closeSheet: function () { self.setState({ mode: null, editId: null, errors: {} }); },
+      form: form,
+      on: { code: setField('code'), lecturer: setField('lecturer'), day: setField('day'), start: setField('start'), end: setField('end'), room: setField('room') },
+      inv: inv, bd: bd,
+      err: {
+        code: errors.code || '', hasCode: !!errors.code,
+        lecturer: errors.lecturer || '', hasLecturer: !!errors.lecturer,
+        room: errors.room || '', hasRoom: !!errors.room,
+        time: errors.day || timeErr, hasTime: !!(errors.day || timeErr)
+      },
+      hasErrors: Object.keys(errors).length > 0,
+      courseOptions: courseOptions,
+      lecturerOptions: lecturerOptions,
+      roomOptions: roomOptions,
+      showAllLect: st.showAllLect,
+      toggleAllLect: function () { self.setState({ showAllLect: !self.state.showAllLect }); },
+      roomWarn: !!form.room && !roomPoint[form.room],
+      checks: checks,
+      save: function () {
+        if (readOnly) { return; }
+        var f = self.state.form;
+        var errs = self.validate(f, self.state.maps, self.state.editId);
+        if (Object.keys(errs).length) { self.setState({ errors: errs }); return; }
+        var co = self.courseOf(f.code);
+        if (self.state.mode === 'add') {
+          var id = 'm' + Date.now();
+          self.setState({ maps: self.state.maps.concat([Object.assign({ id: id }, f)]), mode: null, errors: {}, flashId: id });
+          self.showToast(co.name + ' dipetakan ke ' + f.cls + '.');
+        } else {
+          var eid = self.state.editId;
+          self.setState({ maps: self.state.maps.map(function (m) { return m.id === eid ? Object.assign({}, m, f) : m; }), mode: null, editId: null, errors: {}, flashId: eid });
+          self.showToast('Pemetaan ' + co.name + ' diperbarui.');
+        }
+      },
+
+      confirmOpen: !!delMap,
+      delName: delCourse,
+      cancelDel: function () { self.setState({ delId: null }); },
+      confirmDel: function () {
+        var before = self.state.maps;
+        self.setState({ maps: before.filter(function (m) { return m.id !== self.state.delId; }), delId: null });
+        self.showToast(delCourse + ' dilepas dari ' + cur.cls + '.', before);
+      },
+
+      toastOn: !!st.toast,
+      toastMsg: st.toast ? st.toast.msg : '',
+      canUndo: !!(st.toast && st.toast.undo),
+      undo: function () { if (self.state.toast && self.state.toast.undo) { self.setState({ maps: self.state.toast.undo }); self.showToast('Perubahan dibatalkan.'); } },
+      dismissToast: function () { clearTimeout(self.toastTimer); self.setState({ toast: null }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

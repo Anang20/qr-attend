@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Mahasiswa per kelas · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="position: relative; width: 1440px; height: 1040px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827; overflow: hidden">
+<dc-import name="Sidebar" role="lecturer" active="students" height="1008" hint-size="256px,1008px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Gusmayeni, S.Kom., M.Kom" user-role="Dosen · Fakultas Ilmu Komputer" initials="G" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 18px; padding: 0 8px">
+
+<sc-if value="{{isPicking}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #047857">LANGKAH 1 DARI 2</span>
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Pilih kelas</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">Daftar mahasiswa ditampilkan per kelas. Pilih kelas yang ingin Anda lihat.</p>
+</div>
+<label style="width: 280px; height: 44px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 0 14px; border-radius: 12px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #6B7280"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><input type="search" aria-label="Cari kelas atau mata kuliah" placeholder="Cari kelas atau mata kuliah" value="{{pickQ}}" onChange="{{onPickQ}}" style="flex-grow: 1; min-width: 0; border: 0; outline: none; font: inherit; font-size: 14px; color: #111827; background: transparent"></label>
+</div>
+
+<div role="group" aria-label="Filter mata kuliah" style="display: flex; gap: 8px; flex-wrap: wrap">
+<sc-for list="{{courseChips}}" as="c" hint-placeholder-count="4">
+<button type="button" aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="height: 38px; padding: 0 16px; border-radius: 999px; border: 1px solid {{c.border}}; background: {{c.bg}}; color: {{c.fg}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">{{c.label}}</button>
+</sc-for>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{classCards}}" as="k" hint-placeholder-count="8">
+<button type="button" onClick="{{k.open}}" aria-label="Lihat mahasiswa {{k.course}} kelas {{k.cls}}" style="text-align: left; font: inherit; color: #111827; cursor: pointer; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: center; width: 100%"><span style="font-size: 26px; font-weight: 800; letter-spacing: -0.02em">{{k.cls}}</span><span style="width: 34px; height: 34px; border-radius: 999px; border: 1px solid #D1D5DB; display: flex; align-items: center; justify-content: center; color: #065F46"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg></span></div>
+<div style="display: flex; flex-direction: column; gap: 3px"><span style="font-size: 14px; font-weight: 700">{{k.course}}</span><span style="font-size: 12px; color: #6B7280">{{k.schedule}}</span></div>
+<div style="width: 100%; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; font-size: 12px; color: #4B5563"><span>{{k.count}} mahasiswa</span><strong style="color: #111827">{{k.rate}}% hadir</strong></div>
+<div style="height: 6px; border-radius: 999px; background: #F3F4F6; overflow: hidden"><div style="width: {{k.rate}}%; height: 100%; border-radius: 999px; background: {{k.fill}}"></div></div>
+</div>
+<sc-if value="{{k.hasRisk}}" hint-placeholder-val="{{ false }}"><span style="align-self: flex-start; font-size: 11px; font-weight: 700; color: #92400E; background: #FEF3C7; border-radius: 999px; padding: 3px 9px">{{k.risk}} perlu perhatian</span></sc-if>
+</button>
+</sc-for>
+</div>
+<sc-if value="{{noCards}}" hint-placeholder-val="{{ false }}"><div style="padding: 40px; text-align: center; font-size: 14px; color: #6B7280; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 20px">Tidak ada kelas yang cocok dengan pencarian.</div></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{isList}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<nav aria-label="Breadcrumb" style="display: flex; gap: 8px; font-size: 13px; color: #6B7280"><button type="button" onClick="{{backToPick}}" style="border: 0; background: transparent; padding: 0; font: inherit; color: #047857; font-weight: 600; cursor: pointer">Mahasiswa</button><span aria-hidden="true">/</span><span aria-current="page" style="color: #111827; font-weight: 600">{{sel.course}} · {{sel.cls}}</span></nav>
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Mahasiswa {{sel.cls}}</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">{{sel.course}} · {{sel.schedule}} · {{sel.held}} pertemuan berjalan</p>
+</div>
+<div style="display: flex; gap: 10px; align-items: center">
+<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #374151">Kelas<select value="{{selKey}}" onChange="{{switchClass}}" aria-label="Ganti kelas" style="height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><sc-for list="{{classOptions}}" as="o" hint-placeholder-count="8"><option value="{{o.value}}">{{o.label}}</option></sc-for></select></label>
+<button type="button" onClick="{{backToPick}}" style="height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid #065F46; background: #FFFFFF; color: #065F46; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Pilih kelas lain</button>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<div style="padding: 16px 18px; border-radius: 18px; background: #064E3B; color: #FFFFFF; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; color: #A7F3D0">Jumlah mahasiswa</span><strong style="font-size: 28px">{{stats.total}}</strong></div>
+<div style="padding: 16px 18px; border-radius: 18px; background: #FFFFFF; border: 1px solid #E5E7EB; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; color: #6B7280">Rata-rata kehadiran</span><strong style="font-size: 28px">{{stats.avg}}%</strong></div>
+<div style="padding: 16px 18px; border-radius: 18px; background: #FFFFFF; border: 1px solid #E5E7EB; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; color: #6B7280">Aman (≥ 75%)</span><strong style="font-size: 28px">{{stats.safe}}</strong></div>
+<div style="padding: 16px 18px; border-radius: 18px; background: {{stats.riskBg}}; border: 1px solid {{stats.riskBorder}}; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; color: {{stats.riskLabel}}">Perlu perhatian (&lt; 75%)</span><strong style="font-size: 28px; color: {{stats.riskFg}}">{{stats.risk}}</strong></div>
+</div>
+
+<section style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; gap: 12px; align-items: center">
+<label style="width: 300px; height: 44px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 0 14px; border-radius: 12px; border: 1px solid #E5E7EB; color: #6B7280"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><input type="search" aria-label="Cari nama atau NIM" placeholder="Cari nama atau NIM" value="{{q}}" onChange="{{onQ}}" style="flex-grow: 1; min-width: 0; border: 0; outline: none; font: inherit; font-size: 14px; color: #111827; background: transparent"></label>
+<select aria-label="Filter status kehadiran" value="{{riskFilter}}" onChange="{{onRisk}}" style="height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option value="">Semua status</option><option value="aman">Aman (≥ 75%)</option><option value="risiko">Perlu perhatian (&lt; 75%)</option></select>
+<div style="flex-grow: 1"></div>
+<a href="ManualAttendance.dc.html" style="font-size: 14px; font-weight: 600; text-decoration: none">Ubah presensi pertemuan ini</a>
+</div>
+<table style="width: 100%; border-collapse: collapse; font-size: 14px">
+<thead><tr style="text-align: left; color: #6B7280; font-size: 12px"><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB">NIM</th><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB">Nama mahasiswa</th><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB">Hadir</th><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB">Terlambat</th><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB">Izin</th><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB">Tidak hadir</th><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB">Kehadiran</th><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB">Status</th><th scope="col" style="font-weight: 600; padding: 11px 10px; background: #F9FAFB; text-align: right">Aksi</th></tr></thead>
+<tbody>
+<sc-for list="{{pageRows}}" as="s" hint-placeholder-count="10">
+<tr>
+<td style="padding: 9px 10px; border-bottom: 1px solid #F3F4F6; color: #4B5563; font-variant-numeric: tabular-nums">{{s.nim}}</td>
+<td style="padding: 9px 10px; border-bottom: 1px solid #F3F4F6; font-weight: 600">{{s.name}}</td>
+<td style="padding: 9px 10px; border-bottom: 1px solid #F3F4F6; font-variant-numeric: tabular-nums">{{s.h}}</td>
+<td style="padding: 9px 10px; border-bottom: 1px solid #F3F4F6; font-variant-numeric: tabular-nums">{{s.t}}</td>
+<td style="padding: 9px 10px; border-bottom: 1px solid #F3F4F6; font-variant-numeric: tabular-nums">{{s.i}}</td>
+<td style="padding: 9px 10px; border-bottom: 1px solid #F3F4F6; font-variant-numeric: tabular-nums">{{s.a}}</td>
+<td style="padding: 9px 10px; border-bottom: 1px solid #F3F4F6"><div style="display: flex; align-items: center; gap: 8px"><div style="width: 64px; height: 6px; border-radius: 999px; background: #F3F4F6; overflow: hidden"><div style="width: {{s.rate}}%; height: 100%; border-radius: 999px; background: {{s.fill}}"></div></div><span style="font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums">{{s.rate}}%</span></div></td>
+<td style="padding: 9px 10px; border-bottom: 1px solid #F3F4F6"><span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: {{s.bBg}}; color: {{s.bFg}}">{{s.status}}</span></td>
+<td style="padding: 6px 10px; border-bottom: 1px solid #F3F4F6; text-align: right"><button type="button" onClick="{{s.open}}" aria-label="Detail presensi {{s.name}}" style="height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid #D1D5DB; background: #FFFFFF; font: inherit; font-size: 13px; font-weight: 600; color: #111827; cursor: pointer">Detail</button></td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+<sc-if value="{{noRows}}" hint-placeholder-val="{{ false }}"><div style="padding: 32px 0; text-align: center; display: flex; flex-direction: column; gap: 8px; align-items: center"><strong style="font-size: 15px">Tidak ada mahasiswa yang cocok</strong><button type="button" onClick="{{resetList}}" style="height: 38px; padding: 0 16px; border-radius: 999px; border: 0; background: #ECFDF5; color: #065F46; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Atur ulang pencarian</button></div></sc-if>
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="font-size: 13px; color: #6B7280">{{rangeText}}</span>
+<nav aria-label="Halaman" style="display: flex; gap: 6px"><sc-for list="{{pages}}" as="p" hint-placeholder-count="3"><button type="button" onClick="{{p.go}}" aria-current="{{p.cur}}" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid {{p.border}}; background: {{p.bg}}; color: {{p.fg}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">{{p.n}}</button></sc-for></nav>
+</div>
+</section>
+</div>
+</sc-if>
+</main>
+</div>
+
+<sc-if value="{{detailOpen}}" hint-placeholder-val="{{ false }}">
+<div onClick="{{closeDetail}}" aria-hidden="true" style="position: absolute; inset: 0; background: rgba(17,24,39,0.4)"></div>
+<aside role="dialog" aria-modal="true" aria-labelledby="stu-title" style="position: absolute; top: 16px; right: 16px; bottom: 16px; width: 440px; box-sizing: border-box; background: #FFFFFF; border-radius: 24px; padding: 26px 28px; display: flex; flex-direction: column; gap: 18px; box-shadow: -12px 0 40px rgba(17,24,39,0.16)">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; align-items: center; gap: 14px"><span style="width: 52px; height: 52px; border-radius: 999px; background: #D1FAE5; color: #065F46; font-size: 17px; font-weight: 800; display: flex; align-items: center; justify-content: center">{{det.ini}}</span><div style="display: flex; flex-direction: column; gap: 2px"><h2 id="stu-title" style="margin: 0; font-size: 20px; font-weight: 800">{{det.name}}</h2><span style="font-size: 13px; color: #6B7280">{{det.nim}} · {{sel.cls}}</span></div></div>
+<button type="button" onClick="{{closeDetail}}" aria-label="Tutup panel" style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div style="padding: 14px; border-radius: 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #6B7280">Kehadiran</span><strong style="font-size: 22px">{{det.rate}}%</strong></div>
+<div style="padding: 14px; border-radius: 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #6B7280">Status</span><span style="align-self: flex-start; display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: {{det.bBg}}; color: {{det.bFg}}">{{det.status}}</span></div>
+</div>
+<section aria-labelledby="meet-title" style="display: flex; flex-direction: column; gap: 4px">
+<h3 id="meet-title" style="margin: 0 0 6px; font-size: 15px; font-weight: 700">Riwayat per pertemuan · {{sel.course}}</h3>
+<sc-for list="{{det.meetings}}" as="m" hint-placeholder-count="5">
+<div style="display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid #F3F4F6; font-size: 14px">
+<span style="width: 110px; font-weight: 600">Pertemuan {{m.n}}</span>
+<span style="flex-grow: 1; color: #6B7280; font-size: 13px">{{m.date}} · {{m.method}}</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: {{m.bBg}}; color: {{m.bFg}}"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{m.dot}}"></span>{{m.status}}</span>
+</div>
+</sc-for>
+</section>
+<div style="flex-grow: 1"></div>
+<a href="ManualAttendance.dc.html" style="height: 48px; border-radius: 999px; background: #065F46; color: #FFFFFF; font-size: 14px; font-weight: 700; text-decoration: none; display: flex; align-items: center; justify-content: center">Ubah presensi pertemuan hari ini</a>
+</aside>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1040}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Pertama kali masuk: belum ada kelas terpilih, jadi dosen wajib memilih kelas dulu.
+    this.state = { selKey: null, pickQ: '', courseFilter: '', q: '', riskFilter: '', page: 1, detailNim: null };
+    this.cache = {};
+  }
+
+  offerings() {
+    return [
+      { key: 'IF-305|SI-5A', course: 'Pemrograman Web', cls: 'SI-5A', schedule: 'Senin, 08.00–09.40 · Ruang 301', count: 30, held: 5, seed: 1 },
+      { key: 'IF-305|SI-5B', course: 'Pemrograman Web', cls: 'SI-5B', schedule: 'Senin, 15.30–17.10 · Ruang 301', count: 30, held: 4, seed: 2 },
+      { key: 'IF-305|SI-5C', course: 'Pemrograman Web', cls: 'SI-5C', schedule: 'Rabu, 08.00–09.40 · Ruang 302', count: 28, held: 4, seed: 3 },
+      { key: 'IF-305|SI-5D', course: 'Pemrograman Web', cls: 'SI-5D', schedule: 'Jumat, 08.00–09.40 · Ruang 301', count: 32, held: 4, seed: 4 },
+      { key: 'SI-201|SI-3A', course: 'Sistem Basis Data', cls: 'SI-3A', schedule: 'Selasa, 08.00–09.40 · Ruang 204', count: 36, held: 4, seed: 5 },
+      { key: 'SI-201|SI-3B', course: 'Sistem Basis Data', cls: 'SI-3B', schedule: 'Senin, 10.00–11.40 · Ruang 204', count: 40, held: 4, seed: 6 },
+      { key: 'SI-307|SI-5A', course: 'Interaksi Manusia dan Komputer', cls: 'SI-5A', schedule: 'Kamis, 13.00–14.40 · Lab 2', count: 30, held: 4, seed: 7 },
+      { key: 'SI-307|SI-5C', course: 'Interaksi Manusia dan Komputer', cls: 'SI-5C', schedule: 'Senin, 13.00–14.40 · Lab 2', count: 28, held: 4, seed: 8 }
+    ];
+  }
+
+  // Data dummy deterministik per kelas (nama, NIM, status per pertemuan).
+  students(o) {
+    if (this.cache[o.key]) { return this.cache[o.key]; }
+    var first = ['Ray', 'Bagas', 'Citra', 'Dimas', 'Eka', 'Fajar', 'Gita', 'Hendra', 'Intan', 'Joko', 'Kartika', 'Lukman', 'Maya', 'Nanda', 'Oki', 'Putri', 'Rizky', 'Salsa', 'Teguh', 'Umi', 'Vina', 'Wahyu', 'Yoga', 'Zahra', 'Arif', 'Bella', 'Cahya', 'Dewi', 'Erlangga', 'Farah', 'Galih', 'Hana', 'Ilham', 'Jihan', 'Kevin', 'Laras', 'Miko', 'Nadia', 'Oscar', 'Pandu'];
+    var last = ['Rahmawati', 'Saputra', 'Lestari', 'Hidayat', 'Wulandari', 'Nugroho', 'Maharani', 'Setiawan', 'Rahayu', 'Prasetyo', 'Sari', 'Hakim', 'Puspita', 'Pratama', 'Firmansyah', 'Anggraini', 'Ramadhan', 'Kusuma', 'Wibowo', 'Handayani'];
+    var rnd = function (n) { var x = Math.sin(n * 12.9898) * 43758.5453; return x - Math.floor(x); };
+    var prefix = o.cls.indexOf('-3') !== -1 ? '231011450' : '221011450';
+    var list = [];
+    for (var i = 0; i < o.count; i++) {
+      var weak = (i + o.seed) % 9 === 4;
+      var meetings = [];
+      for (var m = 0; m < o.held; m++) {
+        var v = rnd(o.seed * 1000 + i * 17 + m * 3);
+        var st = weak
+          ? (v < 0.45 ? 'Hadir' : v < 0.55 ? 'Terlambat' : v < 0.65 ? 'Izin' : 'Tidak Hadir')
+          : (v < 0.84 ? 'Hadir' : v < 0.92 ? 'Terlambat' : v < 0.96 ? 'Izin' : 'Tidak Hadir');
+        meetings.push(st);
+      }
+      var name = first[(i + o.seed * 3) % first.length] + ' ' + last[(i * 7 + o.seed) % last.length];
+      list.push({ nim: prefix + String(100 + i * 3 + o.seed), name: name, meetings: meetings });
+    }
+    list.sort(function (a, b) { return a.name.localeCompare(b.name); });
+    this.cache[o.key] = list;
+    return list;
+  }
+
+  summarize(s) {
+    var c = { Hadir: 0, Terlambat: 0, Izin: 0, 'Tidak Hadir': 0 };
+    s.meetings.forEach(function (m) { c[m]++; });
+    var rate = s.meetings.length ? Math.round((c.Hadir + c.Terlambat) / s.meetings.length * 100) : 0;
+    return { h: c.Hadir, t: c.Terlambat, i: c.Izin, a: c['Tidak Hadir'], rate: rate, risk: rate < 75 };
+  }
+
+  renderVals() {
+    var self = this;
+    var st = this.state;
+    var offers = this.offerings();
+    var BADGE = {
+      Hadir: { bBg: '#DCFCE7', bFg: '#166534', dot: '#16A34A' },
+      Terlambat: { bBg: '#FEF3C7', bFg: '#92400E', dot: '#F59E0B' },
+      Izin: { bBg: '#DBEAFE', bFg: '#1E40AF', dot: '#2563EB' },
+      'Tidak Hadir': { bBg: '#FEE2E2', bFg: '#991B1B', dot: '#DC2626' }
+    };
+    var riskBadge = function (risk) {
+      return risk ? { status: 'Perlu perhatian', bBg: '#FEF3C7', bFg: '#92400E' } : { status: 'Aman', bBg: '#DCFCE7', bFg: '#166534' };
+    };
+
+    // ----- Langkah 1: pilih kelas -----
+    var pq = st.pickQ.trim().toLowerCase();
+    var courses = ['Pemrograman Web', 'Sistem Basis Data', 'Interaksi Manusia dan Komputer'];
+    var courseChips = [{ label: 'Semua mata kuliah', value: '' }].concat(courses.map(function (c) { return { label: c, value: c }; })).map(function (c) {
+      var on = st.courseFilter === c.value;
+      return { label: c.label, on: on ? 'true' : 'false', bg: on ? '#065F46' : '#FFFFFF', fg: on ? '#FFFFFF' : '#111827', border: on ? '#065F46' : '#E5E7EB', pick: function () { self.setState({ courseFilter: c.value }); } };
+    });
+    var classCards = offers.filter(function (o) {
+      var okC = !st.courseFilter || o.course === st.courseFilter;
+      var okQ = !pq || (o.cls + ' ' + o.course).toLowerCase().indexOf(pq) !== -1;
+      return okC && okQ;
+    }).map(function (o) {
+      var list = self.students(o).map(function (s) { return self.summarize(s); });
+      var avg = Math.round(list.reduce(function (t, s) { return t + s.rate; }, 0) / list.length);
+      var risk = list.filter(function (s) { return s.risk; }).length;
+      return {
+        cls: o.cls, course: o.course, schedule: o.schedule, count: o.count, rate: avg,
+        fill: avg < 85 ? '#F59E0B' : '#15803D', risk: risk, hasRisk: risk > 0,
+        open: function () { self.setState({ selKey: o.key, q: '', riskFilter: '', page: 1 }); }
+      };
+    });
+
+    // ----- Langkah 2: daftar mahasiswa kelas terpilih -----
+    var sel = offers.filter(function (o) { return o.key === st.selKey; })[0] || null;
+    var rows = [], pageRows = [], pages = [], stats = {}, rangeText = '', det = { meetings: [] };
+    if (sel) {
+      var all = this.students(sel).map(function (s) {
+        var sm = self.summarize(s);
+        return Object.assign({ nim: s.nim, name: s.name, meetings: s.meetings }, sm, riskBadge(sm.risk), { fill: sm.risk ? '#F59E0B' : '#15803D' });
+      });
+      var q = st.q.trim().toLowerCase();
+      rows = all.filter(function (s) {
+        var okQ = !q || s.name.toLowerCase().indexOf(q) !== -1 || s.nim.indexOf(q) !== -1;
+        var okR = !st.riskFilter || (st.riskFilter === 'risiko' ? s.risk : !s.risk);
+        return okQ && okR;
+      });
+      var size = 10;
+      var pc = Math.max(1, Math.ceil(rows.length / size));
+      var page = Math.min(st.page, pc);
+      var start = (page - 1) * size;
+      pageRows = rows.slice(start, start + size).map(function (s) {
+        return Object.assign({}, s, { open: function () { self.setState({ detailNim: s.nim }); } });
+      });
+      pages = Array.apply(null, Array(pc)).map(function (_, i) {
+        var on = i + 1 === page;
+        return { n: i + 1, cur: on ? 'page' : undefined, bg: on ? '#065F46' : '#FFFFFF', fg: on ? '#FFFFFF' : '#111827', border: on ? '#065F46' : '#E5E7EB', go: function () { self.setState({ page: i + 1 }); } };
+      });
+      rangeText = rows.length ? 'Menampilkan ' + (start + 1) + '–' + (start + pageRows.length) + ' dari ' + rows.length + ' mahasiswa' : 'Menampilkan 0 mahasiswa';
+      var riskN = all.filter(function (s) { return s.risk; }).length;
+      stats = {
+        total: all.length,
+        avg: Math.round(all.reduce(function (t, s) { return t + s.rate; }, 0) / all.length),
+        safe: all.length - riskN, risk: riskN,
+        riskBg: riskN ? '#FFFBEB' : '#FFFFFF', riskBorder: riskN ? '#FDE68A' : '#E5E7EB', riskFg: riskN ? '#92400E' : '#111827', riskLabel: riskN ? '#92400E' : '#6B7280'
+      };
+      var ds = all.filter(function (s) { return s.nim === st.detailNim; })[0];
+      if (ds) {
+        var dates = ['31 Agu', '7 Sep', '14 Sep', '21 Sep', '28 Sep'];
+        var parts = ds.name.split(' ');
+        det = Object.assign({}, ds, {
+          ini: (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase(),
+          meetings: ds.meetings.map(function (m, i) {
+            return Object.assign({ n: i + 1, status: m, date: dates[i] || '—', method: m === 'Tidak Hadir' ? '—' : (m === 'Izin' ? 'Manual' : 'QR Code') }, BADGE[m]);
+          })
+        });
+      }
+    }
+
+    return {
+      isPicking: !sel, isList: !!sel,
+      pickQ: st.pickQ,
+      onPickQ: function (e) { self.setState({ pickQ: e.target.value }); },
+      courseChips: courseChips,
+      classCards: classCards, noCards: classCards.length === 0,
+      sel: sel || { course: '', cls: '', schedule: '', held: 0 },
+      selKey: st.selKey || '',
+      classOptions: offers.map(function (o) { return { value: o.key, label: o.cls + ' · ' + o.course }; }),
+      switchClass: function (e) { self.setState({ selKey: e.target.value, q: '', riskFilter: '', page: 1, detailNim: null }); },
+      backToPick: function () { self.setState({ selKey: null, detailNim: null }); },
+      stats: stats,
+      q: st.q, onQ: function (e) { self.setState({ q: e.target.value, page: 1 }); },
+      riskFilter: st.riskFilter, onRisk: function (e) { self.setState({ riskFilter: e.target.value, page: 1 }); },
+      resetList: function () { self.setState({ q: '', riskFilter: '', page: 1 }); },
+      pageRows: pageRows, noRows: !!sel && rows.length === 0,
+      pages: pages, rangeText: rangeText,
+      detailOpen: !!sel && !!st.detailNim && !!det.nim,
+      det: det,
+      closeDetail: function () { self.setState({ detailNim: null }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

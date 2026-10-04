@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Pindai QR (desktop) · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+@keyframes qr-scan-d{0%{top:8%}50%{top:88%}100%{top:8%}}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827">
+<dc-import name="Sidebar" role="student" active="scan" height="968" hint-size="256px,968px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Ray Pengki" user-role="Mahasiswa · SI-5A" initials="RP" search-placeholder="Cari mata kuliah atau riwayat presensi…" profile-href="StudentProfileDesktop.dc.html" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 20px; padding: 0 8px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Pindai QR Presensi</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">Pindai QR Code yang ditampilkan oleh dosen Anda.</p>
+</div>
+
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 16px; align-items: start">
+<section aria-label="Kamera" style="border-radius: 24px; background: #0B1712; color: #FFFFFF; padding: 24px; display: flex; flex-direction: column; gap: 18px; height: 640px; box-sizing: border-box">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #A7F3D0"><span style="width: 8px; height: 8px; border-radius: 999px; background: #34D399"></span>Kamera aktif</span>
+<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #D1FAE5">Kamera<select value="{{camera}}" onChange="{{onCamera}}" style="height: 40px; padding: 0 10px; border-radius: 10px; border: 1px solid #1F3A2E; background: #13251D; color: #FFFFFF; font: inherit; font-size: 13px"><option value="bawaan">Kamera bawaan laptop</option><option value="usb">Webcam USB</option></select></label>
+</div>
+<div style="flex-grow: 1; display: flex; align-items: center; justify-content: center">
+<a href="{{simHref}}" aria-label="Jendela kamera. Arahkan ke QR Code dari dosen" style="position: relative; display: block; width: 360px; height: 360px; border-radius: 32px; background: #13251D; overflow: hidden">
+<svg width="360" height="360" viewBox="0 0 360 360" fill="none" aria-hidden="true" style="position: absolute; inset: 0"><path d="M5 80V36A31 31 0 0 1 36 5h44M280 5h44a31 31 0 0 1 31 31v44M355 280v44a31 31 0 0 1-31 31h-44M80 355H36A31 31 0 0 1 5 324v-44" stroke="#34D399" stroke-width="7" stroke-linecap="round"></path></svg>
+<span style="position: absolute; left: 30px; right: 30px; top: 50%; height: 2px; border-radius: 2px; background: #34D399; box-shadow: 0 0 16px 2px rgba(52,211,153,0.6); animation: qr-scan-d 2.4s ease-in-out infinite"></span>
+</a>
+</div>
+<p style="margin: 0; text-align: center; font-size: 15px; color: #D1FAE5">Posisikan QR Code di dalam bingkai hijau. Pemindaian berjalan otomatis.</p>
+</section>
+
+<aside style="display: flex; flex-direction: column; gap: 16px">
+<div role="note" style="display: flex; gap: 10px; padding: 14px 16px; border-radius: 16px; background: #ECFDF5; border: 1px solid #A7F3D0; color: #065F46; font-size: 14px; line-height: 1.5"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 1px"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>Pastikan Anda berada di dalam kelas dan dalam radius 5 meter dari titik presensi yang ditentukan.</span></div>
+<section aria-label="Validasi sesi" style="border-radius: 22px; background: #FFFFFF; border: 1px solid #E5E7EB; padding: 20px 22px">
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 3px"><dt style="font-size: 12px; color: #6B7280">Mata kuliah</dt><dd style="margin: 0; font-size: 15px; font-weight: 700">Pemrograman Web</dd></div>
+<div style="display: flex; flex-direction: column; gap: 3px"><dt style="font-size: 12px; color: #6B7280">Kelas</dt><dd style="margin: 0; font-size: 15px; font-weight: 700">SI-5A</dd></div>
+<div style="display: flex; flex-direction: column; gap: 3px"><dt style="font-size: 12px; color: #6B7280">Ruang</dt><dd style="margin: 0; font-size: 15px; font-weight: 700">Ruang 301</dd></div>
+<div style="display: flex; flex-direction: column; gap: 3px"><dt style="font-size: 12px; color: #6B7280">Jarak Anda</dt><dd style="margin: 0; font-size: 15px; font-weight: 700; color: #047857">3,2 m · dalam jangkauan</dd></div>
+<div style="display: flex; flex-direction: column; gap: 5px"><dt style="font-size: 12px; color: #6B7280">Status sesi</dt><dd style="margin: 0"><span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: #DCFCE7; color: #166534"><span style="width: 6px; height: 6px; border-radius: 999px; background: #16A34A"></span>Dibuka</span></dd></div>
+<div style="display: flex; flex-direction: column; gap: 3px"><dt style="font-size: 12px; color: #6B7280">Sisa waktu</dt><dd style="margin: 0; font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums">19:42</dd></div>
+</dl>
+</section>
+<section aria-labelledby="pre-title" style="border-radius: 22px; background: #FFFFFF; border: 1px solid #E5E7EB; padding: 20px 22px; display: flex; flex-direction: column; gap: 12px">
+<h2 id="pre-title" style="margin: 0; font-size: 15px; font-weight: 700">Pemeriksaan sebelum pindai</h2>
+<sc-for list="{{checks}}" as="k" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 10px; font-size: 14px"><span style="flex-shrink: 0; width: 22px; height: 22px; border-radius: 999px; background: {{k.bg}}; color: {{k.fg}}; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center">{{k.mark}}</span><span style="flex-grow: 1">{{k.label}}</span><span style="font-size: 12px; color: {{k.fg}}">{{k.state}}</span></div>
+</sc-for>
+</section>
+<section aria-labelledby="sim-title" style="border-radius: 22px; background: #FFFFFF; border: 1.5px dashed #D1D5DB; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 2px"><h2 id="sim-title" style="margin: 0; font-size: 14px; font-weight: 700">Simulasi hasil pindaian</h2><span style="font-size: 12px; color: #6B7280">Khusus prototipe. Pilih hasil, lalu klik bingkai kamera atau tombol di bawah.</span></div>
+<div style="display: flex; gap: 8px"><select value="{{sim}}" onChange="{{onSim}}" aria-label="Simulasi hasil pindaian" style="flex-grow: 1; min-width: 0; height: 40px; padding: 0 10px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 13px; color: #111827; background: #FFFFFF"><sc-for list="{{simOptions}}" as="o" hint-placeholder-count="8"><option value="{{o.id}}">{{o.label}}</option></sc-for></select><a href="{{simHref}}" style="flex-shrink: 0; height: 40px; padding: 0 14px; border-radius: 12px; background: #065F46; color: #FFFFFF; font-size: 13px; font-weight: 700; text-decoration: none; display: flex; align-items: center">Pindai</a></div>
+</section>
+<a href="TodayClassDesktop.dc.html" style="height: 48px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #111827; font-size: 14px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Batal</a>
+</aside>
+</div>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { camera: 'bawaan', sim: 'success' };
+  }
+  // Simulasi hasil pindaian (khusus prototipe). Di aplikasi nyata hasil ditentukan server
+  // setelah mengecek sesi, kelas, jadwal, duplikasi, dan radius.
+  simOptions() {
+    return [
+      { id: 'success', label: 'Berhasil' },
+      { id: 'outsideRadius', label: 'Gagal · di luar radius 5 m' },
+      { id: 'lowAccuracy', label: 'Gagal · lokasi kurang akurat' },
+      { id: 'expired', label: 'Gagal · QR kedaluwarsa' },
+      { id: 'wrongClass', label: 'Gagal · bukan kelasnya' },
+      { id: 'wrongSchedule', label: 'Gagal · di luar jadwal' },
+      { id: 'duplicate', label: 'Gagal · sudah presensi' },
+      { id: 'invalidQR', label: 'Gagal · QR tidak valid' },
+      { id: 'unauthorized', label: 'Gagal · sesi login berakhir' }
+    ];
+  }
+
+  renderVals() {
+    var self = this;
+    return {
+      sim: this.state.sim,
+      simOptions: this.simOptions(),
+      onSim: function (e) { self.setState({ sim: e.target.value }); },
+      simHref: this.state.sim === 'success' ? 'AttendanceSuccessDesktop.dc.html' : 'AttendanceFailedDesktop.dc.html#' + this.state.sim,
+      camera: this.state.camera,
+      onCamera: function (e) { self.setState({ camera: e.target.value }); },
+      checks: [
+        { label: 'Masuk sebagai mahasiswa', mark: '✓', bg: '#DCFCE7', fg: '#166534', state: 'Lolos' },
+        { label: 'Lokasi terdeteksi', mark: '✓', bg: '#DCFCE7', fg: '#166534', state: '3,2 m' },
+        { label: 'Kamera siap', mark: '✓', bg: '#DCFCE7', fg: '#166534', state: 'Aktif' },
+        { label: 'QR Code, kelas, jadwal, duplikasi', mark: '…', bg: '#F3F4F6', fg: '#4B5563', state: 'Menunggu pindaian' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

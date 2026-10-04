@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Kelas hari ini (desktop) · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827">
+<dc-import name="Sidebar" role="student" active="today" height="868" hint-size="256px,868px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Ray Pengki" user-role="Mahasiswa · SI-5A" initials="RP" search-placeholder="Cari mata kuliah atau riwayat presensi…" profile-href="StudentProfileDesktop.dc.html" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 20px; padding: 0 8px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Kelas Hari Ini</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">Senin, 28 September 2026 · 3 kelas</p>
+</div>
+
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px; align-items: start">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<section style="border-radius: 24px; background: #FFFFFF; border: 1px solid #E5E7EB; padding: 26px 28px; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 13px; font-weight: 700; letter-spacing: 0.06em; color: #047857">SEKARANG · PERTEMUAN 5 DARI 16</span><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 12px; border-radius: 999px; font-size: 12px; font-weight: 700; background: #DCFCE7; color: #166534"><span style="width: 6px; height: 6px; border-radius: 999px; background: #16A34A"></span>Presensi dibuka</span></div>
+<h2 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Pemrograman Web</h2>
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<div style="padding: 14px 16px; border-radius: 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 3px"><dt style="font-size: 12px; color: #6B7280">Kelas</dt><dd style="margin: 0; font-size: 16px; font-weight: 700">SI-5A</dd></div>
+<div style="padding: 14px 16px; border-radius: 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 3px"><dt style="font-size: 12px; color: #6B7280">Ruang</dt><dd style="margin: 0; font-size: 16px; font-weight: 700">Ruang 301</dd></div>
+<div style="padding: 14px 16px; border-radius: 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 3px"><dt style="font-size: 12px; color: #6B7280">Jadwal</dt><dd style="margin: 0; font-size: 16px; font-weight: 700">08.00 – 09.40</dd></div>
+<div style="padding: 14px 16px; border-radius: 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 3px"><dt style="font-size: 12px; color: #6B7280">Dosen</dt><dd style="margin: 0; font-size: 16px; font-weight: 700">Gusmayeni</dd></div>
+</dl>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span style="color: #4B5563">QR ditutup pukul 08.25</span><strong style="font-variant-numeric: tabular-nums">sisa 19:42</strong></div>
+<div role="progressbar" aria-label="Sisa waktu presensi" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100" style="height: 8px; border-radius: 999px; background: #ECFDF5; overflow: hidden"><div style="width: 98%; height: 100%; border-radius: 999px; background: #15803D"></div></div>
+</div>
+</section>
+
+<section aria-labelledby="later-title" style="border-radius: 22px; background: #FFFFFF; border: 1px solid #E5E7EB; padding: 20px 24px; display: flex; flex-direction: column; gap: 4px">
+<h2 id="later-title" style="margin: 0 0 8px; font-size: 16px; font-weight: 700">Kelas berikutnya hari ini</h2>
+<sc-for list="{{later}}" as="c" hint-placeholder-count="2">
+<div style="display: grid; grid-template-columns: 110px minmax(0, 1fr) 140px 200px; align-items: center; gap: 12px; padding: 13px 0; border-top: 1px solid #F3F4F6; font-size: 14px">
+<span style="font-weight: 700; font-variant-numeric: tabular-nums">{{c.time}}</span>
+<span style="font-weight: 600">{{c.course}}</span>
+<span style="color: #4B5563">{{c.room}}</span>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6B7280"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Presensi dibuka {{c.opens}}</span>
+</div>
+</sc-for>
+</section>
+</div>
+
+<aside style="display: flex; flex-direction: column; gap: 16px">
+<section aria-labelledby="ready-title" style="border-radius: 22px; background: #FFFFFF; border: 1px solid #E5E7EB; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<h2 id="ready-title" style="margin: 0; font-size: 16px; font-weight: 700">Siap presensi</h2>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px">
+<sc-for list="{{ready}}" as="r" hint-placeholder-count="3">
+<li style="display: flex; gap: 12px; align-items: center"><span style="width: 32px; height: 32px; border-radius: 999px; background: #ECFDF5; color: #047857; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><div style="display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">{{r.t}}</span><span style="font-size: 12px; color: #6B7280">{{r.d}}</span></div></li>
+</sc-for>
+</ul>
+</section>
+<a href="QRScannerDesktop.dc.html" style="height: 56px; border-radius: 999px; background: #065F46; color: #FFFFFF; font-size: 16px; font-weight: 800; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"></path></svg>Pindai QR Code</a>
+<p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B7280; text-align: center">Di laptop, pindai memakai kamera bawaan. Lokasi diambil dari izin lokasi peramban.</p>
+</aside>
+</div>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      later: [
+        { time: '10.00 – 11.40', course: 'Manajemen Proses Bisnis', room: 'Ruang 210', opens: 'pukul 10.00' },
+        { time: '13.00 – 14.40', course: 'Pemrograman Mobile', room: 'Lab 1', opens: 'pukul 13.00' }
+      ],
+      ready: [
+        { t: '3,2 m dari titik presensi', d: 'Masih dalam batas 5 m' },
+        { t: 'Akses kamera diizinkan', d: 'Diperlukan untuk membaca QR Code' },
+        { t: 'Terdaftar di SI-5A', d: 'Belum melakukan presensi' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

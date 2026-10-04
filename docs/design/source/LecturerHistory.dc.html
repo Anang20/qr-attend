@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Riwayat presensi · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="width: 1440px; height: 960px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827">
+<dc-import name="Sidebar" role="lecturer" active="reports" height="928" hint-size="256px,928px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Gusmayeni, S.Kom., M.Kom" user-role="Dosen · Fakultas Ilmu Komputer" initials="G" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 20px; padding: 0 8px">
+
+<div style="display: flex; align-items: flex-end; justify-content: space-between">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Riwayat Presensi</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">Semua sesi yang Anda buka semester ini.</p>
+</div>
+</div>
+
+<section style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; gap: 12px; align-items: flex-end">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #374151">Rentang tanggal<select value="{{range}}" onChange="{{onRange}}" style="height: 44px; min-width: 220px; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option value="">31 Agu – 28 Sep 2026</option><option value="week">Pekan ini</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #374151">Mata kuliah<select value="{{course}}" onChange="{{onCourse}}" style="height: 44px; min-width: 240px; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option value="">Semua mata kuliah</option><option>Pemrograman Web</option><option>Sistem Basis Data</option><option>Interaksi Manusia dan Komputer</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #374151">Kelas<select value="{{cls}}" onChange="{{onCls}}" style="height: 44px; min-width: 150px; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option value="">Semua kelas</option><option>SI-3A</option><option>SI-3B</option><option>SI-5A</option><option>SI-5B</option><option>SI-5C</option><option>SI-5D</option></select></label>
+<div style="flex-grow: 1"></div>
+<button type="button" onClick="{{reset}}" style="height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 600; color: #047857; cursor: pointer">Atur ulang filter</button>
+</div>
+
+<table style="width: 100%; border-collapse: collapse; font-size: 14px">
+<thead><tr style="text-align: left; color: #6B7280; font-size: 12px"><th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB">Tanggal</th><th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB">Mata kuliah</th><th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB">Kelas</th><th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB">Pertemuan</th><th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB">Hadir</th><th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB; width: 180px">Tingkat kehadiran</th><th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB">Sesi</th><th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB; text-align: right">Aksi</th></tr></thead>
+<tbody>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="9">
+<tr>
+<td style="padding: 13px 10px; border-bottom: 1px solid #F3F4F6; color: #4B5563; white-space: nowrap">{{r.date}}</td>
+<td style="padding: 13px 10px; border-bottom: 1px solid #F3F4F6; font-weight: 600">{{r.course}}</td>
+<td style="padding: 13px 10px; border-bottom: 1px solid #F3F4F6; color: #4B5563">{{r.cls}}</td>
+<td style="padding: 13px 10px; border-bottom: 1px solid #F3F4F6; color: #4B5563">{{r.meet}}</td>
+<td style="padding: 13px 10px; border-bottom: 1px solid #F3F4F6; font-variant-numeric: tabular-nums">{{r.present}} / {{r.total}}</td>
+<td style="padding: 13px 10px; border-bottom: 1px solid #F3F4F6"><div style="display: flex; align-items: center; gap: 10px"><div style="flex-grow: 1; height: 6px; border-radius: 999px; background: #F3F4F6; overflow: hidden"><div style="width: {{r.rate}}%; height: 100%; border-radius: 999px; background: #15803D"></div></div><span style="width: 38px; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums">{{r.rate}}%</span></div></td>
+<td style="padding: 13px 10px; border-bottom: 1px solid #F3F4F6"><span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: {{r.bBg}}; color: {{r.bFg}}">{{r.state}}</span></td>
+<td style="padding: 8px 10px; border-bottom: 1px solid #F3F4F6; text-align: right"><a href="{{r.href}}" style="font-size: 13px; font-weight: 600; text-decoration: none">Lihat</a></td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+<sc-if value="{{noRows}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 24px 0; text-align: center; font-size: 14px; color: #6B7280">Tidak ada sesi yang cocok dengan filter.</p></sc-if>
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="font-size: 13px; color: #6B7280">Menampilkan {{count}} dari 42 sesi</span>
+</div>
+</section>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { range: '', course: '', cls: '' };
+  }
+  renderVals() {
+    var self = this;
+    var rows = [
+      { date: 'Sen, 28 Sep', week: true, course: 'Pemrograman Web', cls: 'SI-5A', meet: '5 / 16', present: 27, total: 30, state: 'Berlangsung', href: 'ActiveQR.dc.html' },
+      { date: 'Jum, 25 Sep', course: 'Pemrograman Web', cls: 'SI-5D', meet: '4 / 16', present: 29, total: 32, state: 'Selesai', href: 'ExpiredAttendance.dc.html' },
+      { date: 'Kam, 24 Sep', course: 'Interaksi Manusia dan Komputer', cls: 'SI-5A', meet: '4 / 16', present: 26, total: 30, state: 'Selesai', href: 'ExpiredAttendance.dc.html' },
+      { date: 'Rab, 23 Sep', course: 'Pemrograman Web', cls: 'SI-5C', meet: '4 / 16', present: 25, total: 28, state: 'Selesai', href: 'ExpiredAttendance.dc.html' },
+      { date: 'Sel, 22 Sep', course: 'Interaksi Manusia dan Komputer', cls: 'SI-5D', meet: '4 / 16', present: 29, total: 32, state: 'Selesai', href: 'ExpiredAttendance.dc.html' },
+      { date: 'Sel, 22 Sep', course: 'Sistem Basis Data', cls: 'SI-3A', meet: '4 / 16', present: 0, total: 36, state: 'Tidak dibuka', href: 'ManualAttendance.dc.html' },
+      { date: 'Sen, 21 Sep', course: 'Pemrograman Web', cls: 'SI-5A', meet: '4 / 16', present: 28, total: 30, state: 'Selesai', href: 'ExpiredAttendance.dc.html' },
+      { date: 'Sen, 21 Sep', course: 'Sistem Basis Data', cls: 'SI-3B', meet: '4 / 16', present: 38, total: 40, state: 'Selesai', href: 'ExpiredAttendance.dc.html' },
+      { date: 'Sen, 21 Sep', course: 'Interaksi Manusia dan Komputer', cls: 'SI-5C', meet: '4 / 16', present: 24, total: 28, state: 'Selesai', href: 'ExpiredAttendance.dc.html' }
+    ];
+    var B = {
+      Berlangsung: { bBg: '#DCFCE7', bFg: '#166534' },
+      Selesai: { bBg: '#F3F4F6', bFg: '#374151' },
+      'Tidak dibuka': { bBg: '#FEF3C7', bFg: '#92400E' }
+    };
+    var st = this.state;
+    var list = rows.filter(function (r) {
+      return (!st.course || r.course === st.course) && (!st.cls || r.cls === st.cls) && (!st.range || r.week);
+    });
+    return {
+      range: st.range, course: st.course, cls: st.cls,
+      onRange: function (e) { self.setState({ range: e.target.value }); },
+      onCourse: function (e) { self.setState({ course: e.target.value }); },
+      onCls: function (e) { self.setState({ cls: e.target.value }); },
+      reset: function () { self.setState({ range: '', course: '', cls: '' }); },
+      rows: list.map(function (r) {
+        return Object.assign({}, r, B[r.state], { rate: Math.round(r.present / r.total * 100) });
+      }),
+      noRows: list.length === 0,
+      count: list.length
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Rekap kehadiran · Dosen · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1240px; background: #F8FAFC">
+<dc-import name="AttendanceRecap" role="lecturer" hint-size="1440px,1240px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1240}}'>
+class Component extends DCLogic {
+  // Rekap versi dosen: memakai halaman Rekap Kehadiran yang sama, dibatasi ke mata kuliah yang diampu.
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

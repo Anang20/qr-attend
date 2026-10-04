@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Manajemen Mahasiswa · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; background: #F8FAFC">
+<dc-import name="CrudPage" config="{{config}}" height="1000" hint-size="1440px,1000px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var CLASSES = ['SI-3A', 'SI-3B', 'SI-3C', 'SI-5A', 'SI-5B', 'SI-5C', 'SI-5D', 'SI-7A'];
+    var mk = function (name, nim, cls, angkatan, rate, status) {
+      return { name: name, nim: nim, cls: cls, prodi: 'Sistem Informasi', angkatan: angkatan, rate: rate, status: status, email: name.split(' ')[0].toLowerCase() + '.' + nim.slice(-4) + '@student.unpam.ac.id', phone: '' };
+    };
+    return {
+      config: {
+        title: 'Mahasiswa', subtitle: '{n} mahasiswa terdaftar di semester ini', entity: 'mahasiswa', addLabel: 'Tambah Mahasiswa', active: 'students',
+        searchPlaceholder: 'Cari nama, NIM, atau email', searchKeys: ['name', 'nim', 'email'], labelKey: 'name', pageSize: 8,
+        deleteNote: 'Akun mahasiswa akan dihapus dari kelasnya dan tidak bisa login lagi. Riwayat presensi tetap tersimpan di laporan untuk keperluan audit.',
+        filters: [
+          { key: 'cls', label: 'Filter kelas', allLabel: 'Semua kelas', options: CLASSES },
+          { key: 'angkatan', label: 'Filter angkatan', allLabel: 'Semua angkatan', options: ['2023', '2024', '2025'] },
+          { key: 'status', label: 'Filter status', allLabel: 'Semua status', options: ['Aktif', 'Cuti', 'Nonaktif'] }
+        ],
+        columns: [
+          { key: 'name', label: 'Mahasiswa', type: 'person', subKey: 'email' },
+          { key: 'nim', label: 'NIM', type: 'text' },
+          { key: 'cls', label: 'Kelas', type: 'text' },
+          { key: 'angkatan', label: 'Angkatan', type: 'text' },
+          { key: 'rate', label: 'Kehadiran', type: 'rate' },
+          { key: 'status', label: 'Status', type: 'badge' }
+        ],
+        fields: [
+          { key: 'name', label: 'Nama lengkap', type: 'text', required: true, span: 2, placeholder: 'contoh: Ray Pengki' },
+          { key: 'nim', label: 'NIM', type: 'text', required: true, unique: true, pattern: '^\\d{12}$', patternMsg: 'NIM harus 12 digit angka.', placeholder: '12 digit' },
+          { key: 'angkatan', label: 'Angkatan', type: 'select', required: true, options: ['2023', '2024', '2025'] },
+          { key: 'email', label: 'Email kampus', type: 'email', required: true, unique: true, span: 2, placeholder: 'nama@student.unpam.ac.id' },
+          { key: 'prodi', label: 'Program studi', type: 'select', required: true, options: ['Sistem Informasi', 'Teknik Informatika'] },
+          { key: 'cls', label: 'Kelas', type: 'select', required: true, options: CLASSES },
+          { key: 'phone', label: 'No. HP', type: 'text', pattern: '^08\\d{8,11}$', patternMsg: 'Nomor HP diawali 08, 10–13 digit.', placeholder: '08xxxxxxxxxx' },
+          { key: 'status', label: 'Status', type: 'select', required: true, options: ['Aktif', 'Cuti', 'Nonaktif'] }
+        ],
+        defaults: { rate: 0, status: 'Aktif', prodi: 'Sistem Informasi' },
+        badges: {
+          Aktif: { bg: '#DCFCE7', fg: '#166534', dot: '#16A34A' },
+          Cuti: { bg: '#FEF3C7', fg: '#92400E', dot: '#F59E0B' },
+          Nonaktif: { bg: '#F3F4F6', fg: '#374151', dot: '#6B7280' }
+        },
+        rows: [
+          mk('Ray Pengki', '221011450032', 'SI-5A', '2024', 94, 'Aktif'),
+          mk('Bagas Saputra', '221011450018', 'SI-5A', '2024', 91, 'Aktif'),
+          mk('Citra Lestari', '221011450041', 'SI-5A', '2024', 97, 'Aktif'),
+          mk('Dimas Hidayat', '221011450007', 'SI-5A', '2024', 88, 'Aktif'),
+          mk('Eka Putri Wulandari', '221011450025', 'SI-5B', '2024', 95, 'Aktif'),
+          mk('Fajar Nugroho', '221011450036', 'SI-5B', '2024', 79, 'Aktif'),
+          mk('Gita Maharani', '221011450011', 'SI-5B', '2024', 0, 'Cuti'),
+          mk('Hendra Setiawan', '221011450029', 'SI-5C', '2024', 72, 'Aktif'),
+          mk('Intan Rahayu', '221011450044', 'SI-5C', '2024', 90, 'Aktif'),
+          mk('Joko Prasetyo', '231011450050', 'SI-3B', '2025', 84, 'Aktif'),
+          mk('Kartika Sari', '231011450061', 'SI-3B', '2025', 96, 'Aktif'),
+          mk('Lukman Hakim', '231011450074', 'SI-3A', '2025', 93, 'Aktif'),
+          mk('Maya Puspita', '211011450083', 'SI-7A', '2023', 98, 'Aktif'),
+          mk('Nanda Pratama', '211011450090', 'SI-7A', '2023', 0, 'Nonaktif')
+        ]
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

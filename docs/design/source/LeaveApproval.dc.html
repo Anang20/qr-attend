@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Persetujuan izin · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="position: relative; width: 1440px; height: 1000px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827; overflow: hidden">
+<dc-import name="Sidebar" role="lecturer" active="leave" height="968" hint-size="256px,968px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Gusmayeni, S.Kom., M.Kom" user-role="Dosen · Sistem Informasi" initials="G" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 18px; padding: 0 8px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Persetujuan Izin</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">Periode Ganjil 2026/2027 · pengajuan dari mahasiswa di mata kuliah yang Anda ampu</p>
+</div>
+
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 16px">
+<div role="tablist" aria-label="Status pengajuan" style="display: inline-flex; gap: 4px; padding: 4px; border-radius: 14px; background: #F3F4F6">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+<button type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="height: 38px; padding: 0 16px; border: 0; border-radius: 10px; font: inherit; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; background: {{t.bg}}; color: {{t.fg}}; font-weight: {{t.fw}}; box-shadow: {{t.sh}}">{{t.label}}<span style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 999px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; background: {{t.cBg}}; color: {{t.cFg}}">{{t.count}}</span></button>
+</sc-for>
+</div>
+<label style="display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #374151">Mata kuliah<select value="{{course}}" onChange="{{onCourse}}" style="height: 42px; min-width: 260px; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option value="">Semua mata kuliah</option><sc-for list="{{courseOptions}}" as="o" hint-placeholder-count="3"><option value="{{o}}">{{o}}</option></sc-for></select></label>
+</div>
+
+<sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 48px 0; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+<span style="width: 56px; height: 56px; border-radius: 18px; background: #ECFDF5; color: #047857; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<strong style="font-size: 16px">{{emptyTitle}}</strong>
+<span style="font-size: 14px; color: #6B7280">Pengajuan baru akan muncul di sini dan di notifikasi.</span>
+</div>
+</sc-if>
+
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px">
+<sc-for list="{{items}}" as="r" hint-placeholder-count="3">
+<li style="background: #FFFFFF; border: 1px solid {{r.border}}; border-radius: 22px; padding: 18px 20px; display: grid; grid-template-columns: 250px minmax(0, 1fr) 230px; gap: 20px; align-items: start">
+<div style="display: flex; gap: 12px; align-items: center; min-width: 0">
+<span style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 999px; background: #ECFDF5; color: #065F46; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{r.ini}}</span>
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 700">{{r.name}}</span><span style="font-size: 12px; color: #6B7280; font-variant-numeric: tabular-nums">{{r.nim}} · {{r.cls}}</span><span style="font-size: 12px; color: #6B7280">Diajukan {{r.sent}}</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px"><span style="font-size: 14px; font-weight: 700">{{r.course}}</span><span style="font-size: 13px; color: #6B7280">Pertemuan {{r.p}} · {{r.date}}</span><span style="font-size: 12px; font-weight: 700; color: {{r.typeFg}}; background: {{r.typeBg}}; border-radius: 6px; padding: 2px 8px">{{r.type}}</span></div>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #374151">{{r.reason}}</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+<sc-if value="{{r.hasFile}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{r.preview}}" style="height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid #A7F3D0; background: #F0FDF4; font: inherit; font-size: 12px; font-weight: 700; color: #065F46; cursor: pointer; display: flex; align-items: center; gap: 6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6"></path></svg>{{r.file}}</button></sc-if>
+<sc-if value="{{r.noFile}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #6B7280">Tanpa lampiran</span></sc-if>
+<span style="font-size: 12px; color: #4B5563">Presensi saat ini: <strong style="color: {{r.attFg}}">{{r.attendance}}</strong></span>
+<sc-if value="{{r.hasWarn}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; font-weight: 700; color: #92400E; background: #FEF3C7; border-radius: 999px; padding: 3px 10px">{{r.warn}}</span></sc-if>
+</div>
+<sc-if value="{{r.hasNote}}" hint-placeholder-val="{{ false }}"><div style="padding: 8px 12px; border-radius: 10px; background: {{r.noteBg}}; font-size: 12px; line-height: 1.5; color: {{r.noteFg}}">{{r.note}}</div></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px">
+<sc-if value="{{r.isPending}}" hint-placeholder-val="{{ true }}"><div style="display: flex; gap: 8px">
+<button type="button" onClick="{{r.reject}}" aria-label="Tolak pengajuan {{r.name}}" style="height: 42px; padding: 0 16px; border-radius: 999px; border: 1px solid #FECACA; background: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; color: #B91C1C; cursor: pointer">Tolak</button>
+<button type="button" onClick="{{r.approve}}" aria-label="Setujui pengajuan {{r.name}}" style="height: 42px; padding: 0 18px; border-radius: 999px; border: 0; background: #065F46; font: inherit; font-size: 14px; font-weight: 700; color: #FFFFFF; cursor: pointer">Setujui</button>
+</div></sc-if>
+<sc-if value="{{r.isDone}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 12px; border-radius: 999px; font-size: 12px; font-weight: 700; background: {{r.bBg}}; color: {{r.bFg}}"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{r.dot}}"></span>{{r.status}}</span></sc-if>
+</div>
+</li>
+</sc-for>
+</ul>
+</main>
+</div>
+
+<sc-if value="{{previewOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; background: rgba(17,24,39,0.5); display: flex; align-items: center; justify-content: center">
+<div role="dialog" aria-modal="true" aria-labelledby="pv-title" style="width: 560px; box-sizing: border-box; background: #FFFFFF; border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 40px rgba(17,24,39,0.2)">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px"><div style="display: flex; flex-direction: column; gap: 2px"><h2 id="pv-title" style="margin: 0; font-size: 18px; font-weight: 800">{{pv.file}}</h2><span style="font-size: 13px; color: #6B7280">{{pv.name}} · {{pv.size}}</span></div><button type="button" onClick="{{closePreview}}" autoFocus="{{ true }}" aria-label="Tutup pratinjau" style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+<div role="img" aria-label="Pratinjau dokumen lampiran" style="height: 440px; border-radius: 14px; background: #F3F4F6; display: flex; align-items: center; justify-content: center">
+<div style="width: 300px; height: 400px; background: #FFFFFF; border-radius: 6px; box-shadow: 0 2px 8px rgba(17,24,39,0.12); padding: 28px 26px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px">
+<span style="height: 12px; width: 60%; border-radius: 4px; background: #D1D5DB; align-self: center"></span>
+<span style="height: 8px; width: 40%; border-radius: 4px; background: #E5E7EB; align-self: center; margin-bottom: 14px"></span>
+<span style="height: 8px; width: 100%; border-radius: 4px; background: #E5E7EB"></span><span style="height: 8px; width: 92%; border-radius: 4px; background: #E5E7EB"></span><span style="height: 8px; width: 96%; border-radius: 4px; background: #E5E7EB"></span><span style="height: 8px; width: 70%; border-radius: 4px; background: #E5E7EB"></span>
+<span style="height: 8px; width: 88%; border-radius: 4px; background: #E5E7EB; margin-top: 10px"></span><span style="height: 8px; width: 94%; border-radius: 4px; background: #E5E7EB"></span><span style="height: 8px; width: 60%; border-radius: 4px; background: #E5E7EB"></span>
+<span style="margin-top: auto; align-self: flex-end; width: 90px; height: 40px; border-radius: 999px; border: 2px dashed #D1D5DB"></span>
+</div>
+</div>
+<span style="font-size: 12px; color: #6B7280">Pratinjau di prototipe. Di aplikasi, file asli ditampilkan di sini dan bisa diunduh.</span>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{rejectOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; background: rgba(17,24,39,0.45); display: flex; align-items: center; justify-content: center">
+<div role="alertdialog" aria-modal="true" aria-labelledby="rj-title" aria-describedby="rj-desc" style="width: 500px; box-sizing: border-box; background: #FFFFFF; border-radius: 24px; padding: 26px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 40px rgba(17,24,39,0.18)">
+<h2 id="rj-title" style="margin: 0; font-size: 20px; font-weight: 800">Tolak pengajuan {{rj.name}}?</h2>
+<p id="rj-desc" style="margin: 0; font-size: 14px; line-height: 1.6; color: #4B5563">{{rj.course}} · pertemuan {{rj.p}}. Presensi tetap <strong>{{rj.attendance}}</strong>. Alasan penolakan akan dikirim ke mahasiswa.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{quickReasons}}" as="q" hint-placeholder-count="3"><button type="button" onClick="{{q.use}}" style="height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid #E5E7EB; background: #F9FAFB; font: inherit; font-size: 12px; font-weight: 600; color: #374151; cursor: pointer">{{q.label}}</button></sc-for>
+</div>
+<label for="rj-note" style="font-size: 13px; font-weight: 700">Alasan penolakan<span style="color: #B91C1C"> *</span></label>
+<textarea id="rj-note" rows="3" maxLength="300" value="{{rejectNote}}" onChange="{{onRejectNote}}" aria-invalid="{{rjInvalid}}" style="margin-top: -8px; box-sizing: border-box; padding: 10px 12px; border-radius: 12px; border: 1px solid {{rjBorder}}; font: inherit; font-size: 14px; line-height: 1.5; color: #111827; resize: vertical"></textarea>
+<span style="margin-top: -8px; font-size: 12px; color: {{rjFg}}">{{rjHelp}}</span>
+<div style="display: flex; justify-content: flex-end; gap: 10px"><button type="button" onClick="{{cancelReject}}" style="height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; color: #111827; cursor: pointer">Batal</button><button type="button" onClick="{{confirmReject}}" style="height: 44px; padding: 0 20px; border-radius: 999px; border: 0; background: #B91C1C; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Tolak pengajuan</button></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{toastOn}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; right: 32px; bottom: 32px; width: 440px; box-sizing: border-box; display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: #111827; color: #FFFFFF; box-shadow: 0 12px 28px rgba(17,24,39,0.25)">
+<span style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 999px; background: #16A34A; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<span style="flex-grow: 1; font-size: 14px">{{toastMsg}}</span>
+<sc-if value="{{canUndo}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{undo}}" style="flex-shrink: 0; height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid #4B5563; background: transparent; color: #FFFFFF; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Urungkan</button></sc-if>
+<button type="button" onClick="{{dismissToast}}" aria-label="Tutup notifikasi" style="flex-shrink: 0; width: 28px; height: 28px; border: 0; background: transparent; color: #D1D5DB; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  /*
+   * Persetujuan izin/sakit oleh dosen pengampu.
+   * Setujui → presensi pertemuan itu berubah menjadi Izin.
+   * Tolak → wajib alasan (min. 10 karakter), presensi tidak berubah.
+   * Keduanya bisa diurungkan lewat toast.
+   */
+  constructor(props) {
+    super(props);
+    var q = function (id, name, nim, cls, course, p, date, type, reason, file, size, sent, attendance, status, note, warn) {
+      return { id: id, name: name, nim: nim, cls: cls, course: course, p: p, date: date, type: type, reason: reason, file: file, size: size, sent: sent, attendance: attendance, status: status, note: note || '', warn: warn || '' };
+    };
+    this.state = {
+      tab: 'Menunggu', course: '', previewId: null, rejectId: null, rejectNote: '', rejectError: false, toast: null,
+      items: [
+        q('a1', 'Hendra Setiawan', '221011450029', 'SI-5A', 'Pemrograman Web', 5, 'Sen, 28 Sep 2026', 'Sakit', 'Demam tinggi sejak Minggu malam, sudah periksa ke klinik kampus dan diminta istirahat dua hari.', 'surat_dokter_hendra.jpg', '412 KB', '28 Sep, 07.10', 'Tidak Hadir', 'Menunggu', '', 'Tidak hadir 3 dari 5 pertemuan'),
+        q('a2', 'Joko Prasetyo', '221011450050', 'SI-5A', 'Pemrograman Web', 5, 'Sen, 28 Sep 2026', 'Izin', 'Menghadiri pemakaman kakek di Garut.', '', '', '28 Sep, 09.20', 'Tidak Hadir', 'Menunggu', '', 'Belum pernah hadir (0 dari 5)'),
+        q('a3', 'Rizky Maulana', '221011450061', 'SI-5C', 'Interaksi Manusia dan Komputer', 5, 'Sen, 28 Sep 2026', 'Izin', 'Mewakili kampus di babak final lomba desain UI/UX tingkat nasional.', 'surat_tugas_lomba.pdf', '180 KB', '26 Sep, 16.02', 'Belum dimulai', 'Menunggu'),
+        q('a4', 'Nadia Putri', '221011450118', 'SI-3B', 'Sistem Basis Data', 4, 'Sen, 21 Sep 2026', 'Sakit', 'Rawat jalan setelah tindakan medis kecil.', 'surat_dokter_nadia.pdf', '260 KB', '21 Sep, 07.45', 'Izin', 'Disetujui', 'Disetujui 21 Sep, 12.30. Presensi diubah menjadi Izin.'),
+        q('a5', 'Intan Rahayu', '221011450044', 'SI-5A', 'Pemrograman Web', 5, 'Sen, 28 Sep 2026', 'Izin', 'Mengikuti seleksi pertukaran mahasiswa di rektorat.', 'undangan_seleksi.pdf', '95 KB', '25 Sep, 10.11', 'Izin', 'Disetujui', 'Disetujui 25 Sep, 15.40. Presensi diubah menjadi Izin.'),
+        q('a6', 'Bagas Saputra', '221011450018', 'SI-5A', 'Interaksi Manusia dan Komputer', 2, 'Kam, 10 Sep 2026', 'Izin', 'Menjadi panitia acara himpunan.', '', '', '9 Sep, 21.40', 'Tidak Hadir', 'Ditolak', 'Ditolak: Kegiatan kepanitiaan bukan alasan izin akademik.')
+      ]
+    };
+  }
+  componentWillUnmount() { clearTimeout(this.toastTimer); }
+
+  showToast(msg, undoItems) {
+    var self = this;
+    clearTimeout(this.toastTimer);
+    this.setState({ toast: { msg: msg, undo: undoItems || null } });
+    this.toastTimer = setTimeout(function () { self.setState({ toast: null }); }, 6000);
+  }
+
+  update(id, patch) {
+    return this.state.items.map(function (x) { return x.id === id ? Object.assign({}, x, patch) : x; });
+  }
+
+  renderVals() {
+    var self = this;
+    var st = this.state;
+    var TABS = ['Menunggu', 'Disetujui', 'Ditolak'];
+    var inCourse = st.items.filter(function (x) { return !st.course || x.course === st.course; });
+    var count = function (s) { return inCourse.filter(function (x) { return x.status === s; }).length; };
+    var courses = [];
+    st.items.forEach(function (x) { if (courses.indexOf(x.course) === -1) { courses.push(x.course); } });
+
+    var BADGE = {
+      Disetujui: { bBg: '#DCFCE7', bFg: '#166534', dot: '#16A34A', noteBg: '#F0FDF4', noteFg: '#166534' },
+      Ditolak: { bBg: '#FEE2E2', bFg: '#991B1B', dot: '#DC2626', noteBg: '#FEF2F2', noteFg: '#991B1B' },
+      Menunggu: { bBg: '#FEF3C7', bFg: '#92400E', dot: '#F59E0B', noteBg: '#F9FAFB', noteFg: '#374151' }
+    };
+    var ATT = { 'Tidak Hadir': '#B91C1C', Izin: '#1E40AF', 'Belum dimulai': '#4B5563' };
+    var initials = function (n) { var p = n.split(' '); return (p[0][0] + (p[1] ? p[1][0] : '')).toUpperCase(); };
+
+    var items = inCourse.filter(function (x) { return x.status === st.tab; }).map(function (x) {
+      return Object.assign({}, BADGE[x.status], {
+        ini: initials(x.name), name: x.name, nim: x.nim, cls: x.cls, sent: x.sent, course: x.course, p: x.p, date: x.date,
+        type: x.type, typeBg: x.type === 'Sakit' ? '#DBEAFE' : '#F3E8FF', typeFg: x.type === 'Sakit' ? '#1E40AF' : '#6B21A8',
+        reason: x.reason, hasFile: !!x.file, noFile: !x.file, file: x.file,
+        attendance: x.attendance, attFg: ATT[x.attendance] || '#111827',
+        hasWarn: !!x.warn && x.status === 'Menunggu', warn: x.warn,
+        hasNote: !!x.note, note: x.note, status: x.status,
+        isPending: x.status === 'Menunggu', isDone: x.status !== 'Menunggu',
+        border: x.status === 'Menunggu' ? '#FDE68A' : '#E5E7EB',
+        preview: function () { self.setState({ previewId: x.id }); },
+        reject: function () { self.setState({ rejectId: x.id, rejectNote: '', rejectError: false }); },
+        approve: function () {
+          var before = self.state.items;
+          var att = x.attendance === 'Belum dimulai' ? 'Izin (setelah sesi dibuka)' : 'Izin';
+          self.setState({ items: self.update(x.id, { status: 'Disetujui', attendance: 'Izin', note: 'Disetujui 28 Sep, 09.45. Presensi ' + (x.attendance === 'Belum dimulai' ? 'akan tercatat' : 'diubah menjadi') + ' Izin.' }) });
+          self.showToast('Izin ' + x.name + ' disetujui. Presensi: ' + att + '.', before);
+        }
+      });
+    });
+
+    var pv = st.items.filter(function (x) { return x.id === st.previewId; })[0];
+    var rj = st.items.filter(function (x) { return x.id === st.rejectId; })[0];
+    var QUICK = ['Lampiran tidak terbaca', 'Alasan tidak termasuk izin akademik', 'Melewati batas pengajuan'];
+    var noteOk = st.rejectNote.trim().length >= 10;
+
+    return {
+      tabs: TABS.map(function (t) {
+        var on = t === st.tab;
+        var pending = t === 'Menunggu';
+        return {
+          label: t, count: count(t), on: on ? 'true' : 'false',
+          bg: on ? '#FFFFFF' : 'transparent', fg: on ? '#065F46' : '#4B5563', fw: on ? 700 : 500, sh: on ? '0 1px 2px rgba(17,24,39,0.08)' : 'none',
+          cBg: pending && count(t) ? '#F59E0B' : '#E5E7EB', cFg: pending && count(t) ? '#FFFFFF' : '#374151',
+          pick: function () { self.setState({ tab: t }); }
+        };
+      }),
+      course: st.course,
+      courseOptions: courses,
+      onCourse: function (e) { self.setState({ course: e.target.value }); },
+      items: items,
+      isEmpty: items.length === 0,
+      emptyTitle: st.tab === 'Menunggu' ? 'Tidak ada pengajuan yang menunggu' : 'Belum ada pengajuan ' + st.tab.toLowerCase(),
+
+      previewOpen: !!pv,
+      pv: pv ? { file: pv.file, name: pv.name, size: pv.size } : { file: '', name: '', size: '' },
+      closePreview: function () { self.setState({ previewId: null }); },
+
+      rejectOpen: !!rj,
+      rj: rj ? { name: rj.name, course: rj.course, p: rj.p, attendance: rj.attendance } : { name: '', course: '', p: '', attendance: '' },
+      quickReasons: QUICK.map(function (l) { return { label: l, use: function () { self.setState({ rejectNote: l + '.', rejectError: false }); } }; }),
+      rejectNote: st.rejectNote,
+      onRejectNote: function (e) { self.setState({ rejectNote: String(e.target.value || '').slice(0, 300), rejectError: false }); },
+      rjInvalid: st.rejectError ? 'true' : 'false',
+      rjBorder: st.rejectError ? '#DC2626' : '#D1D5DB',
+      rjFg: st.rejectError ? '#B91C1C' : '#6B7280',
+      rjHelp: st.rejectError ? 'Tulis alasan minimal 10 karakter.' : 'Minimal 10 karakter. Pilih alasan cepat di atas atau tulis sendiri.',
+      cancelReject: function () { self.setState({ rejectId: null }); },
+      confirmReject: function () {
+        if (!noteOk) { self.setState({ rejectError: true }); return; }
+        var before = self.state.items;
+        var target = rj;
+        self.setState({ items: self.update(target.id, { status: 'Ditolak', note: 'Ditolak: ' + self.state.rejectNote.trim() }), rejectId: null });
+        self.showToast('Pengajuan ' + target.name + ' ditolak. Presensi tetap ' + target.attendance + '.', before);
+      },
+
+      toastOn: !!st.toast,
+      toastMsg: st.toast ? st.toast.msg : '',
+      canUndo: !!(st.toast && st.toast.undo),
+      undo: function () { if (self.state.toast && self.state.toast.undo) { self.setState({ items: self.state.toast.undo }); self.showToast('Keputusan dibatalkan.'); } },
+      dismissToast: function () { clearTimeout(self.toastTimer); self.setState({ toast: null }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

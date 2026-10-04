@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Jadwal Akademik · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; background: #F8FAFC">
+<dc-import name="CrudPage" config="{{config}}" height="1000" hint-size="1440px,1000px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  /*
+   * Jadwal Akademik = tampilan baca-saja dari Pemetaan Kelas.
+   * Satu sumber data: kelas, mata kuliah, dosen, hari, jam, dan ruang hanya diinput di Pemetaan Kelas,
+   * jadi tidak ada dua versi jadwal yang bisa saling bertentangan.
+   */
+  renderVals() {
+    var CLASSES = ['SI-3A', 'SI-3B', 'SI-3C', 'SI-5A', 'SI-5B', 'SI-5C', 'SI-5D', 'SI-7A', 'SI-7B'];
+    var LECTURERS = ['Gusmayeni, S.Kom., M.Kom', 'Budi Wicaksono, M.T.', 'Sari Anggraini, M.Sc.', 'Ahmad Fauzi, M.Kom', 'Yusuf Permana, Ph.D.', 'Lina Marlina, M.Kom', 'Taufik Hidayat, M.T.'];
+    var DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+    // Periode dari master Periode Akademik; default = periode Aktif.
+    var ACTIVE = 'Ganjil 2026/2027';
+    var PERIODS = ['Genap 2026/2027', 'Ganjil 2026/2027', 'Genap 2025/2026'];
+    var PERIOD_STATUS = { 'Genap 2026/2027': 'Akan datang', 'Ganjil 2026/2027': 'Aktif', 'Genap 2025/2026': 'Selesai' };
+    var mk = function (course, cls, lecturer, room, day, start, end, period) {
+      var pr = period || ACTIVE;
+      return { period: pr, course: course, cls: cls, lecturer: lecturer, room: room, day: day, start: start, end: end, status: PERIOD_STATUS[pr] };
+    };
+    return {
+      config: {
+        title: 'Jadwal Akademik', subtitle: '{n} jadwal kuliah mingguan · bersumber dari Pemetaan Kelas', entity: 'jadwal', active: 'schedule',
+        readOnly: true, manageHref: 'ClassMapping.dc.html', manageLabel: 'Kelola di Pemetaan Kelas',
+        searchPlaceholder: 'Cari mata kuliah, kelas, dosen, ruang', searchKeys: ['course', 'cls', 'lecturer', 'room'], labelKey: 'course', pageSize: 8,
+        notice: 'Jadwal dibuat otomatis dari Pemetaan Kelas. Untuk menambah, mengubah, atau menghapus jadwal, buka Pemetaan Kelas. Bentrok ruang, dosen, dan kelas dicek di sana.',
+        filters: [
+          { key: 'period', label: 'Filter periode', allLabel: 'Semua periode', options: PERIODS, default: ACTIVE },
+          { key: 'day', label: 'Filter hari', allLabel: 'Semua hari', options: DAYS },
+          { key: 'cls', label: 'Filter kelas', allLabel: 'Semua kelas', options: CLASSES },
+          { key: 'lecturer', label: 'Filter dosen', allLabel: 'Semua dosen', options: LECTURERS }
+        ],
+        columns: [
+          { key: 'course', label: 'Mata kuliah', type: 'strong', subKey: 'lecturer' },
+          { key: 'cls', label: 'Kelas', type: 'text' },
+          { key: 'room', label: 'Ruang', type: 'text' },
+          { key: 'day', label: 'Hari', type: 'text' },
+          { key: 'start', label: 'Jam mulai', type: 'text' },
+          { key: 'end', label: 'Jam selesai', type: 'text' },
+          { key: 'status', label: 'Periode', type: 'badge' }
+        ],
+        // Dipakai panel detail (lihat) saja.
+        fields: [
+          { key: 'period', label: 'Periode akademik' },
+          { key: 'course', label: 'Mata kuliah' },
+          { key: 'cls', label: 'Kelas' },
+          { key: 'lecturer', label: 'Dosen pengampu' },
+          { key: 'day', label: 'Hari' },
+          { key: 'start', label: 'Jam mulai' },
+          { key: 'end', label: 'Jam selesai' },
+          { key: 'room', label: 'Ruang' }
+        ],
+        badges: {
+          Aktif: { bg: '#DCFCE7', fg: '#166534', dot: '#16A34A' },
+          'Akan datang': { bg: '#DBEAFE', fg: '#1E40AF', dot: '#2563EB' },
+          Selesai: { bg: '#F3F4F6', fg: '#374151', dot: '#6B7280' }
+        },
+        // Sama persis dengan data Pemetaan Kelas.
+        rows: [
+          mk('Pemrograman Web', 'SI-5A', 'Gusmayeni, S.Kom., M.Kom', 'Ruang 301', 'Senin', '08.00', '09.40'),
+          mk('Manajemen Proses Bisnis', 'SI-5A', 'Budi Wicaksono, M.T.', 'Ruang 210', 'Senin', '10.00', '11.40'),
+          mk('Sistem Basis Data', 'SI-3B', 'Gusmayeni, S.Kom., M.Kom', 'Ruang 204', 'Senin', '10.00', '11.40'),
+          mk('Pemrograman Mobile', 'SI-5A', 'Ahmad Fauzi, M.Kom', 'Lab 1', 'Senin', '13.00', '14.40'),
+          mk('Interaksi Manusia dan Komputer', 'SI-5C', 'Gusmayeni, S.Kom., M.Kom', 'Lab 2', 'Senin', '13.00', '14.40'),
+          mk('Pemrograman Web', 'SI-5B', 'Gusmayeni, S.Kom., M.Kom', 'Ruang 301', 'Senin', '15.30', '17.10'),
+          mk('Sistem Basis Data', 'SI-3A', 'Gusmayeni, S.Kom., M.Kom', 'Ruang 204', 'Selasa', '08.00', '09.40'),
+          mk('Interaksi Manusia dan Komputer', 'SI-5D', 'Gusmayeni, S.Kom., M.Kom', 'Lab 2', 'Selasa', '10.00', '11.40'),
+          mk('Pemrograman Web', 'SI-5C', 'Gusmayeni, S.Kom., M.Kom', 'Ruang 302', 'Rabu', '08.00', '09.40'),
+          mk('Statistika', 'SI-5A', 'Sari Anggraini, M.Sc.', 'Ruang 208', 'Rabu', '10.00', '11.40'),
+          mk('Statistika', 'SI-5B', 'Sari Anggraini, M.Sc.', 'Ruang 208', 'Rabu', '13.00', '14.40'),
+          mk('Proyek Akhir', 'SI-7A', 'Yusuf Permana, Ph.D.', 'Ruang 105', 'Rabu', '13.00', '15.30'),
+          mk('Interaksi Manusia dan Komputer', 'SI-5A', 'Gusmayeni, S.Kom., M.Kom', 'Lab 2', 'Kamis', '13.00', '14.40'),
+          mk('Jaringan Komputer', 'SI-5B', 'Taufik Hidayat, M.T.', 'Lab 1', 'Kamis', '13.00', '14.40'),
+          mk('Pemrograman Web', 'SI-5D', 'Gusmayeni, S.Kom., M.Kom', 'Ruang 301', 'Jumat', '08.00', '09.40'),
+          mk('Sistem Basis Data', 'SI-5A', 'Budi Wicaksono, M.T.', 'Ruang 204', 'Senin', '08.00', '09.40', 'Genap 2025/2026'),
+          mk('Statistika', 'SI-5A', 'Sari Anggraini, M.Sc.', 'Ruang 208', 'Selasa', '10.00', '11.40', 'Genap 2025/2026'),
+          mk('Sistem Basis Data', 'SI-5B', 'Budi Wicaksono, M.T.', 'Ruang 204', 'Rabu', '08.00', '09.40', 'Genap 2025/2026'),
+          mk('Jaringan Komputer', 'SI-5A', 'Taufik Hidayat, M.T.', 'Lab 1', 'Kamis', '13.00', '14.40', 'Genap 2025/2026')
+        ]
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

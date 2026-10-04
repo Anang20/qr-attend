@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Halaman CRUD</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 1440px; height: {{h}}px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827; overflow: hidden">
+<dc-import name="Sidebar" role="admin" active="{{cfg.active}}" height="{{sideH}}" hint-size="256px,968px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Niken" user-role="Administrator · Bagian Akademik" initials="N" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 18px; padding: 0 8px">
+
+<div style="display: flex; align-items: flex-end; justify-content: space-between">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">{{cfg.title}}</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">{{subtitle}}</p>
+</div>
+<sc-if value="{{canEdit}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{openAdd}}" style="height: 46px; padding: 0 20px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>{{cfg.addLabel}}</button></sc-if>
+<sc-if value="{{readOnly}}" hint-placeholder-val="{{ false }}"><a href="{{cfg.manageHref}}" style="height: 46px; padding: 0 20px; border-radius: 999px; border: 1.5px solid #065F46; color: #065F46; font-size: 14px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 8px">{{cfg.manageLabel}}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a></sc-if>
+</div>
+
+<sc-if value="{{hasNotice}}" hint-placeholder-val="{{ false }}">
+<div role="note" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 14px; background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; font-size: 14px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"></path></svg><span>{{cfg.notice}}</span></div>
+</sc-if>
+
+<section style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; gap: 12px; align-items: center">
+<label style="width: 300px; height: 44px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 0 14px; border-radius: 12px; border: 1px solid #E5E7EB; color: #6B7280"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><input type="search" aria-label="{{cfg.searchPlaceholder}}" placeholder="{{cfg.searchPlaceholder}}" value="{{q}}" onChange="{{onSearch}}" style="flex-grow: 1; min-width: 0; border: 0; outline: none; font: inherit; font-size: 14px; color: #111827; background: transparent"></label>
+<sc-for list="{{filters}}" as="fl" hint-placeholder-count="2">
+<select aria-label="{{fl.label}}" value="{{fl.value}}" onChange="{{fl.onChange}}" style="height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid {{fl.border}}; font: inherit; font-size: 14px; color: #111827; background: {{fl.bg}}; max-width: 200px">
+<option value="">{{fl.allLabel}}</option>
+<sc-for list="{{fl.options}}" as="o" hint-placeholder-count="3"><option value="{{o}}">{{o}}</option></sc-for>
+</select>
+</sc-for>
+<sc-if value="{{isFiltered}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{resetFilters}}" style="height: 44px; padding: 0 12px; border: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 600; color: #047857; cursor: pointer">Atur ulang</button></sc-if>
+<div style="flex-grow: 1"></div>
+<span role="status" style="font-size: 13px; color: #6B7280">{{resultText}}</span>
+</div>
+
+<table style="width: 100%; border-collapse: collapse; font-size: 14px">
+<thead><tr style="text-align: left; color: #6B7280; font-size: 12px">
+<sc-for list="{{cfg.columns}}" as="c" hint-placeholder-count="6"><th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB">{{c.label}}</th></sc-for>
+<th scope="col" style="font-weight: 600; padding: 12px 10px; background: #F9FAFB; text-align: right; width: 140px">Aksi</th>
+</tr></thead>
+<tbody>
+<sc-for list="{{pageRows}}" as="r" hint-placeholder-count="8">
+<tr style="background: {{r.bg}}">
+<sc-for list="{{r.cells}}" as="c" hint-placeholder-count="6">
+<td style="padding: 10px; border-bottom: 1px solid #F3F4F6; vertical-align: middle">
+<sc-if value="{{c.isPerson}}" hint-placeholder-val="{{ false }}"><div style="display: flex; align-items: center; gap: 12px"><span style="flex-shrink: 0; width: 36px; height: 36px; border-radius: 999px; background: #ECFDF5; color: #065F46; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{c.ini}}</span><div style="display: flex; flex-direction: column; min-width: 0"><span style="font-weight: 600">{{c.text}}</span><span style="font-size: 12px; color: #6B7280">{{c.sub}}</span></div></div></sc-if>
+<sc-if value="{{c.isStrong}}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column"><span style="font-weight: 600">{{c.text}}</span><sc-if value="{{c.hasSub}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #6B7280">{{c.sub}}</span></sc-if></div></sc-if>
+<sc-if value="{{c.isText}}" hint-placeholder-val="{{ true }}"><span style="color: #4B5563; font-variant-numeric: tabular-nums">{{c.text}}</span></sc-if>
+<sc-if value="{{c.isBadge}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; background: {{c.bBg}}; color: {{c.bFg}}"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{c.dot}}"></span>{{c.text}}</span></sc-if>
+<sc-if value="{{c.isRate}}" hint-placeholder-val="{{ false }}"><div style="display: flex; align-items: center; gap: 8px"><div style="width: 64px; height: 6px; border-radius: 999px; background: #F3F4F6; overflow: hidden"><div style="width: {{c.rate}}%; height: 100%; border-radius: 999px; background: {{c.fill}}"></div></div><span style="font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; color: {{c.rateFg}}">{{c.text}}</span></div></sc-if>
+</td>
+</sc-for>
+<td style="padding: 8px 10px; border-bottom: 1px solid #F3F4F6"><div style="display: flex; justify-content: flex-end; gap: 6px">
+<button type="button" onClick="{{r.view}}" aria-label="Lihat detail {{r.label}}" title="Lihat detail" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+<sc-if value="{{canEdit}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{r.edit}}" aria-label="Ubah {{r.label}}" title="Ubah" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path></svg></button></sc-if>
+<sc-if value="{{canEdit}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{r.del}}" aria-label="Hapus {{r.label}}" title="Hapus" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid #FECACA; background: #FFFFFF; color: #B91C1C; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"></path></svg></button></sc-if>
+</div></td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+
+<sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 0; text-align: center">
+<span style="width: 56px; height: 56px; border-radius: 18px; background: #F3F4F6; color: #4B5563; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></span>
+<strong style="font-size: 16px">{{emptyTitle}}</strong>
+<span style="font-size: 14px; color: #6B7280">{{emptyText}}</span>
+<sc-if value="{{isFiltered}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{resetFilters}}" style="height: 40px; padding: 0 16px; border-radius: 999px; border: 0; background: #ECFDF5; color: #065F46; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Atur ulang pencarian</button></sc-if>
+</div>
+</sc-if>
+
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="font-size: 13px; color: #6B7280">{{rangeText}}</span>
+<nav aria-label="Halaman" style="display: flex; gap: 6px">
+<button type="button" onClick="{{prevPage}}" disabled="{{isFirst}}" aria-label="Halaman sebelumnya" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid #E5E7EB; background: #FFFFFF; color: {{prevFg}}; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+<sc-for list="{{pages}}" as="p" hint-placeholder-count="2"><button type="button" onClick="{{p.go}}" aria-current="{{p.cur}}" aria-label="Halaman {{p.n}}" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid {{p.border}}; background: {{p.bg}}; color: {{p.fg}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">{{p.n}}</button></sc-for>
+<button type="button" onClick="{{nextPage}}" disabled="{{isLast}}" aria-label="Halaman berikutnya" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid #E5E7EB; background: #FFFFFF; color: {{nextFg}}; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+</nav>
+</div>
+</section>
+</main>
+</div>
+
+<sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
+<div onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; background: rgba(17,24,39,0.4)"></div>
+<aside role="dialog" aria-modal="true" aria-labelledby="crud-sheet-title" style="position: absolute; top: 16px; right: 16px; bottom: 16px; width: 480px; box-sizing: border-box; background: #FFFFFF; border-radius: 24px; display: flex; flex-direction: column; box-shadow: -12px 0 40px rgba(17,24,39,0.16); overflow: hidden">
+<div style="padding: 26px 28px 18px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; border-bottom: 1px solid #F3F4F6">
+<div style="display: flex; flex-direction: column; gap: 4px"><h2 id="crud-sheet-title" style="margin: 0; font-size: 22px; font-weight: 800">{{sheet.title}}</h2><span style="font-size: 14px; color: #6B7280">{{sheet.desc}}</span></div>
+<button type="button" onClick="{{closeSheet}}" aria-label="Tutup panel" style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+
+<div style="flex-grow: 1; overflow-y: auto; padding: 20px 28px; display: flex; flex-direction: column; gap: 16px">
+<sc-if value="{{sheet.isView}}" hint-placeholder-val="{{ false }}">
+<dl style="margin: 0; display: flex; flex-direction: column">
+<sc-for list="{{viewItems}}" as="v" hint-placeholder-count="6"><div style="display: flex; justify-content: space-between; gap: 16px; padding: 13px 0; border-bottom: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">{{v.label}}</dt><dd style="margin: 0; font-weight: 700; text-align: right">{{v.value}}</dd></div></sc-for>
+</dl>
+</sc-if>
+
+<sc-if value="{{sheet.isForm}}" hint-placeholder-val="{{ true }}">
+<sc-if value="{{hasErrors}}" hint-placeholder-val="{{ false }}"><div role="alert" style="display: flex; gap: 10px; padding: 12px 14px; border-radius: 12px; background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; font-size: 13px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path></svg><span>{{errorSummary}}</span></div></sc-if>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 12px">
+<sc-for list="{{formFields}}" as="f" hint-placeholder-count="5">
+<div style="grid-column: {{f.span}}; display: flex; flex-direction: column; gap: 6px">
+<label for="{{f.id}}" style="font-size: 13px; font-weight: 600">{{f.label}}<sc-if value="{{f.required}}" hint-placeholder-val="{{ true }}"><span style="color: #B91C1C"> *</span></sc-if></label>
+<sc-if value="{{f.isSelect}}" hint-placeholder-val="{{ false }}"><select id="{{f.id}}" value="{{f.value}}" onChange="{{f.onChange}}" aria-invalid="{{f.invalid}}" style="height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid {{f.border}}; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option value="">Pilih…</option><sc-for list="{{f.options}}" as="o" hint-placeholder-count="3"><option value="{{o}}">{{o}}</option></sc-for></select></sc-if>
+<sc-if value="{{f.isInput}}" hint-placeholder-val="{{ true }}"><input id="{{f.id}}" type="{{f.inputType}}" value="{{f.value}}" onChange="{{f.onChange}}" placeholder="{{f.placeholder}}" aria-invalid="{{f.invalid}}" autoFocus="{{f.first}}" style="height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid {{f.border}}; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"></sc-if>
+<sc-if value="{{f.hasError}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #B91C1C">{{f.error}}</span></sc-if>
+<sc-if value="{{f.hasHint}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #6B7280">{{f.hint}}</span></sc-if>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</div>
+
+<div style="padding: 16px 28px 24px; border-top: 1px solid #F3F4F6; display: flex; justify-content: flex-end; gap: 10px">
+<sc-if value="{{sheet.isView}}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{closeSheet}}" style="height: 46px; padding: 0 18px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; color: #111827; cursor: pointer">Tutup</button>
+<sc-if value="{{canEdit}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{viewToEdit}}" style="height: 46px; padding: 0 22px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Ubah data</button></sc-if>
+</sc-if>
+<sc-if value="{{sheet.isForm}}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{closeSheet}}" style="height: 46px; padding: 0 18px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; color: #111827; cursor: pointer">Batal</button>
+<button type="button" onClick="{{save}}" style="height: 46px; padding: 0 22px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">{{sheet.saveLabel}}</button>
+</sc-if>
+</div>
+</aside>
+</sc-if>
+
+<sc-if value="{{confirmOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; background: rgba(17,24,39,0.45); display: flex; align-items: center; justify-content: center">
+<div role="alertdialog" aria-modal="true" aria-labelledby="crud-del-title" aria-describedby="crud-del-desc" style="width: 460px; box-sizing: border-box; background: #FFFFFF; border-radius: 24px; padding: 28px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 40px rgba(17,24,39,0.18)">
+<span style="width: 48px; height: 48px; border-radius: 14px; background: #FEE2E2; color: #B91C1C; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"></path></svg></span>
+<sc-if value="{{delAllowed}}" hint-placeholder-val="{{ true }}"><h2 id="crud-del-title" style="margin: 0; font-size: 20px; font-weight: 800">Hapus {{delLabel}}?</h2></sc-if>
+<sc-if value="{{delBlocked}}" hint-placeholder-val="{{ false }}"><h2 id="crud-del-title" style="margin: 0; font-size: 20px; font-weight: 800">{{delLabel}} tidak bisa dihapus</h2></sc-if>
+<p id="crud-del-desc" style="margin: 0; font-size: 14px; line-height: 1.6; color: #4B5563">{{delMessage}}</p>
+<sc-if value="{{delAllowed}}" hint-placeholder-val="{{ true }}"><div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px"><button type="button" onClick="{{cancelDelete}}" autoFocus="{{ true }}" style="height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; color: #111827; cursor: pointer">Batal</button><button type="button" onClick="{{confirmDelete}}" style="height: 44px; padding: 0 20px; border-radius: 999px; border: 0; background: #B91C1C; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Ya, hapus</button></div></sc-if>
+<sc-if value="{{delBlocked}}" hint-placeholder-val="{{ false }}"><div style="display: flex; justify-content: flex-end; margin-top: 6px"><button type="button" onClick="{{cancelDelete}}" autoFocus="{{ true }}" style="height: 44px; padding: 0 20px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Mengerti</button></div></sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{toastOn}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; right: 32px; bottom: 32px; width: 400px; box-sizing: border-box; display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: #111827; color: #FFFFFF; box-shadow: 0 12px 28px rgba(17,24,39,0.25)">
+<span style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 999px; background: #16A34A; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<span style="flex-grow: 1; font-size: 14px">{{toast.msg}}</span>
+<sc-if value="{{toast.canUndo}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{undo}}" style="flex-shrink: 0; height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid #4B5563; background: transparent; color: #FFFFFF; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Urungkan</button></sc-if>
+<button type="button" onClick="{{dismissToast}}" aria-label="Tutup notifikasi" style="flex-shrink: 0; width: 28px; height: 28px; border: 0; background: transparent; color: #D1D5DB; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"config":{"editor":null},"height":{"editor":"int","default":1000},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  /*
+   * CrudPage — engine CRUD generik untuk semua halaman master data admin.
+   * Setiap halaman hanya mengirim `config` (kolom, field form, filter, data awal).
+   * State (data, pencarian, filter, halaman, panel, dialog, toast) hidup di sini,
+   * sehingga tiap halaman tetap tipis dan perilakunya konsisten.
+   */
+  defaultConfig() { return {
+  title: 'Mahasiswa', subtitle: '{n} mahasiswa terdaftar', entity: 'mahasiswa', addLabel: 'Tambah Mahasiswa', active: 'students',
+  searchPlaceholder: 'Cari nama atau NIM', searchKeys: ['name', 'nim'], labelKey: 'name', pageSize: 8,
+  deleteNote: 'Akun akan dihapus dari kelasnya. Riwayat presensi tetap tersimpan di laporan untuk audit.',
+  filters: [{ key: 'cls', label: 'Kelas', allLabel: 'Semua kelas', options: ['SI-5A', 'SI-5B'] }],
+  columns: [{ key: 'name', label: 'Mahasiswa', type: 'person', subKey: 'email' }, { key: 'nim', label: 'NIM', type: 'text' }, { key: 'cls', label: 'Kelas', type: 'text' }, { key: 'status', label: 'Status', type: 'badge' }],
+  fields: [
+    { key: 'name', label: 'Nama lengkap', type: 'text', required: true, span: 2 },
+    { key: 'nim', label: 'NIM', type: 'text', required: true, unique: true, pattern: '^\\d{12}$', patternMsg: 'NIM harus 12 digit angka.' },
+    { key: 'cls', label: 'Kelas', type: 'select', required: true, options: ['SI-5A', 'SI-5B'] },
+    { key: 'email', label: 'Email kampus', type: 'email', required: true, span: 2 },
+    { key: 'status', label: 'Status', type: 'select', required: true, options: ['Aktif', 'Cuti'] }
+  ],
+  badges: { Aktif: { bg: '#DCFCE7', fg: '#166534', dot: '#16A34A' }, Cuti: { bg: '#FEF3C7', fg: '#92400E', dot: '#F59E0B' } },
+  rows: [
+    { name: 'Ray Pengki', nim: '221011450032', cls: 'SI-5A', email: 'ray.0032@student.unpam.ac.id', status: 'Aktif' },
+    { name: 'Bagas Saputra', nim: '221011450018', cls: 'SI-5A', email: 'bagas.0018@student.unpam.ac.id', status: 'Aktif' },
+    { name: 'Gita Maharani', nim: '221011450011', cls: 'SI-5B', email: 'gita.0011@student.unpam.ac.id', status: 'Cuti' }
+  ]
+  }; }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      rows: null, q: '', filters: this.initialFilters(), page: 1,
+      mode: null, editId: null, form: {}, errors: {}, submitted: false,
+      delId: null, toast: null, flashId: null
+    };
+  }
+  componentWillUnmount() { clearTimeout(this.toastTimer); }
+
+  cfg() {
+    if (this.props.config) { return this.props.config; }
+    if (!this._defaultCfg) { this._defaultCfg = this.defaultConfig(); }
+    return this._defaultCfg;
+  }
+
+  // Nilai awal filter (opsional `default` per filter, mis. periode akademik aktif).
+  initialFilters() {
+    var out = {};
+    (this.cfg().filters || []).forEach(function (f) { if (f.default) { out[f.key] = f.default; } });
+    return out;
+  }
+
+  // "2026-09-07" → "7 Sep 2026"
+  formatDate(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ''));
+    if (!m) { return iso; }
+    var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    return Number(m[3]) + ' ' + MON[Number(m[2]) - 1] + ' ' + m[1];
+  }
+
+  // Baris data: state lokal bila sudah diubah, selain itu data awal dari config.
+  baseRows() {
+    if (this.state.rows) { return this.state.rows; }
+    return (this.cfg().rows || []).map(function (r, i) { return Object.assign({ _id: 'r' + i }, r); });
+  }
+
+  showToast(msg, undoRows) {
+    var self = this;
+    clearTimeout(this.toastTimer);
+    this.setState({ toast: { msg: msg, undoRows: undoRows || null } });
+    this.toastTimer = setTimeout(function () { self.setState({ toast: null }); }, 6000);
+  }
+
+  toMinutes(t) {
+    var m = /^(\d{1,2})[.:](\d{2})$/.exec(String(t || '').trim());
+    return m ? Number(m[1]) * 60 + Number(m[2]) : NaN;
+  }
+
+  validate(form, rows, editId) {
+    var self = this;
+    var cfg = this.cfg();
+    var errors = {};
+    cfg.fields.forEach(function (f) {
+      var v = String(form[f.key] == null ? '' : form[f.key]).trim();
+      if (f.required && !v) { errors[f.key] = 'Wajib diisi.'; return; }
+      if (!v) { return; }
+      if (f.pattern && !new RegExp(f.pattern).test(v)) { errors[f.key] = f.patternMsg || 'Format tidak valid.'; return; }
+      if (f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { errors[f.key] = 'Format email tidak valid.'; return; }
+      if (f.min != null && Number(v) < f.min) { errors[f.key] = 'Minimal ' + f.min + '.'; return; }
+      if (f.max != null && Number(v) > f.max) { errors[f.key] = 'Maksimal ' + f.max + '.'; return; }
+      if (f.unique && rows.some(function (r) { return r._id !== editId && String(r[f.key]).toLowerCase() === v.toLowerCase(); })) {
+        errors[f.key] = f.label + ' sudah terdaftar.'; return;
+      }
+      if (f.after) {
+        var a = self.toMinutes(form[f.after]);
+        var b = self.toMinutes(v);
+        if (!isNaN(a) && !isNaN(b) && b <= a) { errors[f.key] = 'Harus setelah jam mulai.'; }
+      }
+      // Tanggal ISO (YYYY-MM-DD) bisa dibandingkan sebagai string.
+      if (f.afterDate && form[f.afterDate] && v <= String(form[f.afterDate])) {
+        errors[f.key] = 'Harus setelah tanggal mulai.';
+      }
+    });
+    // Kombinasi beberapa kolom harus unik (mis. tahun ajaran + semester).
+    var ub = cfg.uniqueBy;
+    if (ub && !errors[ub.field] && ub.keys.every(function (k) { return String(form[k] || '').trim(); })) {
+      var dup = rows.some(function (r) {
+        return r._id !== editId && ub.keys.every(function (k) { return String(r[k]) === String(form[k]).trim(); });
+      });
+      if (dup) { errors[ub.field] = ub.message; }
+    }
+    // Rentang tanggal tidak boleh beririsan dengan baris lain.
+    var ov = cfg.noOverlap;
+    if (ov && !errors[ov.start] && !errors[ov.end] && form[ov.start] && form[ov.end]) {
+      var hitRange = rows.filter(function (r) {
+        return r._id !== editId && String(r[ov.start]) <= String(form[ov.end]) && String(form[ov.start]) <= String(r[ov.end]);
+      })[0];
+      if (hitRange) {
+        errors[ov.start] = 'Beririsan dengan ' + hitRange[cfg.labelKey || 'name'] + ' (' + self.formatDate(hitRange[ov.start]) + ' – ' + self.formatDate(hitRange[ov.end]) + ').';
+      }
+    }
+    // Aturan bentrok jadwal (hari + ruang/dosen/kelas yang waktunya beririsan).
+    if (!Object.keys(errors).length && cfg.conflicts) {
+      var s = this.toMinutes(form.start);
+      var e = this.toMinutes(form.end);
+      cfg.conflicts.forEach(function (rule) {
+        if (errors[rule.field]) { return; }
+        var hit = rows.filter(function (r) {
+          if (r._id === editId) { return false; }
+          var same = rule.same.every(function (k) { return String(r[k]) === String(form[k]); });
+          return same && self.toMinutes(r.start) < e && s < self.toMinutes(r.end);
+        })[0];
+        if (hit) {
+          errors[rule.field] = rule.label + ' bentrok dengan ' + hit.course + ' (' + hit.cls + '), ' + hit.day + ' ' + hit.start + '–' + hit.end + '.';
+        }
+      });
+    }
+    return errors;
+  }
+
+  renderVals() {
+    var self = this;
+    var cfg = this.cfg();
+    var st = this.state;
+    var rows = this.baseRows();
+    var badges = cfg.badges || {};
+    var labelKey = cfg.labelKey || 'name';
+    var pageSize = cfg.pageSize || 8;
+
+    // Pencarian + filter
+    var q = st.q.trim().toLowerCase();
+    var filtered = rows.filter(function (r) {
+      var okQ = !q || (cfg.searchKeys || []).some(function (k) { return String(r[k] || '').toLowerCase().indexOf(q) !== -1; });
+      var okF = (cfg.filters || []).every(function (f) { return !st.filters[f.key] || String(r[f.key]) === st.filters[f.key]; });
+      return okQ && okF;
+    });
+    var pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
+    var page = Math.min(st.page, pageCount);
+    var start = (page - 1) * pageSize;
+    var visible = filtered.slice(start, start + pageSize);
+    var defaults = this.initialFilters();
+    var isFiltered = !!q || (cfg.filters || []).some(function (f) { return (st.filters[f.key] || '') !== (defaults[f.key] || ''); });
+
+    var initials = function (name) {
+      var clean = String(name || '').replace(/^(Dr\.|Prof\.)\s*/i, '').split(',')[0].trim().split(/\s+/);
+      return ((clean[0] || '')[0] || '').toUpperCase() + ((clean[1] || '')[0] || '').toUpperCase();
+    };
+
+    var findRow = function (id) { return rows.filter(function (r) { return r._id === id; })[0]; };
+    var openForm = function (mode, row) {
+      var form = {};
+      cfg.fields.forEach(function (f) { form[f.key] = row ? String(row[f.key] == null ? '' : row[f.key]) : String((cfg.defaults || {})[f.key] || ''); });
+      self.setState({ mode: mode, editId: row ? row._id : null, form: form, errors: {}, submitted: false });
+    };
+
+    var pageRows = visible.map(function (r) {
+      return {
+        label: r[labelKey],
+        bg: r._id === st.flashId ? '#F0FDF4' : 'transparent',
+        cells: cfg.columns.map(function (c) {
+          var v = r[c.key];
+          var t = c.type || 'text';
+          var b = badges[v] || { bg: '#F3F4F6', fg: '#374151', dot: '#6B7280' };
+          var rate = Number(v) || 0;
+          return {
+            isPerson: t === 'person', isStrong: t === 'strong', isText: t === 'text' || t === 'date', isBadge: t === 'badge', isRate: t === 'rate',
+            text: t === 'rate' ? rate + '%' : (v == null || v === '' ? '—' : (t === 'date' ? self.formatDate(v) : String(v))),
+            sub: c.subKey ? (r[c.subKey] || '') : '', hasSub: !!(c.subKey && r[c.subKey]),
+            ini: initials(v), bBg: b.bg, bFg: b.fg, dot: b.dot,
+            rate: rate, fill: rate < 80 ? '#F59E0B' : '#15803D', rateFg: rate < 80 ? '#B45309' : '#111827'
+          };
+        }),
+        view: function () { self.setState({ mode: 'view', editId: r._id }); },
+        edit: function () { openForm('edit', r); },
+        del: function () { self.setState({ delId: r._id }); }
+      };
+    });
+
+    var editRow = st.editId ? findRow(st.editId) : null;
+    var entity = cfg.entity || 'data';
+    var sheet = {
+      isView: st.mode === 'view',
+      isForm: st.mode === 'add' || st.mode === 'edit',
+      title: st.mode === 'add' ? cfg.addLabel : st.mode === 'edit' ? 'Ubah ' + entity : (editRow ? editRow[labelKey] : ''),
+      desc: st.mode === 'add' ? 'Isi data lalu simpan. Kolom bertanda * wajib diisi.' : st.mode === 'edit' ? 'Perbarui data ' + (editRow ? editRow[labelKey] : '') + '.' : 'Detail ' + entity,
+      saveLabel: st.mode === 'add' ? 'Simpan' : 'Simpan perubahan'
+    };
+
+    var errors = st.errors;
+    var errCount = Object.keys(errors).length;
+    var formFields = cfg.fields.map(function (f, i) {
+      var err = errors[f.key];
+      return {
+        id: 'crud-' + f.key, key: f.key, label: f.label, required: !!f.required,
+        span: f.span === 2 ? 'span 2' : 'span 1',
+        isSelect: f.type === 'select', isInput: f.type !== 'select',
+        inputType: f.type === 'select' ? 'text' : (f.type || 'text'),
+        options: f.options || [], placeholder: f.placeholder || '',
+        value: st.form[f.key] == null ? '' : st.form[f.key],
+        first: i === 0,
+        hasError: !!err, error: err || '', invalid: err ? 'true' : 'false',
+        border: err ? '#DC2626' : '#D1D5DB',
+        hasHint: !!f.hint && !err, hint: f.hint || '',
+        onChange: function (e) {
+          var val = e.target.value;
+          var form = Object.assign({}, self.state.form);
+          form[f.key] = val;
+          var next = Object.assign({}, self.state.errors);
+          delete next[f.key];
+          self.setState({ form: form, errors: next });
+        }
+      };
+    });
+
+    var viewItems = editRow ? cfg.fields.map(function (f) {
+      var v = editRow[f.key];
+      return { label: f.label, value: v == null || v === '' ? '—' : (f.type === 'date' ? self.formatDate(v) : String(v)) };
+    }) : [];
+
+    var delRow = st.delId ? findRow(st.delId) : null;
+    // Baris yang sudah dipakai data lain (mis. periode dengan sesi presensi) tidak boleh dihapus.
+    var delBlocked = !!(delRow && cfg.deleteGuard && Number(delRow[cfg.deleteGuard.key]) > 0);
+    var totalLabel = String(rows.length).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    return {
+      cfg: cfg,
+      // readOnly: data dikelola di halaman lain (mis. Jadwal Akademik dari Pemetaan Kelas).
+      readOnly: !!cfg.readOnly,
+      canEdit: !cfg.readOnly,
+      h: Number(this.props.height) || 1000,
+      sideH: (Number(this.props.height) || 1000) - 32,
+      subtitle: String(cfg.subtitle || '').replace('{n}', totalLabel),
+      hasNotice: !!cfg.notice,
+      q: st.q,
+      onSearch: function (e) { self.setState({ q: e.target.value, page: 1 }); },
+      filters: (cfg.filters || []).map(function (f) {
+        var val = st.filters[f.key] || '';
+        return {
+          label: f.label, allLabel: f.allLabel, options: f.options, value: val,
+          border: val ? '#15803D' : '#E5E7EB', bg: val ? '#F0FDF4' : '#FFFFFF',
+          onChange: function (e) {
+            var fl = Object.assign({}, self.state.filters);
+            fl[f.key] = e.target.value;
+            self.setState({ filters: fl, page: 1 });
+          }
+        };
+      }),
+      isFiltered: isFiltered,
+      resetFilters: function () { self.setState({ q: '', filters: self.initialFilters(), page: 1 }); },
+      resultText: filtered.length + ' hasil',
+      pageRows: pageRows,
+      isEmpty: filtered.length === 0,
+      emptyTitle: rows.length === 0 ? 'Belum ada data' : 'Tidak ada data yang cocok',
+      emptyText: rows.length === 0 ? 'Tambahkan ' + entity + ' pertama untuk mulai.' : 'Coba kata kunci lain atau atur ulang filter.',
+      rangeText: filtered.length ? 'Menampilkan ' + (start + 1) + '–' + (start + visible.length) + ' dari ' + filtered.length : 'Menampilkan 0 data',
+      pages: Array.apply(null, Array(pageCount)).map(function (_, i) {
+        var on = i + 1 === page;
+        return { n: i + 1, cur: on ? 'page' : undefined, bg: on ? '#065F46' : '#FFFFFF', fg: on ? '#FFFFFF' : '#111827', border: on ? '#065F46' : '#E5E7EB', go: function () { self.setState({ page: i + 1 }); } };
+      }),
+      isFirst: page <= 1, isLast: page >= pageCount,
+      prevFg: page <= 1 ? '#D1D5DB' : '#111827', nextFg: page >= pageCount ? '#D1D5DB' : '#111827',
+      prevPage: function () { if (page > 1) { self.setState({ page: page - 1 }); } },
+      nextPage: function () { if (page < pageCount) { self.setState({ page: page + 1 }); } },
+
+      openAdd: function () { if (!cfg.readOnly) { openForm('add', null); } },
+      sheetOpen: !!st.mode,
+      sheet: sheet,
+      closeSheet: function () { self.setState({ mode: null, editId: null, errors: {} }); },
+      viewToEdit: function () { if (editRow && !cfg.readOnly) { openForm('edit', editRow); } },
+      viewItems: viewItems,
+      formFields: formFields,
+      hasErrors: errCount > 0,
+      errorSummary: 'Periksa kembali ' + errCount + ' isian yang ditandai merah.',
+      save: function () {
+        var cur = self.baseRows();
+        var form = self.state.form;
+        var errs = self.validate(form, cur, self.state.editId);
+        if (Object.keys(errs).length) { self.setState({ errors: errs, submitted: true }); return; }
+        var clean = {};
+        Object.keys(form).forEach(function (k) { clean[k] = String(form[k]).trim(); });
+        if (cfg.derive) { Object.assign(clean, cfg.derive(clean)); }
+        // Hanya satu baris boleh bernilai tertentu (mis. satu periode Aktif); baris lama diturunkan.
+        var sa = cfg.singleActive;
+        var demoted = [];
+        var settle = function (list, keepId) {
+          if (!sa || clean[sa.key] !== sa.value) { return list; }
+          return list.map(function (r) {
+            if (r._id === keepId || r[sa.key] !== sa.value) { return r; }
+            demoted.push(r[labelKey]);
+            var o = Object.assign({}, r);
+            o[sa.key] = sa.demoteTo;
+            return o;
+          });
+        };
+        var extra = function () { return demoted.length ? ' ' + demoted.join(', ') + ' diubah menjadi ' + sa.demoteTo + '.' : ''; };
+        if (self.state.mode === 'add') {
+          var id = 'n' + Date.now();
+          var row = Object.assign({ _id: id }, cfg.defaults || {}, clean);
+          self.setState({ rows: [row].concat(settle(cur, id)), mode: null, editId: null, q: '', filters: self.initialFilters(), page: 1, flashId: id });
+          self.showToast(clean[labelKey] + ' berhasil ditambahkan.' + extra(), demoted.length ? cur : null);
+        } else {
+          var eid = self.state.editId;
+          var next = settle(cur, eid).map(function (r) { return r._id === eid ? Object.assign({}, r, clean) : r; });
+          self.setState({ rows: next, mode: null, editId: null, flashId: eid });
+          self.showToast('Perubahan pada ' + clean[labelKey] + ' disimpan.' + extra(), demoted.length ? cur : null);
+        }
+      },
+
+      confirmOpen: !!delRow,
+      delLabel: delRow ? delRow[labelKey] : '',
+      delBlocked: delBlocked,
+      delAllowed: !delBlocked,
+      delMessage: delBlocked ? String(cfg.deleteGuard.message).replace('{n}', delRow[cfg.deleteGuard.key]) : cfg.deleteNote,
+      cancelDelete: function () { self.setState({ delId: null }); },
+      confirmDelete: function () {
+        var cur = self.baseRows();
+        var target = findRow(self.state.delId);
+        self.setState({ rows: cur.filter(function (r) { return r._id !== self.state.delId; }), delId: null });
+        self.showToast((target ? target[labelKey] : 'Data') + ' dihapus.', cur);
+      },
+
+      toastOn: !!st.toast,
+      toast: { msg: st.toast ? st.toast.msg : '', canUndo: !!(st.toast && st.toast.undoRows) },
+      undo: function () {
+        if (self.state.toast && self.state.toast.undoRows) {
+          self.setState({ rows: self.state.toast.undoRows });
+          self.showToast('Perubahan dibatalkan.');
+        }
+      },
+      dismissToast: function () { clearTimeout(self.toastTimer); self.setState({ toast: null }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

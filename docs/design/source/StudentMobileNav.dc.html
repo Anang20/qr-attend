@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Navigasi mobile mahasiswa</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: {{h}}px; pointer-events: none; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827; overflow: hidden">
+
+<header style="position: absolute; top: 0; left: 0; right: 0; height: 100px; box-sizing: border-box; padding: 44px 16px 0; background: #FFFFFF; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; gap: 10px; pointer-events: auto">
+<button type="button" onClick="{{openDrawer}}" aria-label="Buka menu" aria-expanded="{{expanded}}" aria-controls="student-drawer" style="width: 44px; height: 44px; border-radius: 12px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #111827; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+<a href="StudentDashboard.dc.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #111827; flex-grow: 1">
+<span style="width: 32px; height: 32px; border-radius: 10px; background: #064E3B; color: #D1FAE5; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><path d="M14 14h3v3h-3zM20 14v1M14 20h1M17 20h4M20 17v3"></path></svg></span>
+<span style="font-size: 17px; font-weight: 800; letter-spacing: -0.02em">QR Attend</span>
+</a>
+<button type="button" aria-label="Notifikasi, 1 belum dibaca" style="position: relative; width: 44px; height: 44px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 999px; background: #DC2626; border: 2px solid #FFFFFF"></span></button>
+</header>
+
+<sc-if value="{{open}}" hint-placeholder-val="{{ false }}">
+<div onClick="{{closeDrawer}}" aria-hidden="true" style="position: absolute; inset: 0; background: rgba(17,24,39,0.45); pointer-events: auto"></div>
+<nav id="student-drawer" role="dialog" aria-modal="true" aria-label="Menu mahasiswa" style="position: absolute; top: 0; left: 0; bottom: 0; width: 304px; box-sizing: border-box; padding: 52px 16px 20px; background: #FFFFFF; border-radius: 0 24px 24px 0; box-shadow: 12px 0 40px rgba(17,24,39,0.18); display: flex; flex-direction: column; gap: 20px; pointer-events: auto; overflow: hidden">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 0 4px 0 8px">
+<span style="display: flex; align-items: center; gap: 10px"><span style="width: 36px; height: 36px; border-radius: 11px; background: #064E3B; color: #D1FAE5; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><path d="M14 14h3v3h-3zM20 14v1M14 20h1M17 20h4M20 17v3"></path></svg></span><span style="font-size: 18px; font-weight: 800; letter-spacing: -0.02em">QR Attend</span></span>
+<button type="button" onClick="{{closeDrawer}}" aria-label="Tutup menu" autoFocus="{{ true }}" style="width: 40px; height: 40px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+
+<a href="StudentProfile.dc.html" aria-label="Buka profil" style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 16px; background: #F8FAFC; border: 1px solid #E5E7EB; text-decoration: none; color: #111827">
+<span style="flex-shrink: 0; width: 42px; height: 42px; border-radius: 999px; background: #D1FAE5; color: #065F46; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center">RP</span>
+<span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 14px; font-weight: 700">Ray Pengki</span><span style="font-size: 12px; color: #6B7280">Mahasiswa · SI-5A · Lihat profil</span></span>
+</a>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #6B7280; padding: 0 12px 6px">UTAMA</div>
+<sc-for list="{{items}}" as="it" hint-placeholder-count="4">
+<a href="{{it.href}}" aria-current="{{it.cur}}" style="position: relative; display: flex; align-items: center; gap: 12px; height: 48px; padding: 0 12px; border-radius: 12px; text-decoration: none; font-size: 15px; background: {{it.bg}}; color: {{it.fg}}; font-weight: {{it.fw}}"><span style="position: absolute; left: -16px; top: 12px; width: 4px; height: 24px; border-radius: 0 4px 4px 0; background: {{it.bar}}"></span>
+<sc-if value="{{it.isHome}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></sc-if>
+<sc-if value="{{it.isToday}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></sc-if>
+<sc-if value="{{it.isScan}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"></path></svg></sc-if>
+<sc-if value="{{it.isHistory}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5M12 7v5l3 2"></path></svg></sc-if>
+<sc-if value="{{it.isLeave}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6M12 12v6M9 15h6"></path></svg></sc-if>
+{{it.label}}
+<sc-if value="{{it.hasBadge}}" hint-placeholder-val="{{ false }}"><span style="margin-left: auto; font-size: 11px; font-weight: 700; color: #FFFFFF; background: #15803D; border-radius: 999px; padding: 2px 8px">{{it.badge}}</span></sc-if>
+</a>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #6B7280; padding: 0 12px 6px">SISTEM</div>
+<a href="#bantuan" style="display: flex; align-items: center; gap: 12px; height: 48px; padding: 0 12px; border-radius: 12px; text-decoration: none; font-size: 15px; color: #4B5563; font-weight: 500"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"></path></svg>Bantuan</a>
+</div>
+
+<div style="flex-grow: 1"></div>
+<a href="Main.dc.html" style="height: 48px; border-radius: 12px; border: 1px solid #E5E7EB; color: #B91C1C; font-size: 15px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"></path></svg>Keluar</a>
+</nav>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"active":{"editor":"enum","options":["dashboard","today","scan","history","leave","none"],"default":"dashboard"},"height":{"editor":"int","default":844},"startOpen":{"editor":"boolean","default":false,"section":"Demo"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  /*
+   * Header + drawer hamburger untuk semua layar mobile mahasiswa.
+   * Isi menu sama persis dengan sidebar desktop mahasiswa (UTAMA + SISTEM),
+   * hanya tujuan tautannya yang mengarah ke layar versi mobile.
+   * Dipasang di lapisan atas layar (pointer-events: none), jadi hanya
+   * header dan drawer yang menangkap klik; konten di bawahnya tetap bisa dipakai.
+   */
+  constructor(props) {
+    super(props);
+    // Tanpa prop `active` berarti artboard komponen ini sendiri: tampilkan drawer terbuka sebagai pratinjau.
+    var open = props.startOpen != null ? !!props.startOpen : !props.active;
+    this.state = { open: open };
+  }
+  componentDidUpdate(prev) {
+    if (prev.startOpen !== this.props.startOpen && this.props.startOpen != null) { this.setState({ open: !!this.props.startOpen }); }
+  }
+  renderVals() {
+    var self = this;
+    var active = this.props.active || 'dashboard';
+    var defs = [
+      { key: 'dashboard', label: 'Beranda', href: 'StudentDashboard.dc.html' },
+      { key: 'today', label: 'Kelas Hari Ini', href: 'TodayClass.dc.html' },
+      { key: 'scan', label: 'Pindai QR', href: 'QRScanner.dc.html', badge: 'Dibuka' },
+      { key: 'history', label: 'Riwayat Presensi', href: 'StudentHistory.dc.html' },
+      { key: 'leave', label: 'Pengajuan Izin', href: 'LeaveRequest.dc.html' }
+    ];
+    return {
+      h: Number(this.props.height) || 844,
+      open: this.state.open,
+      expanded: this.state.open ? 'true' : 'false',
+      openDrawer: function () { self.setState({ open: true }); },
+      closeDrawer: function () { self.setState({ open: false }); },
+      items: defs.map(function (d) {
+        var on = d.key === active;
+        return {
+          label: d.label, href: d.href,
+          isHome: d.key === 'dashboard', isToday: d.key === 'today', isScan: d.key === 'scan', isHistory: d.key === 'history', isLeave: d.key === 'leave',
+          hasBadge: !!d.badge, badge: d.badge || '',
+          cur: on ? 'page' : undefined,
+          bg: on ? '#ECFDF5' : 'transparent', fg: on ? '#065F46' : '#4B5563', fw: on ? 700 : 500, bar: on ? '#15803D' : 'transparent'
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

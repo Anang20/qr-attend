@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Beranda mahasiswa (desktop) · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1060px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827">
+<dc-import name="Sidebar" role="student" active="dashboard" height="1028" hint-size="256px,1028px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Ray Pengki" user-role="Mahasiswa · SI-5A" initials="RP" search-placeholder="Cari mata kuliah atau riwayat presensi…" profile-href="StudentProfileDesktop.dc.html" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 20px; padding: 0 8px">
+
+<div style="display: flex; align-items: flex-end; justify-content: space-between">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 34px; font-weight: 800; letter-spacing: -0.03em">Halo, Ray</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">Senin, 28 September 2026 · 08.05 · NIM 221011450032 · Kelas SI-5A</p>
+</div>
+<div style="display: flex; gap: 12px">
+<a href="StudentHistoryDesktop.dc.html" style="height: 48px; padding: 0 22px; border-radius: 999px; border: 1.5px solid #065F46; color: #065F46; font-size: 15px; font-weight: 700; text-decoration: none; display: flex; align-items: center">Riwayat presensi</a>
+<a href="QRScannerDesktop.dc.html" style="height: 48px; padding: 0 22px; border-radius: 999px; background: #065F46; color: #FFFFFF; font-size: 15px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"></path></svg>Pindai QR</a>
+</div>
+</div>
+
+<div aria-label="Status kehadiran" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+<a href="StudentHistoryDesktop.dc.html" style="display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-radius: 18px; background: #F0FDF4; border: 1px solid #BBF7D0; text-decoration: none; color: #111827"><span style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 14px; background: #DCFCE7; color: #15803D; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"></path><path d="m9 12 2 2 4-4"></path></svg></span><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><strong style="font-size: 16px">Kelayakan UAS: Aman di 5 mata kuliah</strong><span style="font-size: 13px; line-height: 1.4; color: #4B5563">Sisa jatah absen paling sedikit: Interaksi Manusia dan Komputer, 3 kali lagi</span></span><span style="flex-shrink: 0; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: #166534">Riwayat<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
+<a href="LeaveRequestDesktop.dc.html" style="display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-radius: 18px; background: #FFFBEB; border: 1px solid #FDE68A; text-decoration: none; color: #111827"><span style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 14px; background: #FEF3C7; color: #B45309; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6M9 15l2 2 4-4"></path></svg></span><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><strong style="font-size: 16px">1 pengajuan izin menunggu</strong><span style="font-size: 13px; line-height: 1.4; color: #4B5563">Manajemen Proses Bisnis · pertemuan 5 · menunggu Budi Wicaksono, M.T.</span></span><span style="flex-shrink: 0; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: #92400E">Lihat<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
+</div>
+
+<div style="display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px">
+<section aria-labelledby="cur-title" style="border-radius: 24px; background: #064E3B; color: #FFFFFF; padding: 26px 28px; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span id="cur-title" style="font-size: 13px; font-weight: 700; letter-spacing: 0.06em; color: #A7F3D0">KELAS SAAT INI · PERTEMUAN 5</span><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #064E3B; background: #D1FAE5; border-radius: 999px; padding: 4px 10px"><span style="width: 6px; height: 6px; border-radius: 999px; background: #15803D"></span>Presensi dibuka</span></div>
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 6px"><h2 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">Pemrograman Web</h2><span style="font-size: 15px; color: #D1FAE5">SI-5A · 08.00 – 09.40 · Ruang 301</span><span style="font-size: 14px; color: #A7F3D0">Gusmayeni, S.Kom., M.Kom</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px"><span style="font-size: 12px; color: #A7F3D0">Sisa waktu</span><span style="font-size: 44px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums">19:42</span></div>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #065F46; font-size: 14px; color: #ECFDF5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path></svg><span><strong>Presensi sedang dibuka.</strong> Anda belum melakukan presensi. Pastikan berada dalam radius 5 m dari titik presensi.</span></div>
+<div style="display: flex; gap: 12px">
+<a href="QRScannerDesktop.dc.html" style="height: 52px; padding: 0 26px; border-radius: 999px; background: #FFFFFF; color: #064E3B; font-size: 15px; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"></path></svg>Pindai QR Code</a>
+<a href="TodayClassDesktop.dc.html" style="height: 52px; padding: 0 22px; border-radius: 999px; border: 1px solid #047857; color: #D1FAE5; font-size: 15px; font-weight: 600; text-decoration: none; display: flex; align-items: center">Detail kelas</a>
+</div>
+</section>
+
+<section aria-labelledby="pct-title" style="border-radius: 24px; background: #FFFFFF; border: 1px solid #E5E7EB; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<h2 id="pct-title" style="margin: 0; font-size: 17px; font-weight: 700">Kehadiran semester ini</h2>
+<div style="display: flex; align-items: center; gap: 24px">
+<svg width="132" height="132" viewBox="0 0 104 104" role="img" aria-label="Kehadiran 94 persen"><circle cx="52" cy="52" r="42" fill="none" stroke="#ECFDF5" stroke-width="12"></circle><circle cx="52" cy="52" r="42" fill="none" stroke="#15803D" stroke-width="12" stroke-linecap="round" stroke-dasharray="248 264" transform="rotate(-90 52 52)"></circle><text x="52" y="58" text-anchor="middle" font-size="20" font-weight="800" fill="#111827" font-family="Plus Jakarta Sans, system-ui, sans-serif">94%</text></svg>
+<dl style="margin: 0; flex-grow: 1; display: flex; flex-direction: column; gap: 10px; font-size: 14px">
+<div style="display: flex; align-items: center; gap: 8px"><span style="width: 9px; height: 9px; border-radius: 999px; background: #16A34A"></span><dt style="color: #4B5563">Hadir</dt><dd style="margin: 0 0 0 auto; font-weight: 700">30</dd></div>
+<div style="display: flex; align-items: center; gap: 8px"><span style="width: 9px; height: 9px; border-radius: 999px; background: #F59E0B"></span><dt style="color: #4B5563">Terlambat</dt><dd style="margin: 0 0 0 auto; font-weight: 700">1</dd></div>
+<div style="display: flex; align-items: center; gap: 8px"><span style="width: 9px; height: 9px; border-radius: 999px; background: #DC2626"></span><dt style="color: #4B5563">Tidak hadir</dt><dd style="margin: 0 0 0 auto; font-weight: 700">1</dd></div>
+<div style="display: flex; align-items: center; gap: 8px"><span style="width: 9px; height: 9px; border-radius: 999px; background: #2563EB"></span><dt style="color: #4B5563">Izin</dt><dd style="margin: 0 0 0 auto; font-weight: 700">1</dd></div>
+</dl>
+</div>
+<span style="font-size: 13px; color: #6B7280">31 dari 33 pertemuan tercatat hadir.</span>
+</section>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+<section aria-labelledby="today-title" style="border-radius: 22px; background: #FFFFFF; border: 1px solid #E5E7EB; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center"><h2 id="today-title" style="margin: 0; font-size: 16px; font-weight: 700">Jadwal hari ini</h2><a href="TodayClassDesktop.dc.html" style="font-size: 13px; font-weight: 600; text-decoration: none">Detail</a></div>
+<sc-for list="{{today}}" as="c" hint-placeholder-count="3">
+<div style="display: flex; gap: 12px; align-items: center; padding: 12px; border-radius: 14px; background: {{c.bg}}; border: 1px solid {{c.border}}">
+<div style="width: 50px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 700">{{c.start}}</span><span style="font-size: 12px; color: #6B7280">{{c.end}}</span></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 14px; font-weight: 700">{{c.course}}</span><span style="font-size: 12px; color: #6B7280">{{c.room}}</span></div>
+<span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: {{c.bBg}}; color: {{c.bFg}}">{{c.badge}}</span>
+</div>
+</sc-for>
+</section>
+
+<section aria-labelledby="hist-title" style="border-radius: 22px; background: #FFFFFF; border: 1px solid #E5E7EB; padding: 20px; display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px"><h2 id="hist-title" style="margin: 0; font-size: 16px; font-weight: 700">Presensi terakhir</h2><a href="StudentHistoryDesktop.dc.html" style="font-size: 13px; font-weight: 600; text-decoration: none">Lihat semua</a></div>
+<sc-for list="{{recent}}" as="h" hint-placeholder-count="4">
+<a href="AttendanceDetailDesktop.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid #F3F4F6; text-decoration: none; color: #111827">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 14px; font-weight: 600">{{h.course}}</span><span style="font-size: 12px; color: #6B7280">{{h.date}} · {{h.method}}</span></div>
+<span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: {{h.bBg}}; color: {{h.bFg}}">{{h.status}}</span>
+</a>
+</sc-for>
+</section>
+
+<section aria-labelledby="course-title" style="border-radius: 22px; background: #FFFFFF; border: 1px solid #E5E7EB; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<h2 id="course-title" style="margin: 0; font-size: 16px; font-weight: 700">Kehadiran per mata kuliah</h2>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px">
+<sc-for list="{{courses}}" as="c" hint-placeholder-count="5">
+<li style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; font-size: 13px"><span style="font-weight: 600">{{c.name}}</span><span style="font-weight: 700; font-variant-numeric: tabular-nums">{{c.v}}%</span></div>
+<div style="height: 8px; border-radius: 4px; background: #F3F4F6"><div style="width: {{c.v}}%; height: 100%; border-radius: 4px; background: {{c.fill}}"></div></div>
+</li>
+</sc-for>
+</ul>
+</section>
+</div>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1060}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var ST = {
+      Hadir: { bBg: '#DCFCE7', bFg: '#166534' },
+      Terlambat: { bBg: '#FEF3C7', bFg: '#92400E' },
+      'Tidak Hadir': { bBg: '#FEE2E2', bFg: '#991B1B' },
+      Izin: { bBg: '#DBEAFE', bFg: '#1E40AF' }
+    };
+    return {
+      today: [
+        { start: '08.00', end: '09.40', course: 'Pemrograman Web', room: 'Ruang 301', badge: 'Sekarang', bBg: '#DCFCE7', bFg: '#166534', bg: '#F0FDF4', border: '#A7F3D0' },
+        { start: '10.00', end: '11.40', course: 'Manajemen Proses Bisnis', room: 'Ruang 210', badge: 'Berikutnya', bBg: '#F3F4F6', bFg: '#374151', bg: '#FFFFFF', border: '#F3F4F6' },
+        { start: '13.00', end: '14.40', course: 'Pemrograman Mobile', room: 'Lab 1', badge: 'Nanti', bBg: '#F3F4F6', bFg: '#374151', bg: '#FFFFFF', border: '#F3F4F6' }
+      ],
+      recent: [
+        { course: 'Interaksi Manusia dan Komputer', date: 'Kam, 24 Sep', method: 'QR Code', status: 'Hadir' },
+        { course: 'Statistika', date: 'Rab, 23 Sep', method: 'Manual', status: 'Izin' },
+        { course: 'Pemrograman Mobile', date: 'Sen, 21 Sep', method: 'QR Code', status: 'Hadir' },
+        { course: 'Pemrograman Web', date: 'Sen, 21 Sep', method: 'QR Code', status: 'Terlambat' }
+      ].map(function (h) { return Object.assign({}, h, ST[h.status]); }),
+      courses: [
+        { name: 'Pemrograman Web', v: 100 },
+        { name: 'Interaksi Manusia dan Komputer', v: 100 },
+        { name: 'Pemrograman Mobile', v: 100 },
+        { name: 'Statistika', v: 86 },
+        { name: 'Manajemen Proses Bisnis', v: 83 }
+      ].map(function (c) { return Object.assign({}, c, { fill: c.v < 85 ? '#F59E0B' : '#15803D' }); })
+    };
+  }
+}
+</script>
+</body>
+</html>

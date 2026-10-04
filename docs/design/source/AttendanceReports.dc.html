@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Laporan presensi · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="position: relative; width: 1440px; height: 1300px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827">
+<dc-import name="Sidebar" role="admin" active="reports" height="1268" hint-size="256px,1268px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Niken" user-role="Administrator · Bagian Akademik" initials="N" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 16px; padding: 0 8px">
+<div style="display: flex; align-items: flex-end; justify-content: space-between">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Laporan Presensi</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">Saring, pratinjau, dan ekspor rekap presensi resmi.</p>
+</div>
+<div style="display: flex; gap: 10px">
+<button type="button" onClick="{{exportXlsx}}" disabled="{{noData}}" style="height: 46px; padding: 0 18px; border-radius: 999px; border: 1.5px solid #065F46; background: #FFFFFF; color: #065F46; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; opacity: {{btnOpacity}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6M9 13l6 5M15 13l-6 5"></path></svg>Ekspor Excel</button>
+<button type="button" onClick="{{exportPdf}}" disabled="{{noData}}" style="height: 46px; padding: 0 18px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; opacity: {{btnOpacity}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>Ekspor PDF</button>
+</div>
+</div>
+
+<section aria-label="Filter laporan" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 22px; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 16px; align-items: end">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #374151">Periode<select value="{{draft.period}}" onChange="{{on.period}}" style="width: 100%; min-width: 0; height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><sc-for list="{{periodOptions}}" as="o" hint-placeholder-count="2"><option value="{{o.name}}">{{o.label}}</option></sc-for></select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #374151">Tanggal<select value="{{draft.date}}" onChange="{{on.date}}" style="width: 100%; min-width: 0; height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><sc-for list="{{dateOptions}}" as="o" hint-placeholder-count="2"><option value="{{o.v}}">{{o.s}}</option></sc-for></select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #374151">Mata kuliah<select value="{{draft.course}}" onChange="{{on.course}}" style="width: 100%; min-width: 0; height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option>Pemrograman Web</option><option>Sistem Basis Data</option><option>Interaksi Manusia dan Komputer</option><option>Statistika</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #374151">Kelas<select value="{{draft.cls}}" onChange="{{on.cls}}" style="width: 100%; min-width: 0; height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option>SI-5A</option><option>SI-5B</option><option>SI-3B</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #374151">Dosen<select value="{{draft.lecturer}}" onChange="{{on.lecturer}}" style="width: 100%; min-width: 0; height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option>Gusmayeni, S.Kom., M.Kom</option><option>Ahmad Fauzi, M.Kom</option><option>Sari Anggraini, M.Sc.</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #374151">Status<select value="{{draft.status}}" onChange="{{on.status}}" style="width: 100%; min-width: 0; height: 44px; padding: 0 10px; border-radius: 12px; border: 1px solid #E5E7EB; font: inherit; font-size: 14px; color: #111827; background: #FFFFFF"><option value="">Semua</option><option>Hadir</option><option>Terlambat</option><option>Tidak Hadir</option><option>Izin</option></select></label>
+</div>
+<div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 14px; border-top: 1px solid #F3F4F6">
+<button type="button" onClick="{{resetFilters}}" style="height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: transparent; color: #047857; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Atur ulang</button>
+<button type="button" onClick="{{apply}}" style="height: 44px; padding: 0 22px; border-radius: 12px; border: 0; background: {{applyBg}}; color: {{applyFg}}; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Terapkan</button>
+</div>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{stats}}" as="s" hint-placeholder-count="6">
+<div style="padding: 16px 18px; border-radius: 18px; background: {{s.bg}}; border: 1px solid {{s.border}}; display: flex; flex-direction: column; gap: 6px">
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: {{s.labelFg}}"><sc-if value="{{s.hasDot}}" hint-placeholder-val="{{ true }}"><span style="width: 8px; height: 8px; border-radius: 999px; background: {{s.dot}}"></span></sc-if>{{s.label}}</span>
+<span style="font-size: 28px; font-weight: 800; line-height: 1; color: {{s.fg}}">{{s.value}}</span>
+</div>
+</sc-for>
+</div>
+
+<article aria-label="Pratinjau laporan" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 22px; padding: 28px 32px; display: flex; flex-direction: column; gap: 18px">
+<header style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 2px solid #064E3B">
+<div style="display: flex; align-items: center; gap: 14px">
+<span style="width: 48px; height: 48px; border-radius: 12px; border: 1.5px dashed #9CA3AF; color: #6B7280; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; text-align: center">LOGO</span>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 18px; font-weight: 800">Universitas Pamulang</span><span style="font-size: 13px; color: #6B7280">Fakultas Ilmu Komputer · Program Studi Sistem Informasi</span></div>
+</div>
+<div style="text-align: right; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 800; letter-spacing: 0.04em">LAPORAN PRESENSI</span><span style="font-size: 12px; color: #6B7280">{{rep.period}} · No. {{refNo}}</span></div>
+</header>
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 24px; font-size: 14px">
+<div style="display: flex; gap: 8px"><dt style="width: 90px; color: #6B7280">Mata kuliah</dt><dd style="margin: 0; font-weight: 700">{{rep.course}}</dd></div>
+<div style="display: flex; gap: 8px"><dt style="width: 90px; color: #6B7280">Kelas</dt><dd style="margin: 0; font-weight: 700">{{rep.cls}}</dd></div>
+<div style="display: flex; gap: 8px"><dt style="width: 90px; color: #6B7280">Dosen</dt><dd style="margin: 0; font-weight: 700">{{rep.lecturer}}</dd></div>
+<div style="display: flex; gap: 8px"><dt style="width: 90px; color: #6B7280">Tanggal</dt><dd style="margin: 0; font-weight: 700">{{rep.dateLabel}}</dd></div>
+<div style="display: flex; gap: 8px"><dt style="width: 90px; color: #6B7280">Jadwal</dt><dd style="margin: 0; font-weight: 700">{{rep.schedule}}</dd></div>
+<div style="display: flex; gap: 8px"><dt style="width: 90px; color: #6B7280">Jendela QR</dt><dd style="margin: 0; font-weight: 700">{{rep.qr}}</dd></div>
+</dl>
+<sc-if value="{{hasData}}" hint-placeholder-val="{{ true }}">
+<table style="width: 100%; border-collapse: collapse; font-size: 13px">
+<thead><tr style="text-align: left; color: #374151; font-size: 12px"><th scope="col" style="padding: 10px; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; background: #F9FAFB; width: 48px">No.</th><th scope="col" style="padding: 10px; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; background: #F9FAFB">NIM</th><th scope="col" style="padding: 10px; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; background: #F9FAFB">Nama mahasiswa</th><th scope="col" style="padding: 10px; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; background: #F9FAFB">Waktu presensi</th><th scope="col" style="padding: 10px; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; background: #F9FAFB">Metode</th><th scope="col" style="padding: 10px; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; background: #F9FAFB">Status</th></tr></thead>
+<tbody>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="9">
+<tr><td style="padding: 9px 10px; border-bottom: 1px solid #F3F4F6; color: #6B7280">{{r.no}}</td><td style="padding: 9px 10px; border-bottom: 1px solid #F3F4F6; font-variant-numeric: tabular-nums">{{r.id}}</td><td style="padding: 9px 10px; border-bottom: 1px solid #F3F4F6; font-weight: 600">{{r.name}}</td><td style="padding: 9px 10px; border-bottom: 1px solid #F3F4F6; font-variant-numeric: tabular-nums">{{r.time}}</td><td style="padding: 9px 10px; border-bottom: 1px solid #F3F4F6">{{r.method}}</td><td style="padding: 9px 10px; border-bottom: 1px solid #F3F4F6"><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 999px; font-size: 11px; font-weight: 700; background: {{r.bBg}}; color: {{r.bFg}}">{{r.status}}</span></td></tr>
+</sc-for>
+</tbody>
+</table>
+</sc-if>
+<sc-if value="{{noData}}" hint-placeholder-val="{{ false }}"><div style="padding: 36px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center"><strong style="font-size: 15px">Belum ada data untuk filter ini</strong><span style="font-size: 13px; color: #6B7280">Tidak ada sesi presensi untuk kombinasi mata kuliah, kelas, dan tanggal tersebut.</span></div></sc-if>
+<footer style="display: flex; justify-content: space-between; font-size: 12px; color: #6B7280"><span>Dibuat 28 Sep 2026, 09.45 oleh Niken · QR Attend</span><span>{{footerText}}</span></footer>
+</article>
+</main>
+</div>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; right: 32px; bottom: 32px; width: 400px; box-sizing: border-box; display: flex; gap: 12px; padding: 16px; border-radius: 16px; background: #111827; color: #FFFFFF; box-shadow: 0 12px 28px rgba(17,24,39,0.25)">
+<span style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 999px; background: #16A34A; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><strong style="font-size: 14px">{{toastTitle}}</strong><span style="font-size: 13px; color: #D1D5DB">{{toast}}</span></div>
+<button type="button" onClick="{{dismiss}}" aria-label="Tutup notifikasi" style="flex-shrink: 0; width: 28px; height: 28px; border: 0; background: transparent; color: #D1D5DB; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1300}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var init = this.initFilters();
+    this.state = { draft: Object.assign({}, init), applied: Object.assign({}, init), toast: '', toastTitle: '' };
+  }
+  initFilters() {
+    return { period: 'Ganjil 2026/2027', date: '2026-09-28', course: 'Pemrograman Web', cls: 'SI-5A', lecturer: 'Gusmayeni, S.Kom., M.Kom', status: '' };
+  }
+  // Dari master Periode Akademik; tanggal pertemuan mengikuti periode terpilih.
+  periods() {
+    return [
+      { name: 'Ganjil 2026/2027', active: true, course: 'Pemrograman Web', lecturer: 'Gusmayeni, S.Kom., M.Kom', dates: [
+        { v: '2026-09-28', s: 'Sen, 28 Sep 2026', l: 'Senin, 28 September 2026' },
+        { v: '2026-09-21', s: 'Sen, 21 Sep 2026', l: 'Senin, 21 September 2026' }
+      ] },
+      { name: 'Genap 2025/2026', active: false, course: 'Statistika', lecturer: 'Sari Anggraini, M.Sc.', dates: [
+        { v: '2026-06-23', s: 'Sel, 23 Jun 2026', l: 'Selasa, 23 Juni 2026' },
+        { v: '2026-06-16', s: 'Sel, 16 Jun 2026', l: 'Selasa, 16 Juni 2026' }
+      ] }
+    ];
+  }
+  renderVals() {
+    var self = this;
+    var ST = {
+      Hadir: { bBg: '#DCFCE7', bFg: '#166534' },
+      Terlambat: { bBg: '#FEF3C7', bFg: '#92400E' },
+      'Tidak Hadir': { bBg: '#FEE2E2', bFg: '#991B1B' },
+      Izin: { bBg: '#DBEAFE', bFg: '#1E40AF' }
+    };
+    var DATA = {
+      '2026-09-28|Pemrograman Web|SI-5A': { meet: 5, qr: '08.05 – 08.25', rows: [
+        { id: '221011450032', name: 'Ray Pengki', time: '08.05.17', method: 'QR Code', status: 'Hadir' },
+        { id: '221011450018', name: 'Bagas Saputra', time: '08.05.15', method: 'QR Code', status: 'Hadir' },
+        { id: '221011450041', name: 'Citra Lestari', time: '08.05.12', method: 'QR Code', status: 'Hadir' },
+        { id: '221011450007', name: 'Dimas Hidayat', time: '08.05.10', method: 'Manual', status: 'Hadir' },
+        { id: '221011450025', name: 'Eka Putri Wulandari', time: '08.05.08', method: 'QR Code', status: 'Hadir' },
+        { id: '221011450036', name: 'Fajar Nugroho', time: '08.24.51', method: 'QR Code', status: 'Terlambat' },
+        { id: '221011450011', name: 'Gita Maharani', time: '08.05.04', method: 'QR Code', status: 'Hadir' },
+        { id: '221011450029', name: 'Hendra Setiawan', time: '—', method: '—', status: 'Tidak Hadir' },
+        { id: '221011450044', name: 'Intan Rahayu', time: '08.30.12', method: 'Manual', status: 'Izin' },
+        { id: '221011450050', name: 'Joko Prasetyo', time: '—', method: '—', status: 'Tidak Hadir' }
+      ], totals: { total: 30, Hadir: 24, Terlambat: 1, 'Tidak Hadir': 3, Izin: 2 } },
+      '2026-09-21|Pemrograman Web|SI-5A': { meet: 4, qr: '08.03 – 08.23', rows: [
+        { id: '221011450032', name: 'Ray Pengki', time: '08.19.48', method: 'QR Code', status: 'Terlambat' },
+        { id: '221011450018', name: 'Bagas Saputra', time: '08.04.02', method: 'QR Code', status: 'Hadir' },
+        { id: '221011450041', name: 'Citra Lestari', time: '08.03.40', method: 'QR Code', status: 'Hadir' },
+        { id: '221011450007', name: 'Dimas Hidayat', time: '08.04.11', method: 'QR Code', status: 'Hadir' },
+        { id: '221011450025', name: 'Eka Putri Wulandari', time: '08.03.55', method: 'QR Code', status: 'Hadir' },
+        { id: '221011450029', name: 'Hendra Setiawan', time: '—', method: '—', status: 'Tidak Hadir' }
+      ], totals: { total: 30, Hadir: 27, Terlambat: 1, 'Tidak Hadir': 2, Izin: 0 } },
+      '2026-06-23|Statistika|SI-5A': { meet: 16, time: '10.00 – 11.40', qr: '10.04 – 10.24', rows: [
+        { id: '221011450032', name: 'Ray Pengki', time: '10.04.31', method: 'QR Code', status: 'Hadir' },
+        { id: '221011450018', name: 'Bagas Saputra', time: '10.04.40', method: 'QR Code', status: 'Hadir' },
+        { id: '221011450041', name: 'Citra Lestari', time: '10.05.02', method: 'QR Code', status: 'Hadir' },
+        { id: '221011450007', name: 'Dimas Hidayat', time: '10.21.13', method: 'QR Code', status: 'Terlambat' },
+        { id: '221011450029', name: 'Hendra Setiawan', time: '—', method: '—', status: 'Tidak Hadir' }
+      ], totals: { total: 30, Hadir: 26, Terlambat: 2, 'Tidak Hadir': 2, Izin: 0 } }
+    };
+    var a = this.state.applied;
+    var rec = DATA[a.date + '|' + a.course + '|' + a.cls];
+    var list = rec ? rec.rows.filter(function (r) { return !a.status || r.status === a.status; }) : [];
+    var t = rec ? rec.totals : { total: 0, Hadir: 0, Terlambat: 0, 'Tidak Hadir': 0, Izin: 0 };
+    var rate = t.total ? Math.round((t.Hadir + t.Terlambat + t.Izin) / t.total * 100) : 0;
+    var PER = this.periods();
+    var perOf = function (name) { return PER.filter(function (p) { return p.name === name; })[0] || PER[0]; };
+    var aPer = perOf(a.period);
+    var aDate = aPer.dates.filter(function (d) { return d.v === a.date; })[0] || aPer.dates[0];
+    var dateLabel = aDate.l;
+    var stats = [
+      { label: 'Total mahasiswa', value: String(t.total), hasDot: false },
+      { label: 'Hadir', value: String(t.Hadir), dot: '#16A34A', hasDot: true },
+      { label: 'Terlambat', value: String(t.Terlambat), dot: '#F59E0B', hasDot: true },
+      { label: 'Tidak hadir', value: String(t['Tidak Hadir']), dot: '#DC2626', hasDot: true },
+      { label: 'Izin', value: String(t.Izin), dot: '#2563EB', hasDot: true },
+      { label: 'Tingkat kehadiran', value: rate + '%', dark: true, hasDot: false }
+    ];
+    var dirty = JSON.stringify(this.state.draft) !== JSON.stringify(a);
+    var set = function (k) {
+      return function (e) {
+        var d = Object.assign({}, self.state.draft);
+        d[k] = e.target.value;
+        // Ganti periode → tanggal & mata kuliah ikut ke pertemuan terbaru di periode itu.
+        if (k === 'period') { d.date = perOf(d.period).dates[0].v; d.course = perOf(d.period).course; d.lecturer = perOf(d.period).lecturer; }
+        self.setState({ draft: d });
+      };
+    };
+    var fileBase = 'presensi_' + a.cls + '_' + a.date;
+    return {
+      draft: this.state.draft,
+      periodOptions: PER.map(function (p) { return { name: p.name, label: p.name }; }),
+      dateOptions: perOf(this.state.draft.period).dates,
+      on: { period: set('period'), date: set('date'), course: set('course'), cls: set('cls'), lecturer: set('lecturer'), status: set('status') },
+      apply: function () { self.setState({ applied: Object.assign({}, self.state.draft) }); },
+      applyBg: dirty ? '#065F46' : '#ECFDF5', applyFg: dirty ? '#FFFFFF' : '#065F46',
+      resetFilters: function () {
+        var init = self.initFilters();
+        self.setState({ draft: Object.assign({}, init), applied: Object.assign({}, init) });
+      },
+      stats: stats.map(function (s) {
+        return Object.assign({}, s, {
+          bg: s.dark ? '#064E3B' : '#FFFFFF', border: s.dark ? '#064E3B' : '#E5E7EB',
+          fg: s.dark ? '#FFFFFF' : '#111827', labelFg: s.dark ? '#A7F3D0' : '#6B7280'
+        });
+      }),
+      rep: {
+        course: a.course + (a.course === 'Pemrograman Web' ? ' (IF-305)' : ''), cls: a.cls, lecturer: a.lecturer, dateLabel: dateLabel,
+        period: aPer.name,
+        schedule: rec ? (rec.time || '08.00 – 09.40') + ' · Pertemuan ' + rec.meet : '—', qr: rec ? rec.qr : '—'
+      },
+      refNo: 'PRS-' + a.date.replace(/-/g, '') + '-' + a.cls.replace('-', '') + (rec ? '-' + rec.meet : ''),
+      rows: list.map(function (r, i) { return Object.assign({}, r, ST[r.status], { no: i + 1 }); }),
+      hasData: !!rec && list.length > 0,
+      noData: !rec || list.length === 0,
+      btnOpacity: (!rec || list.length === 0) ? 0.45 : 1,
+      footerText: rec ? 'Baris 1–' + list.length + ' dari ' + (a.status ? list.length : t.total) : 'Tidak ada data',
+      hasToast: !!this.state.toast,
+      toast: this.state.toast,
+      toastTitle: this.state.toastTitle,
+      exportXlsx: function () { self.setState({ toastTitle: 'Ekspor Excel siap', toast: fileBase + '.xlsx sedang diunduh.' }); },
+      exportPdf: function () { self.setState({ toastTitle: 'Ekspor PDF siap', toast: fileBase + '.pdf sedang diunduh.' }); },
+      dismiss: function () { self.setState({ toast: '' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Presensi berhasil · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827; overflow: hidden; display: flex; flex-direction: column">
+<main style="flex-grow: 1; padding: 72px 20px 0; display: flex; flex-direction: column; align-items: center; gap: 22px">
+<div style="position: relative; width: 112px; height: 112px; display: flex; align-items: center; justify-content: center">
+<span style="position: absolute; inset: 0; border-radius: 999px; background: #D1FAE5"></span>
+<span style="position: relative; width: 80px; height: 80px; border-radius: 999px; background: #15803D; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+</div>
+<div role="status" style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+<h1 style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.02em">Presensi Berhasil</h1>
+<p style="margin: 0; font-size: 15px; line-height: 1.5; color: #4B5563">Anda tercatat <strong style="color: #166534">Hadir</strong>.</p>
+</div>
+<section aria-label="Data presensi" style="width: 100%; box-sizing: border-box; border-radius: 22px; background: #FFFFFF; border: 1px solid #E5E7EB; padding: 6px 18px">
+<dl style="margin: 0; display: flex; flex-direction: column">
+<div style="display: flex; justify-content: space-between; padding: 13px 0; border-bottom: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">Mata kuliah</dt><dd style="margin: 0; font-weight: 700">Pemrograman Web</dd></div>
+<div style="display: flex; justify-content: space-between; padding: 13px 0; border-bottom: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">Kelas</dt><dd style="margin: 0; font-weight: 700">SI-5A</dd></div>
+<div style="display: flex; justify-content: space-between; padding: 13px 0; border-bottom: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">Tanggal</dt><dd style="margin: 0; font-weight: 700">Senin, 28 Sep 2026</dd></div>
+<div style="display: flex; justify-content: space-between; padding: 13px 0; border-bottom: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">Waktu</dt><dd style="margin: 0; font-weight: 700; font-variant-numeric: tabular-nums">08.05.17</dd></div>
+<div style="display: flex; justify-content: space-between; padding: 13px 0; border-bottom: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">Metode presensi</dt><dd style="margin: 0; font-weight: 700">QR Code</dd></div>
+<div style="display: flex; justify-content: space-between; padding: 13px 0; font-size: 14px"><dt style="color: #6B7280">Lokasi</dt><dd style="margin: 0; font-weight: 700">Terverifikasi · 3,2 m</dd></div>
+</dl>
+</section>
+</main>
+<div style="padding: 16px 20px 32px; display: flex; flex-direction: column; gap: 10px">
+<a href="StudentDashboard.dc.html" style="height: 54px; border-radius: 999px; background: #065F46; color: #FFFFFF; font-size: 16px; font-weight: 700; text-decoration: none; display: flex; align-items: center; justify-content: center">Kembali ke beranda</a>
+<a href="AttendanceDetail.dc.html" style="height: 50px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #111827; font-size: 15px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Lihat detail presensi</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Presensi gagal (desktop) · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827">
+<dc-import name="Sidebar" role="student" active="scan" height="868" hint-size="256px,868px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Ray Pengki" user-role="Mahasiswa · SI-5A" initials="RP" search-placeholder="Cari mata kuliah atau riwayat presensi…" profile-href="StudentProfileDesktop.dc.html" hint-size="1136px,72px"></dc-import>
+<main style="flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 0 8px 24px">
+<section style="width: 880px; box-sizing: border-box; border-radius: 28px; background: #FFFFFF; border: 1px solid #E5E7EB; padding: 40px 44px; display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 40px; align-items: center">
+<div style="display: flex; flex-direction: column; gap: 20px">
+<div style="position: relative; width: 96px; height: 96px; display: flex; align-items: center; justify-content: center">
+<span style="position: absolute; inset: 0; border-radius: 999px; background: {{v.ring}}"></span>
+<span style="position: relative; width: 68px; height: 68px; border-radius: 999px; background: {{v.fill}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+<sc-if value="{{v.isInfo}}" hint-placeholder-val="{{ false }}"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></sc-if>
+<sc-if value="{{v.isError}}" hint-placeholder-val="{{ true }}"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></sc-if>
+</span>
+</div>
+<div role="alert" style="display: flex; flex-direction: column; gap: 10px">
+<h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">{{v.title}}</h1>
+<p style="margin: 0; font-size: 16px; line-height: 1.55; color: #374151">{{v.message}}</p>
+<p style="margin: 0; font-size: 14px; line-height: 1.55; color: #6B7280">{{v.hint}}</p>
+</div>
+<div style="display: flex; gap: 12px">
+<a href="{{v.primaryHref}}" style="height: 50px; padding: 0 24px; border-radius: 999px; background: #065F46; color: #FFFFFF; font-size: 15px; font-weight: 700; text-decoration: none; display: flex; align-items: center">{{v.primary}}</a>
+<a href="StudentDashboardDesktop.dc.html" style="height: 50px; padding: 0 22px; border-radius: 999px; border: 1px solid #E5E7EB; color: #111827; font-size: 15px; font-weight: 600; text-decoration: none; display: flex; align-items: center">Kembali ke beranda</a>
+</div>
+</div>
+<section aria-labelledby="checks-title" style="border-radius: 20px; background: #F9FAFB; border: 1px solid #E5E7EB; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<h2 id="checks-title" style="margin: 0; font-size: 14px; font-weight: 700; color: #374151">Hasil validasi</h2>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 11px">
+<sc-for list="{{checks}}" as="c" hint-placeholder-count="7">
+<li style="display: flex; align-items: center; gap: 10px; font-size: 13px">
+<span style="flex-shrink: 0; width: 22px; height: 22px; border-radius: 999px; background: {{c.bg}}; color: {{c.fg}}; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800">{{c.mark}}</span>
+<span style="flex-grow: 1; color: {{c.text}}; font-weight: {{c.fw}}">{{c.label}}</span>
+<span style="font-size: 12px; color: {{c.fg2}}">{{c.state}}</span>
+</li>
+</sc-for>
+</ul>
+</section>
+</section>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"variant":{"editor":"enum","options":["outsideRadius","lowAccuracy","expired","duplicate","wrongClass","wrongSchedule","unauthorized","invalidQR"],"default":"outsideRadius"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    // Varian dari tautan pemindai (mis. AttendanceFailed.dc.html#expired); tanpa tautan pakai tweak di kanvas.
+    var fromLink = '';
+    try { fromLink = String(window.location.hash || '').replace('#', ''); } catch (err) { fromLink = ''; }
+    var key = fromLink || this.props.variant || 'outsideRadius';
+    var RED = { ring: '#FEE2E2', fill: '#DC2626', isError: true, isInfo: false };
+    var AMBER = { ring: '#FEF3C7', fill: '#B45309', isError: true, isInfo: false };
+    var BLUE = { ring: '#DBEAFE', fill: '#2563EB', isError: false, isInfo: true };
+    var V = {
+      unauthorized: Object.assign({ fail: 0, title: 'Perlu Masuk Ulang', message: 'Sesi login Anda berakhir sehingga identitas Anda tidak dapat dipastikan.', hint: 'Masuk kembali, lalu pindai QR selama sesi masih dibuka.', primary: 'Masuk', primaryHref: 'Main.dc.html' }, AMBER),
+      invalidQR: Object.assign({ fail: 1, title: 'QR Code Tidak Valid', message: 'Kode ini bukan QR sesi presensi QR Attend.', hint: 'Pindai QR yang ditampilkan dosen di layar kelas.', primary: 'Pindai lagi', primaryHref: 'QRScannerDesktop.dc.html' }, RED),
+      expired: Object.assign({ fail: 2, title: 'Sesi Presensi Kedaluwarsa', message: 'QR Code ini kedaluwarsa pukul 08.25 dan tidak bisa dipakai lagi.', hint: 'Minta dosen mencatat presensi Anda secara manual.', primary: 'Lihat kelas hari ini', primaryHref: 'TodayClassDesktop.dc.html' }, RED),
+      wrongClass: Object.assign({ fail: 3, title: 'Bukan Kelas Anda', message: 'QR Code ini untuk Pemrograman Web SI-5B. Anda terdaftar di SI-5A.', hint: 'Hanya mahasiswa di kelas yang ditentukan yang dapat memakai kode ini.', primary: 'Lihat kelas hari ini', primaryHref: 'TodayClassDesktop.dc.html' }, RED),
+      wrongSchedule: Object.assign({ fail: 4, title: 'Di Luar Jadwal Kuliah', message: 'Presensi Pemrograman Web hanya diterima pukul 08.00 – 09.40.', hint: 'Lakukan pindai pada jam kuliah yang dijadwalkan.', primary: 'Lihat kelas hari ini', primaryHref: 'TodayClassDesktop.dc.html' }, RED),
+      duplicate: Object.assign({ fail: 5, title: 'Presensi Sudah Tercatat', message: 'Anda sudah presensi di sesi ini pukul 08.05.17.', hint: 'Setiap mahasiswa hanya dapat presensi satu kali per sesi.', primary: 'Lihat detail presensi', primaryHref: 'AttendanceDetailDesktop.dc.html' }, BLUE),
+      lowAccuracy: Object.assign({ fail: 6, title: 'Lokasi Kurang Akurat', message: 'Akurasi lokasi perangkat Anda sekitar ±42 m, sedangkan batasnya 25 m.', hint: 'Nyalakan GPS atau mode akurasi tinggi, dekati jendela, tunggu beberapa detik, lalu pindai ulang.', primary: 'Coba lagi', primaryHref: 'QRScannerDesktop.dc.html' }, AMBER),
+      outsideRadius: Object.assign({ fail: 6, title: 'Presensi Gagal', message: 'Lokasi Anda saat ini berada di luar area presensi yang diizinkan.', hint: 'Anda sekitar 18 m dari Ruang 301. Mendekatlah ke titik presensi (maks. 5 m) lalu pindai ulang.', primary: 'Coba lagi', primaryHref: 'QRScannerDesktop.dc.html' }, RED)
+    };
+    var v = V[key] || V.outsideRadius;
+    var labels = ['Masuk sebagai mahasiswa', 'QR Code valid', 'Sesi masih dibuka', 'Anda terdaftar di kelas ini', 'Di dalam jadwal kuliah', 'Belum pernah presensi', 'Dalam radius 5 m dari titik presensi'];
+    return {
+      v: v,
+      checks: labels.map(function (label, i) {
+        if (i < v.fail) {
+          return { label: label, mark: '✓', bg: '#DCFCE7', fg: '#166534', text: '#374151', fw: 500, state: 'Lolos', fg2: '#166534' };
+        }
+        if (i === v.fail) {
+          var info = v.isInfo;
+          return { label: label, mark: info ? 'i' : '✕', bg: info ? '#DBEAFE' : '#FEE2E2', fg: info ? '#1E40AF' : '#991B1B', text: '#111827', fw: 700, state: info ? 'Sudah tercatat' : 'Gagal', fg2: info ? '#1E40AF' : '#991B1B' };
+        }
+        return { label: label, mark: '–', bg: '#F3F4F6', fg: '#6B7280', text: '#6B7280', fw: 500, state: 'Tidak dicek', fg2: '#6B7280' };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

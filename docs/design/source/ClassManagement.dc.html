@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Manajemen Kelas · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; background: #F8FAFC">
+<dc-import name="CrudPage" config="{{config}}" height="1000" hint-size="1440px,1000px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var LECTURERS = ['Gusmayeni, S.Kom., M.Kom', 'Budi Wicaksono, M.T.', 'Sari Anggraini, M.Sc.', 'Ahmad Fauzi, M.Kom', 'Yusuf Permana, Ph.D.', 'Lina Marlina, M.Kom', 'Taufik Hidayat, M.T.'];
+    var mk = function (cls, angkatan, advisor, students, capacity, rate) {
+      return { cls: cls, prodi: 'Sistem Informasi', angkatan: angkatan, advisor: advisor, students: String(students), capacity: String(capacity), rate: rate, status: 'Aktif' };
+    };
+    return {
+      config: {
+        title: 'Kelas', subtitle: '{n} rombongan belajar di semester ini', entity: 'kelas', addLabel: 'Tambah Kelas', active: 'classes',
+        searchPlaceholder: 'Cari kelas atau dosen wali', searchKeys: ['cls', 'advisor'], labelKey: 'cls', pageSize: 8,
+        notice: 'Mata kuliah, dosen pengampu, dan jadwal tiap kelas diatur di menu Pemetaan Kelas.',
+        deleteNote: 'Kelas akan dihapus beserta pemetaan mata kuliah dan jadwalnya. Mahasiswa di kelas ini perlu dipindahkan ke kelas lain terlebih dahulu.',
+        filters: [
+          { key: 'angkatan', label: 'Filter angkatan', allLabel: 'Semua angkatan', options: ['2023', '2024', '2025'] },
+          { key: 'status', label: 'Filter status', allLabel: 'Semua status', options: ['Aktif', 'Nonaktif'] }
+        ],
+        columns: [
+          { key: 'cls', label: 'Kelas', type: 'strong', subKey: 'prodi' },
+          { key: 'angkatan', label: 'Angkatan', type: 'text' },
+          { key: 'advisor', label: 'Dosen wali', type: 'text' },
+          { key: 'students', label: 'Mahasiswa', type: 'text' },
+          { key: 'capacity', label: 'Kapasitas', type: 'text' },
+          { key: 'rate', label: 'Kehadiran', type: 'rate' },
+          { key: 'status', label: 'Status', type: 'badge' }
+        ],
+        fields: [
+          { key: 'cls', label: 'Kode kelas', type: 'text', required: true, unique: true, pattern: '^[A-Z]{2}-\\d[A-Z]$', patternMsg: 'Format kode: prodi-semester+huruf (contoh SI-5A).', placeholder: 'SI-5A' },
+          { key: 'angkatan', label: 'Angkatan', type: 'select', required: true, options: ['2023', '2024', '2025', '2026'] },
+          { key: 'prodi', label: 'Program studi', type: 'select', required: true, span: 2, options: ['Sistem Informasi', 'Teknik Informatika'] },
+          { key: 'advisor', label: 'Dosen wali', type: 'select', required: true, span: 2, options: LECTURERS },
+          { key: 'capacity', label: 'Kapasitas', type: 'number', required: true, min: 10, max: 60, placeholder: '10–60' },
+          { key: 'status', label: 'Status', type: 'select', required: true, options: ['Aktif', 'Nonaktif'] }
+        ],
+        defaults: { students: '0', rate: 0, status: 'Aktif', prodi: 'Sistem Informasi' },
+        badges: {
+          Aktif: { bg: '#DCFCE7', fg: '#166534', dot: '#16A34A' },
+          Nonaktif: { bg: '#F3F4F6', fg: '#374151', dot: '#6B7280' }
+        },
+        rows: [
+          mk('SI-3A', '2025', 'Lina Marlina, M.Kom', 36, 40, 91),
+          mk('SI-3B', '2025', 'Gusmayeni, S.Kom., M.Kom', 40, 40, 94),
+          mk('SI-3C', '2025', 'Budi Wicaksono, M.T.', 38, 40, 89),
+          mk('SI-5A', '2024', 'Gusmayeni, S.Kom., M.Kom', 30, 35, 93),
+          mk('SI-5B', '2024', 'Sari Anggraini, M.Sc.', 30, 35, 82),
+          mk('SI-5C', '2024', 'Ahmad Fauzi, M.Kom', 28, 35, 88),
+          mk('SI-5D', '2024', 'Lina Marlina, M.Kom', 32, 35, 90),
+          mk('SI-7A', '2023', 'Yusuf Permana, Ph.D.', 18, 30, 97),
+          mk('SI-7B', '2023', 'Taufik Hidayat, M.T.', 21, 30, 92)
+        ]
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

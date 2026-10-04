@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Sesi kedaluwarsa · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="width: 1440px; height: 960px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827">
+<dc-import name="Sidebar" role="lecturer" active="attendance" height="928" hint-size="256px,928px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Gusmayeni, S.Kom., M.Kom" user-role="Dosen · Fakultas Ilmu Komputer" initials="G" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 20px; padding: 0 8px">
+
+<div style="display: flex; align-items: flex-end; justify-content: space-between">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<nav aria-label="Breadcrumb" style="display: flex; gap: 8px; font-size: 13px; color: #6B7280"><a href="LecturerSchedule.dc.html" style="text-decoration: none; color: #6B7280">Jadwal</a><span aria-hidden="true">/</span><span>Pemrograman Web · SI-5A</span><span aria-hidden="true">/</span><span aria-current="page" style="color: #111827; font-weight: 600">Sesi ditutup</span></nav>
+<div style="display: flex; align-items: center; gap: 14px">
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Sesi Presensi Kedaluwarsa</h1>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #FEE2E2; color: #991B1B"><span style="width: 8px; height: 8px; border-radius: 999px; background: #DC2626"></span>Berakhir 08.25</span>
+</div>
+</div>
+<div style="display: flex; gap: 10px">
+<a href="LecturerHistory.dc.html" style="height: 46px; padding: 0 20px; border-radius: 999px; border: 1.5px solid #065F46; color: #065F46; font-size: 14px; font-weight: 700; text-decoration: none; display: flex; align-items: center">Lihat riwayat</a>
+<a href="ManualAttendance.dc.html" style="height: 46px; padding: 0 20px; border-radius: 999px; background: #065F46; color: #FFFFFF; font-size: 14px; font-weight: 700; text-decoration: none; display: flex; align-items: center">Tinjau presensi</a>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: 460px minmax(0, 1fr); gap: 16px">
+<section aria-label="QR Code nonaktif" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 28px; display: flex; flex-direction: column; align-items: center; gap: 20px">
+<div style="position: relative; width: 340px; height: 340px; border-radius: 20px; border: 2px dashed #E5E7EB; display: flex; align-items: center; justify-content: center; overflow: hidden">
+<svg aria-hidden="true" width="280" height="280" viewBox="-2 -2 29 29" shape-rendering="crispEdges" style="opacity: 0.18; filter: grayscale(1) blur(3px)"><path fill="#111827" d="M8 0h2v1h-2zM11 0h1v1h-1zM13 0h2v1h-2zM8 1h4v1h-4zM13 2h4v1h-4zM6 8h5v1h-5zM2 9h5v1h-5zM2 10h11v1h-11zM15 10h5v1h-5zM6 12h5v1h-5zM17 12h5v1h-5zM13 14h4v1h-4zM15 16h10v1h-10zM11 19h3v1h-3zM16 20h6v1h-6zM8 21h5v1h-5zM17 23h7v1h-7zM12 24h5v1h-5zM20 24h5v1h-5z"></path><path fill="#111827" fill-rule="evenodd" d="M0 0h7v7h-7zM1 1v5h5v-5zM2 2h3v3h-3zM18 0h7v7h-7zM19 1v5h5v-5zM20 2h3v3h-3zM0 18h7v7h-7zM1 19v5h5v-5zM2 20h3v3h-3z"></path></svg>
+<div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 24px">
+<span style="width: 60px; height: 60px; border-radius: 999px; background: #FEE2E2; color: #B91C1C; display: flex; align-items: center; justify-content: center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span>
+<strong style="font-size: 18px">QR Code dinonaktifkan</strong>
+<span style="font-size: 14px; color: #4B5563">Sesi presensi ini sudah kedaluwarsa.</span>
+</div>
+</div>
+<span style="font-size: 64px; line-height: 1; font-weight: 800; letter-spacing: -0.03em; color: #9CA3AF; font-variant-numeric: tabular-nums" aria-label="Sisa waktu 00:00">00:00</span>
+<div style="width: 100%; box-sizing: border-box; display: flex; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #F9FAFB; border: 1px solid #E5E7EB; font-size: 13px; line-height: 1.5; color: #374151"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 1px"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span>QR Code baru tidak dapat dibuat untuk sesi ini. Gunakan presensi manual untuk mahasiswa yang terlambat atau izin.</span></div>
+</section>
+
+<div style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<div style="padding: 18px 20px; border-radius: 20px; background: #064E3B; color: #FFFFFF; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 14px; color: #A7F3D0">Hadir</span><span style="font-size: 34px; font-weight: 800; line-height: 1">27</span></div>
+<div style="padding: 18px 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E5E7EB; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 14px; color: #6B7280">Tidak hadir</span><span style="font-size: 34px; font-weight: 800; line-height: 1">3</span></div>
+<div style="padding: 18px 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E5E7EB; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 14px; color: #6B7280">Total mahasiswa</span><span style="font-size: 34px; font-weight: 800; line-height: 1">30</span></div>
+<div style="padding: 18px 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E5E7EB; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 14px; color: #6B7280">Tingkat kehadiran</span><span style="font-size: 34px; font-weight: 800; line-height: 1">90%</span></div>
+</div>
+
+<section style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 20px; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: center"><h2 style="margin: 0; font-size: 18px; font-weight: 700">Belum presensi</h2><span style="font-size: 13px; color: #6B7280">Otomatis ditandai Tidak Hadir</span></div>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+<sc-for list="{{absent}}" as="s" hint-placeholder-count="3">
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F3F4F6">
+<span style="width: 40px; height: 40px; border-radius: 999px; background: #F3F4F6; color: #374151; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{s.ini}}</span>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 700">{{s.name}}</span><span style="font-size: 12px; color: #6B7280">{{s.id}}</span></div>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: #FEE2E2; color: #991B1B"><span style="width: 6px; height: 6px; border-radius: 999px; background: #DC2626"></span>Tidak Hadir</span>
+<a href="ManualAttendance.dc.html" style="height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid #E5E7EB; color: #111827; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center">Ubah status</a>
+</li>
+</sc-for>
+</ul>
+</section>
+
+<section style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 20px; padding: 20px 24px">
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 16px; column-gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 4px"><dt style="font-size: 12px; color: #6B7280">Mata kuliah</dt><dd style="margin: 0; font-size: 15px; font-weight: 700">Pemrograman Web</dd></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><dt style="font-size: 12px; color: #6B7280">Kelas · Ruang</dt><dd style="margin: 0; font-size: 15px; font-weight: 700">SI-5A · Ruang 301</dd></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><dt style="font-size: 12px; color: #6B7280">Sesi</dt><dd style="margin: 0; font-size: 15px; font-weight: 700">Pertemuan 5 dari 16</dd></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><dt style="font-size: 12px; color: #6B7280">Dimulai</dt><dd style="margin: 0; font-size: 15px; font-weight: 700">08.05.00</dd></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><dt style="font-size: 12px; color: #6B7280">Kedaluwarsa</dt><dd style="margin: 0; font-size: 15px; font-weight: 700">08.25.00</dd></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><dt style="font-size: 12px; color: #6B7280">Pindaian ditolak</dt><dd style="margin: 0; font-size: 15px; font-weight: 700">2 · di luar radius</dd></div>
+</dl>
+</section>
+</div>
+</div>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      absent: [
+        { ini: 'HS', name: 'Hendra Setiawan', id: '221011450029' },
+        { ini: 'IR', name: 'Intan Rahayu', id: '221011450044' },
+        { ini: 'JP', name: 'Joko Prasetyo', id: '221011450050' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

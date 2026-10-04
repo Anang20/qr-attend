@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Detail presensi · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 900px; box-sizing: border-box; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827; overflow: hidden">
+<header style="display: flex; align-items: center; gap: 12px; padding: 48px 20px 12px">
+<a href="StudentHistory.dc.html" aria-label="Kembali ke riwayat" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #111827; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; font-size: 18px; font-weight: 800">Detail Presensi</h1>
+</header>
+<main style="padding: 8px 20px 32px; display: flex; flex-direction: column; gap: 14px">
+<section style="border-radius: 22px; background: #FFFFFF; border: 1px solid #E5E7EB; padding: 18px; display: flex; flex-direction: column; gap: 10px">
+<span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #DCFCE7; color: #166534"><span style="width: 8px; height: 8px; border-radius: 999px; background: #16A34A"></span>Hadir</span>
+<h2 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em">Pemrograman Web</h2>
+<span style="font-size: 14px; color: #6B7280">Pertemuan 5 · Senin, 28 Sep 2026</span>
+</section>
+
+<section aria-label="Rincian presensi" style="border-radius: 22px; background: #FFFFFF; border: 1px solid #E5E7EB; padding: 4px 18px">
+<dl style="margin: 0; display: flex; flex-direction: column">
+<div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">Kelas</dt><dd style="margin: 0; font-weight: 700">SI-5A</dd></div>
+<div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">Jadwal</dt><dd style="margin: 0; font-weight: 700">08.00 – 09.40</dd></div>
+<div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">Ruang</dt><dd style="margin: 0; font-weight: 700">Ruang 301</dd></div>
+<div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">Dosen</dt><dd style="margin: 0; font-weight: 700">Gusmayeni, S.Kom., M.Kom</dd></div>
+<div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">Waktu presensi</dt><dd style="margin: 0; font-weight: 700; font-variant-numeric: tabular-nums">08.05.17</dd></div>
+<div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F3F4F6; font-size: 14px"><dt style="color: #6B7280">Metode</dt><dd style="margin: 0; font-weight: 700">QR Code</dd></div>
+<div style="display: flex; justify-content: space-between; padding: 12px 0; font-size: 14px"><dt style="color: #6B7280">Jarak dari titik</dt><dd style="margin: 0; font-weight: 700">3,2 m (batas 5 m)</dd></div>
+</dl>
+</section>
+
+<section aria-labelledby="tl-title" style="border-radius: 22px; background: #FFFFFF; border: 1px solid #E5E7EB; padding: 18px; display: flex; flex-direction: column; gap: 14px">
+<h2 id="tl-title" style="margin: 0; font-size: 15px; font-weight: 700">Linimasa</h2>
+<ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="4">
+<li style="display: flex; gap: 12px">
+<div style="display: flex; flex-direction: column; align-items: center"><span style="width: 12px; height: 12px; border-radius: 999px; background: {{s.dot}}; margin-top: 4px"></span><span style="width: 2px; flex-grow: 1; background: {{s.line}}; min-height: 22px"></span></div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding-bottom: 14px"><span style="font-size: 14px; font-weight: 600">{{s.t}}</span><span style="font-size: 12px; color: #6B7280">{{s.d}}</span></div>
+</li>
+</sc-for>
+</ol>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var steps = [
+      { t: 'Sesi dibuka oleh dosen', d: '08.05.00 · QR berlaku hingga 08.25.00' },
+      { t: 'QR Code dipindai', d: '08.05.15 · Ruang 301' },
+      { t: 'Ketujuh validasi lolos', d: 'Kelas, jadwal, lokasi, dan cek duplikasi' },
+      { t: 'Tercatat Hadir', d: '08.05.17 · Metode: QR Code' }
+    ];
+    return {
+      steps: steps.map(function (s, i) {
+        return Object.assign({}, s, { dot: i === steps.length - 1 ? '#15803D' : '#6EE7B7', line: i === steps.length - 1 ? 'transparent' : '#D1FAE5' });
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

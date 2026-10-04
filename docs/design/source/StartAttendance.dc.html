@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Mulai presensi · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+</style>
+</helmet>
+<div style="position: relative; width: 1440px; height: 960px; box-sizing: border-box; padding: 16px; display: flex; gap: 16px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827">
+<dc-import name="Sidebar" role="lecturer" active="attendance" height="928" hint-size="256px,928px"></dc-import>
+<div style="width: 1136px; display: flex; flex-direction: column; gap: 24px">
+<dc-import name="Topbar" user-name="Gusmayeni, S.Kom., M.Kom" user-role="Dosen · Fakultas Ilmu Komputer" initials="G" hint-size="1136px,72px"></dc-import>
+<main style="display: flex; flex-direction: column; gap: 20px; padding: 0 8px">
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<nav aria-label="Breadcrumb" style="display: flex; gap: 8px; font-size: 13px; color: #6B7280"><a href="LecturerSchedule.dc.html" style="text-decoration: none; color: #6B7280">Jadwal</a><span aria-hidden="true">/</span><span aria-current="page" style="color: #111827; font-weight: 600">Mulai presensi</span></nav>
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Mulai Sesi Presensi</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">Periksa detail sesi, lalu buat QR Code untuk dipindai mahasiswa.</p>
+</div>
+
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 16px; align-items: start">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<section style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 28px; display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; font-weight: 700; letter-spacing: 0.06em; color: #047857">MATA KULIAH</span><h2 style="margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.02em">Pemrograman Web</h2><span style="font-size: 14px; color: #6B7280">IF-305 · 3 SKS · Pertemuan 5 dari 16</span></div>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border-radius: 999px; background: #DCFCE7; color: #166534; font-size: 12px; font-weight: 700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Sesuai jadwal</span>
+</div>
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="padding: 16px; border-radius: 16px; background: #F8FAFC; border: 1px solid #F1F5F9; display: flex; flex-direction: column; gap: 4px"><dt style="font-size: 12px; color: #6B7280">Kelas</dt><dd style="margin: 0; font-size: 17px; font-weight: 700">SI-5A · 30 mahasiswa</dd></div>
+<div style="padding: 16px; border-radius: 16px; background: #F8FAFC; border: 1px solid #F1F5F9; display: flex; flex-direction: column; gap: 4px"><dt style="font-size: 12px; color: #6B7280">Ruang</dt><dd style="margin: 0; font-size: 17px; font-weight: 700">Ruang 301</dd></div>
+<div style="padding: 16px; border-radius: 16px; background: #F8FAFC; border: 1px solid #F1F5F9; display: flex; flex-direction: column; gap: 4px"><dt style="font-size: 12px; color: #6B7280">Jadwal</dt><dd style="margin: 0; font-size: 17px; font-weight: 700">Senin · 08.00 – 09.40</dd></div>
+<div style="padding: 16px; border-radius: 16px; background: #F8FAFC; border: 1px solid #F1F5F9; display: flex; flex-direction: column; gap: 4px"><dt style="font-size: 12px; color: #6B7280">Durasi presensi</dt><dd style="margin: 0; font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 8px">20 menit<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Ditetapkan kebijakan kampus"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></dd></div>
+</dl>
+</section>
+
+<section style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 24px 28px; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; align-items: center">
+<div role="img" aria-label="Titik presensi di Ruang 301 dengan radius 5 meter" style="height: 180px; border-radius: 18px; background: #F0FDF4; border: 1px solid #D1FAE5; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center">
+<svg width="220" height="180" viewBox="0 0 220 180" fill="none" aria-hidden="true" style="position: absolute; inset: 0"><path d="M0 45h220M0 90h220M0 135h220M55 0v180M110 0v180M165 0v180" stroke="#D1FAE5"></path><circle cx="110" cy="90" r="62" fill="#15803D" fill-opacity="0.08" stroke="#15803D" stroke-width="1.5" stroke-dasharray="5 5"></circle><circle cx="110" cy="90" r="9" fill="#065F46"></circle><circle cx="110" cy="90" r="4" fill="#FFFFFF"></circle><path d="M110 90h62" stroke="#065F46" stroke-width="1.5"></path></svg>
+<span style="position: absolute; left: 146px; top: 70px; font-size: 12px; font-weight: 700; color: #065F46">5 m</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h3 style="margin: 0; font-size: 17px; font-weight: 700">Lokasi presensi</h3>
+<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #4B5563">Ruang 301, Gedung B lantai 3. Mahasiswa harus berada dalam radius 5 meter dari titik ini saat memindai.</p>
+<span style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #6B7280"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>-6,3452100, 106,6917400 · akurasi ±3,9 m · diatur 12 Agu 2026 di <a href="RoomManagement.dc.html" style="font-weight: 600">Ruang &amp; Titik Presensi</a></span>
+</div>
+</section>
+</div>
+
+<aside style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 20px">
+<h2 style="margin: 0; font-size: 18px; font-weight: 700">Sebelum memulai</h2>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px">
+<sc-for list="{{rules}}" as="r" hint-placeholder-count="5">
+<li style="display: flex; gap: 12px; align-items: flex-start"><span style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 999px; background: #ECFDF5; color: #047857; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 700">{{r.t}}</span><span style="font-size: 13px; line-height: 1.5; color: #6B7280">{{r.d}}</span></div></li>
+</sc-for>
+</ul>
+<div role="note" style="display: flex; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; font-size: 13px; line-height: 1.5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 1px"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"></path></svg><span>QR Code hanya bisa dibuat satu kali. Anda tidak dapat memperbaruinya untuk sesi ini.</span></div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<button type="button" onClick="{{openDialog}}" style="height: 52px; border: 0; border-radius: 999px; background: #065F46; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><path d="M14 14h3v3h-3zM20 14v1M14 20h1M17 20h4M20 17v3"></path></svg>Mulai Presensi</button>
+<a href="LecturerSchedule.dc.html" style="height: 48px; border-radius: 999px; border: 1px solid #E5E7EB; color: #111827; font-size: 15px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Batal</a>
+</div>
+</aside>
+</div>
+</main>
+</div>
+
+<sc-if value="{{dialogOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; background: rgba(17,24,39,0.45); display: flex; align-items: center; justify-content: center">
+<div role="alertdialog" aria-modal="true" aria-labelledby="sa-title" aria-describedby="sa-desc" style="width: 440px; box-sizing: border-box; background: #FFFFFF; border-radius: 24px; padding: 28px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 20px 40px rgba(17,24,39,0.18)">
+<span style="width: 48px; height: 48px; border-radius: 14px; background: #ECFDF5; color: #047857; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><path d="M14 14h3v3h-3zM20 14v1M14 20h1M17 20h4M20 17v3"></path></svg></span>
+<h2 id="sa-title" style="margin: 0; font-size: 20px; font-weight: 800">Buat QR Code sekarang?</h2>
+<p id="sa-desc" style="margin: 0; font-size: 14px; line-height: 1.6; color: #4B5563">Timer 20 menit langsung berjalan dan QR kedaluwarsa pukul 08.25. QR tidak dapat dibuat ulang untuk Pemrograman Web · SI-5A, Pertemuan 5.</p>
+<div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px">
+<button type="button" onClick="{{closeDialog}}" style="height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #E5E7EB; background: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; color: #111827; cursor: pointer">Nanti dulu</button>
+<a href="ActiveQR.dc.html" style="height: 44px; padding: 0 20px; border-radius: 999px; background: #065F46; color: #FFFFFF; font-size: 14px; font-weight: 700; text-decoration: none; display: flex; align-items: center">Buat &amp; mulai</a>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"showDialog":{"editor":"boolean","default":false,"section":"Demo"},"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { open: !!props.showDialog };
+  }
+  componentDidUpdate(prev) {
+    if (prev.showDialog !== this.props.showDialog) { this.setState({ open: !!this.props.showDialog }); }
+  }
+  renderVals() {
+    var self = this;
+    return {
+      dialogOpen: this.state.open,
+      openDialog: function () { self.setState({ open: true }); },
+      closeDialog: function () { self.setState({ open: false }); },
+      rules: [
+        { t: 'Berlaku tepat 20 menit', d: 'QR Code otomatis nonaktif saat timer mencapai 00:00.' },
+        { t: 'Satu QR Code per sesi', d: 'Memperbarui atau membuat ulang QR diblokir untuk pertemuan ini.' },
+        { t: 'Khusus mahasiswa SI-5A', d: 'Mahasiswa dari kelas lain akan ditolak.' },
+        { t: 'Dalam radius 5 meter dari Ruang 301', d: 'Pindaian di luar radius akan ditolak.' },
+        { t: 'Hanya pukul 08.00 – 09.40', d: 'Sekarang pukul 08.04, masih di dalam jadwal.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

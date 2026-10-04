@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Manajemen Mata Kuliah · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; background: #F8FAFC">
+<dc-import name="CrudPage" config="{{config}}" height="1000" hint-size="1440px,1000px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var mk = function (code, name, sks, sem, prodi, jenis, status) {
+      return { code: code, name: name, sks: String(sks), semester: sem, prodi: prodi, jenis: jenis, status: status };
+    };
+    return {
+      config: {
+        title: 'Mata Kuliah', subtitle: '{n} mata kuliah pada Semester Ganjil 2026/2027', entity: 'mata kuliah', addLabel: 'Tambah Mata Kuliah', active: 'courses',
+        searchPlaceholder: 'Cari kode atau nama mata kuliah', searchKeys: ['code', 'name'], labelKey: 'name', pageSize: 8,
+        deleteNote: 'Mata kuliah akan dihapus dari kurikulum semester ini. Kelas dan jadwal yang memakai mata kuliah ini ikut dilepas dari pemetaan.',
+        filters: [
+          { key: 'prodi', label: 'Filter program studi', allLabel: 'Semua prodi', options: ['Sistem Informasi', 'Teknik Informatika'] },
+          { key: 'semester', label: 'Filter semester', allLabel: 'Semua semester', options: ['Semester 3', 'Semester 5', 'Semester 7'] },
+          { key: 'status', label: 'Filter status', allLabel: 'Semua status', options: ['Aktif', 'Draf'] }
+        ],
+        columns: [
+          { key: 'code', label: 'Kode', type: 'text' },
+          { key: 'name', label: 'Mata kuliah', type: 'strong', subKey: 'prodi' },
+          { key: 'sks', label: 'SKS', type: 'text' },
+          { key: 'semester', label: 'Semester', type: 'text' },
+          { key: 'jenis', label: 'Jenis', type: 'text' },
+          { key: 'status', label: 'Status', type: 'badge' }
+        ],
+        fields: [
+          { key: 'code', label: 'Kode mata kuliah', type: 'text', required: true, unique: true, pattern: '^[A-Z]{2}-\\d{3}$', patternMsg: 'Format kode: 2 huruf kapital, strip, 3 angka (contoh SI-305).', placeholder: 'SI-305' },
+          { key: 'sks', label: 'SKS', type: 'number', required: true, min: 1, max: 6, placeholder: '1–6' },
+          { key: 'name', label: 'Nama mata kuliah', type: 'text', required: true, unique: true, span: 2, placeholder: 'contoh: Pemrograman Web' },
+          { key: 'prodi', label: 'Program studi', type: 'select', required: true, options: ['Sistem Informasi', 'Teknik Informatika'] },
+          { key: 'semester', label: 'Semester', type: 'select', required: true, options: ['Semester 1', 'Semester 3', 'Semester 5', 'Semester 7'] },
+          { key: 'jenis', label: 'Jenis', type: 'select', required: true, options: ['Wajib', 'Pilihan'] },
+          { key: 'status', label: 'Status', type: 'select', required: true, options: ['Aktif', 'Draf'], hint: 'Mata kuliah Draf belum bisa dipetakan ke kelas.' }
+        ],
+        defaults: { status: 'Aktif', jenis: 'Wajib' },
+        badges: {
+          Aktif: { bg: '#DCFCE7', fg: '#166534', dot: '#16A34A' },
+          Draf: { bg: '#F3F4F6', fg: '#374151', dot: '#6B7280' }
+        },
+        rows: [
+          mk('IF-305', 'Pemrograman Web', 3, 'Semester 5', 'Sistem Informasi', 'Wajib', 'Aktif'),
+          mk('SI-201', 'Sistem Basis Data', 3, 'Semester 3', 'Sistem Informasi', 'Wajib', 'Aktif'),
+          mk('SI-307', 'Interaksi Manusia dan Komputer', 3, 'Semester 5', 'Sistem Informasi', 'Wajib', 'Aktif'),
+          mk('SI-309', 'Manajemen Proses Bisnis', 3, 'Semester 5', 'Sistem Informasi', 'Wajib', 'Aktif'),
+          mk('MA-210', 'Statistika', 2, 'Semester 5', 'Sistem Informasi', 'Wajib', 'Aktif'),
+          mk('IF-311', 'Pemrograman Mobile', 3, 'Semester 5', 'Sistem Informasi', 'Pilihan', 'Aktif'),
+          mk('SI-401', 'Proyek Akhir', 4, 'Semester 7', 'Sistem Informasi', 'Wajib', 'Aktif'),
+          mk('IF-230', 'Jaringan Komputer', 3, 'Semester 3', 'Teknik Informatika', 'Wajib', 'Aktif'),
+          mk('SI-415', 'Tata Kelola Data', 2, 'Semester 7', 'Sistem Informasi', 'Pilihan', 'Draf')
+        ]
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

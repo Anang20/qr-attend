@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>State UX · QR Attend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F8FAFC}
+a{color:#047857}a:hover{color:#064E3B}
+@keyframes ux-pulse{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes ux-spin{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1320px; box-sizing: border-box; padding: 48px; background: #F8FAFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #111827; display: flex; flex-direction: column; gap: 28px">
+<header style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 34px; font-weight: 800; letter-spacing: -0.03em">State UX</h1>
+<p style="margin: 0; font-size: 15px; color: #6B7280">Pola memuat, kosong, galat, izin akses, dan umpan balik yang dipakai di seluruh QR Attend.</p>
+</header>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
+
+<section aria-label="State memuat" aria-busy="true" style="grid-column: span 2; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #6B7280">MEMUAT</span>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; animation: ux-pulse 1.6s ease-in-out infinite">
+<div style="height: 96px; border-radius: 18px; background: #F3F4F6"></div><div style="height: 96px; border-radius: 18px; background: #F3F4F6"></div><div style="height: 96px; border-radius: 18px; background: #F3F4F6"></div><div style="height: 96px; border-radius: 18px; background: #F3F4F6"></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; animation: ux-pulse 1.6s ease-in-out infinite">
+<div style="height: 40px; border-radius: 10px; background: #F3F4F6"></div>
+<div style="display: grid; grid-template-columns: 2fr 3fr 2fr 1fr; gap: 16px"><div style="height: 16px; border-radius: 6px; background: #F3F4F6"></div><div style="height: 16px; border-radius: 6px; background: #F3F4F6"></div><div style="height: 16px; border-radius: 6px; background: #F3F4F6"></div><div style="height: 16px; border-radius: 6px; background: #F3F4F6"></div></div>
+<div style="display: grid; grid-template-columns: 2fr 3fr 2fr 1fr; gap: 16px"><div style="height: 16px; border-radius: 6px; background: #F3F4F6"></div><div style="height: 16px; border-radius: 6px; background: #F3F4F6"></div><div style="height: 16px; border-radius: 6px; background: #F3F4F6"></div><div style="height: 16px; border-radius: 6px; background: #F3F4F6"></div></div>
+<div style="display: grid; grid-template-columns: 2fr 3fr 2fr 1fr; gap: 16px"><div style="height: 16px; border-radius: 6px; background: #F3F4F6"></div><div style="height: 16px; border-radius: 6px; background: #F3F4F6"></div><div style="height: 16px; border-radius: 6px; background: #F3F4F6"></div><div style="height: 16px; border-radius: 6px; background: #F3F4F6"></div></div>
+</div>
+<span role="status" style="font-size: 13px; color: #6B7280">Memuat data presensi…</span>
+</section>
+
+<section aria-label="Memvalidasi presensi" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #6B7280">PINDAI · MEMVALIDASI</span>
+<div role="status" style="display: flex; align-items: center; gap: 14px">
+<svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="animation: ux-spin 0.9s linear infinite"><circle cx="20" cy="20" r="16" fill="none" stroke="#D1FAE5" stroke-width="4"></circle><path d="M20 4a16 16 0 0 1 16 16" fill="none" stroke="#15803D" stroke-width="4" stroke-linecap="round"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 2px"><strong style="font-size: 16px">Memvalidasi presensi…</strong><span style="font-size: 13px; color: #6B7280">Jangan tutup layar ini.</span></div>
+</div>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 14px">
+<li style="display: flex; align-items: center; gap: 10px"><span style="width: 22px; height: 22px; border-radius: 999px; background: #DCFCE7; color: #166534; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center">✓</span>QR Code dan sesi</li>
+<li style="display: flex; align-items: center; gap: 10px"><span style="width: 22px; height: 22px; border-radius: 999px; background: #DCFCE7; color: #166534; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center">✓</span>Kelas dan jadwal</li>
+<li style="display: flex; align-items: center; gap: 10px; font-weight: 700"><span style="width: 22px; height: 22px; border-radius: 999px; background: #ECFDF5; border: 2px solid #15803D; box-sizing: border-box"></span>Memeriksa lokasi Anda…</li>
+</ul>
+</section>
+
+<section aria-label="State kosong, tidak ada kelas" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #6B7280">KOSONG</span>
+<div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 12px 0">
+<span style="width: 64px; height: 64px; border-radius: 20px; background: #ECFDF5; color: #047857; display: flex; align-items: center; justify-content: center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span>
+<strong style="font-size: 17px">Tidak ada kelas hari ini</strong>
+<span style="font-size: 14px; line-height: 1.5; color: #6B7280; max-width: 280px">Kelas berikutnya: Pemrograman Web, Senin pukul 08.00.</span>
+<a href="LecturerSchedule.dc.html" style="height: 40px; padding: 0 18px; border-radius: 999px; border: 1.5px solid #065F46; color: #065F46; font-size: 14px; font-weight: 700; text-decoration: none; display: flex; align-items: center">Lihat jadwal</a>
+</div>
+</section>
+
+<section aria-label="State kosong, tidak ada data yang cocok" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #6B7280">KOSONG · TERSARING</span>
+<div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 12px 0">
+<span style="width: 64px; height: 64px; border-radius: 20px; background: #F3F4F6; color: #4B5563; display: flex; align-items: center; justify-content: center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></span>
+<strong style="font-size: 17px">Tidak ada data yang cocok</strong>
+<span style="font-size: 14px; line-height: 1.5; color: #6B7280; max-width: 280px">Coba rentang tanggal yang lebih luas atau hapus filter status.</span>
+<button type="button" style="height: 40px; padding: 0 18px; border-radius: 999px; border: 0; background: #ECFDF5; color: #065F46; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Atur ulang filter</button>
+</div>
+</section>
+
+<section aria-label="State galat" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #6B7280">GALAT</span>
+<div role="alert" style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 12px 0">
+<span style="width: 64px; height: 64px; border-radius: 20px; background: #FEE2E2; color: #B91C1C; display: flex; align-items: center; justify-content: center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"></path></svg></span>
+<strong style="font-size: 17px">Data presensi gagal dimuat</strong>
+<span style="font-size: 14px; line-height: 1.5; color: #6B7280; max-width: 280px">Periksa koneksi Anda lalu coba lagi. Tidak ada data yang hilang.</span>
+<button type="button" style="height: 40px; padding: 0 18px; border-radius: 999px; border: 0; background: #065F46; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Coba lagi</button>
+</div>
+</section>
+
+<section aria-label="State tanpa akses" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #6B7280">TANPA AKSES</span>
+<div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 12px 0">
+<span style="width: 64px; height: 64px; border-radius: 20px; background: #FEF3C7; color: #B45309; display: flex; align-items: center; justify-content: center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span>
+<strong style="font-size: 17px">Anda tidak punya akses ke halaman ini</strong>
+<span style="font-size: 14px; line-height: 1.5; color: #6B7280; max-width: 280px">Laporan hanya tersedia untuk administrator. Hubungi bagian akademik bila Anda membutuhkan akses.</span>
+<a href="LecturerDashboard.dc.html" style="height: 40px; padding: 0 18px; border-radius: 999px; border: 1px solid #D1D5DB; color: #111827; font-size: 14px; font-weight: 600; text-decoration: none; display: flex; align-items: center">Kembali ke dasbor</a>
+</div>
+</section>
+
+<section aria-label="Notifikasi toast" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #6B7280">TOAST</span>
+<sc-for list="{{toasts}}" as="t" hint-placeholder-count="4">
+<div role="status" style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; background: #111827; color: #FFFFFF">
+<span style="flex-shrink: 0; width: 24px; height: 24px; border-radius: 999px; background: {{t.color}}; color: #FFFFFF; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center">{{t.mark}}</span>
+<div style="display: flex; flex-direction: column; gap: 2px"><strong style="font-size: 13px">{{t.title}}</strong><span style="font-size: 12px; color: #D1D5DB">{{t.body}}</span></div>
+</div>
+</sc-for>
+</section>
+
+<section aria-label="Badge status" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #6B7280">BADGE</span>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 13px; font-weight: 600">Status presensi</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{attendance}}" as="b" hint-placeholder-count="4"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 11px; border-radius: 999px; font-size: 12px; font-weight: 700; background: {{b.bg}}; color: {{b.fg}}"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{b.dot}}"></span>{{b.label}}</span></sc-for></div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 13px; font-weight: 600">Status sesi</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{session}}" as="b" hint-placeholder-count="4"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 11px; border-radius: 999px; font-size: 12px; font-weight: 700; background: {{b.bg}}; color: {{b.fg}}"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{b.dot}}"></span>{{b.label}}</span></sc-for></div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 13px; font-weight: 600">Metode</span><div style="display: flex; gap: 8px"><span style="display: inline-flex; align-items: center; height: 26px; padding: 0 11px; border-radius: 8px; font-size: 12px; font-weight: 600; background: #ECFDF5; color: #065F46">QR Code</span><span style="display: inline-flex; align-items: center; height: 26px; padding: 0 11px; border-radius: 8px; font-size: 12px; font-weight: 600; background: #EFF6FF; color: #1E40AF">Manual</span></div></div>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1320}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      toasts: [
+        { mark: '✓', color: '#16A34A', title: 'Presensi berhasil', body: 'Pemrograman Web · 08.05.17' },
+        { mark: '✕', color: '#DC2626', title: 'Presensi gagal', body: 'Anda berada di luar area presensi 5 m.' },
+        { mark: '!', color: '#D97706', title: 'QR ditutup 2 menit lagi', body: 'Pemrograman Web · SI-5A' },
+        { mark: 'i', color: '#2563EB', title: 'Sudah tercatat', body: 'Anda sudah presensi pukul 08.05.17.' }
+      ],
+      attendance: [
+        { label: 'Hadir', bg: '#DCFCE7', fg: '#166534', dot: '#16A34A' },
+        { label: 'Terlambat', bg: '#FEF3C7', fg: '#92400E', dot: '#F59E0B' },
+        { label: 'Tidak Hadir', bg: '#FEE2E2', fg: '#991B1B', dot: '#DC2626' },
+        { label: 'Izin', bg: '#DBEAFE', fg: '#1E40AF', dot: '#2563EB' }
+      ],
+      session: [
+        { label: 'Sesi QR aktif', bg: '#DCFCE7', fg: '#166534', dot: '#16A34A' },
+        { label: 'Sesi QR kedaluwarsa', bg: '#FEE2E2', fg: '#991B1B', dot: '#DC2626' },
+        { label: 'Belum dimulai', bg: '#FEF3C7', fg: '#92400E', dot: '#F59E0B' },
+        { label: 'Presensi selesai', bg: '#F3F4F6', fg: '#374151', dot: '#6B7280' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
