@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Support\PerPage;
 
 class LecturerController extends Controller
 {
@@ -32,7 +33,7 @@ class LecturerController extends Controller
             // Akun menunggu persetujuan tampil paling atas.
             ->orderByRaw("(select case when users.status = 'pending' then 0 else 1 end from users where users.id = lecturers.user_id)")
             ->orderBy('nidn')
-            ->paginate(10)
+            ->paginate(PerPage::from($request))
             ->withQueryString()
             ->through(fn (Lecturer $l): array => [
                 'id' => $l->id,

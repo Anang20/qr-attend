@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/react';
 import { FileDown, Printer, Search } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { DataTable, type DataTableColumn } from '@/components/app/data-table';
 import { PageHeader } from '@/components/app/page-header';
@@ -10,14 +10,18 @@ import { StatCard } from '@/components/app/stat-card';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { ALL, useFilters } from '@/hooks/use-filters';
+import { useLoadAll } from '@/hooks/use-load-all';
 import AppLayout from '@/layouts/app-layout';
 import { downloadXlsx, printAsPdf, slug } from '@/lib/export';
 import { cn, formatDate } from '@/lib/utils';
-import type { Option } from '@/types';
+import type { Option, Paginated } from '@/types';
 
 type Code = 'H' | 'T' | 'I' | 'A';
+type Chip = 'all' | 'ineligible' | 'warning' | 'safe';
 
 interface RecapRow {
+  no?: number;
   studentId: number;
   name: string;
   nim: string;
@@ -41,19 +45,17 @@ interface Recap {
     minPercent: number;
     maxAbsent: number;
   };
-  rows: RecapRow[];
+  rows: Paginated<RecapRow>;
 }
 
 interface Props {
   role: 'admin' | 'lecturer';
   baseUrl: string;
-  filters: { period_id: string | null; course_id: string | null; class_group_id: string | null };
+  filters: { period_id: string | null; course_id: string | null; class_group_id: string | null; q: string; chip: Chip };
   options: { periods: Option[]; courses: Option[]; classGroups: Option[] };
   schedule: { course: string; courseCode: string; classGroup: string; lecturer: string } | null;
   recap: Recap | null;
 }
-
-const PAGE_SIZE = 10;
 
 const codeStyle: Record<Code, { cls: string; label: string }> = {
   H: { cls: 'bg-emerald-600', label: 'Hadir' },
@@ -62,25 +64,32 @@ const codeStyle: Record<Code, { cls: string; label: string }> = {
   A: { cls: 'bg-red-600', label: 'Tidak hadir' },
 };
 
-type Chip = 'all' | 'ineligible' | 'warning' | 'safe';
 
 export default function AttendanceRecap({ baseUrl, filters, options, schedule, recap }: Props) {
-  const [search, setSearch] = useState('');
-  const [chip, setChip] = useState<Chip>('all');
   const [isExporting, setIsExporting] = useState(false);
+  const [printRows, setPrintRows] = useState<RecapRow[] | null>(null);
+  const exportAll = useLoadAll<RecapRow>('exportRows');
 
-  const visit = (params: Partial<Props['filters']>) => router.get(baseUrl, { ...filters, ...params }, { preserveScroll: true, preserveState: false });
+  // Pencarian & saringan status dikirim ke server bersama pilihan periode/MK/kelas; halaman kembali ke 1.
+  const { filters: view, setFilter } = useFilters(
+    baseUrl,
+    { q: filters.q, chip: filters.chip },
+    { period_id: filters.period_id ?? undefined, course_id: filters.course_id ?? undefined, class_group_id: filters.class_group_id ?? undefined },
+  );
+  const chip = (view.chip ?? ALL) as Chip | typeof ALL;
 
-  const rows = useMemo(() => {
-    const q = search.toLowerCase();
-    return (recap?.rows ?? [])
-      .filter((r) => r.name.toLowerCase().includes(q) || r.nim.includes(q))
-      .filter((r) => chip === 'all' || r.status === chip || (chip === 'safe' && r.status === 'eligible'));
-  }, [recap, search, chip]);
+  const visit = (params: Partial<Pick<Props['filters'], 'period_id' | 'course_id' | 'class_group_id'>>) =>
+    router.get(baseUrl, { period_id: filters.period_id, course_id: filters.course_id, class_group_id: filters.class_group_id, ...params }, { preserveScroll: true, preserveState: false });
 
+  // PDF: muat seluruh baris, tampilkan sebagai tabel khusus cetak, lalu buka dialog cetak.
+  useEffect(() => {
+    if (!printRows) return;
+    printAsPdf();
+    setPrintRows(null);
+  }, [printRows]);
 
   const columns: DataTableColumn<RecapRow>[] = [
-    { key: 'no', header: 'No.', className: 'tabular-nums text-muted-foreground', cell: (r) => rows.indexOf(r) + 1 },
+    { key: 'no', header: 'No.', className: 'tabular-nums text-muted-foreground', cell: (r) => r.no },
     {
       key: 'name',
       header: 'Mahasiswa',
@@ -143,14 +152,15 @@ export default function AttendanceRecap({ baseUrl, filters, options, schedule, r
     if (!recap || !schedule) return;
     setIsExporting(true);
     try {
+      const all = await exportAll.load();
       await downloadXlsx(`rekap-${slug(schedule.courseCode)}-${slug(schedule.classGroup)}`, 'Rekap', {
         title: [
           'Rekap Kehadiran',
           `${schedule.course} (${schedule.courseCode}) · ${schedule.classGroup} · ${schedule.lecturer}`,
           `Pertemuan terlaksana ${recap.summary.held}/${recap.summary.total} · batas minimal ${recap.summary.minPercent}% (maks. ${recap.summary.maxAbsent} kali tidak hadir)`,
         ],
-        headers: ['No.', 'NIM', 'Nama', ...recap.rows[0]!.strip.map((s) => `P${s.meetingNo}`), 'H', 'T', 'I', 'A', 'Kehadiran (%)', 'Sisa jatah', 'Status'],
-        rows: recap.rows.map((r, i) => [
+        headers: ['No.', 'NIM', 'Nama', ...all[0]!.strip.map((s) => `P${s.meetingNo}`), 'H', 'T', 'I', 'A', 'Kehadiran (%)', 'Sisa jatah', 'Status'],
+        rows: all.map((r, i) => [
           i + 1,
           r.nim,
           r.name,
@@ -163,7 +173,7 @@ export default function AttendanceRecap({ baseUrl, filters, options, schedule, r
           r.remaining,
           recapStatusInfo[r.status].label,
         ]),
-        widths: [6, 15, 28, ...recap.rows[0]!.strip.map(() => 5), 5, 5, 5, 5, 14, 11, 16],
+        widths: [6, 15, 28, ...all[0]!.strip.map(() => 5), 5, 5, 5, 5, 14, 11, 16],
       });
     } finally {
       setIsExporting(false);
@@ -187,11 +197,11 @@ export default function AttendanceRecap({ baseUrl, filters, options, schedule, r
         description="Kehadiran per mahasiswa dalam satu periode, dan kelayakan ikut UAS."
         actions={
           <div className="flex gap-2 print:hidden">
-            <Button variant="outline" onClick={exportExcel} disabled={!recap || recap.rows.length === 0 || isExporting}>
+            <Button variant="outline" onClick={exportExcel} disabled={!recap || recap.rows.total === 0 || isExporting || exportAll.isLoading}>
               <FileDown aria-hidden />
               {isExporting ? 'Menyiapkan…' : 'Ekspor Excel'}
             </Button>
-            <Button onClick={printAsPdf} disabled={!recap || recap.rows.length === 0}>
+            <Button onClick={async () => setPrintRows(await exportAll.load())} disabled={!recap || recap.rows.total === 0 || exportAll.isLoading}>
               <Printer aria-hidden />
               Ekspor PDF
             </Button>
@@ -258,8 +268,8 @@ export default function AttendanceRecap({ baseUrl, filters, options, schedule, r
                 <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
                 <Input
                   type="search"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  value={view.q ?? ''}
+                  onChange={(e) => setFilter('q', e.target.value)}
                   placeholder="Cari nama atau NIM"
                   aria-label="Cari nama atau NIM"
                   className="pl-9"
@@ -271,7 +281,7 @@ export default function AttendanceRecap({ baseUrl, filters, options, schedule, r
                     key={c.key}
                     type="button"
                     aria-pressed={chip === c.key}
-                    onClick={() => setChip(c.key)}
+                    onClick={() => setFilter('chip', c.key)}
                     className={cn(
                       'rounded-full px-3 py-1.5 text-sm font-semibold text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring/40 focus-visible:outline-none',
                       chip === c.key && 'bg-white text-primary shadow-sm',
@@ -283,8 +293,15 @@ export default function AttendanceRecap({ baseUrl, filters, options, schedule, r
               </div>
             </div>
 
-            {/* Paginasi klien di dalam DataTable; saat dicetak semua baris tetap ikut. */}
-            <DataTable columns={columns} rows={rows} getRowKey={(r) => r.studentId} emptyMessage="Tidak ada mahasiswa yang cocok." pageSize={PAGE_SIZE} itemLabel="mahasiswa" />
+            {/* Paginasi server; saat cetak PDF, seluruh baris dimuat lalu tampil di tabel khusus cetak. */}
+            <div className={cn(printRows && 'print:hidden')}>
+              <DataTable columns={columns} rows={recap.rows} getRowKey={(r) => r.studentId} emptyMessage="Tidak ada mahasiswa yang cocok." />
+            </div>
+            {printRows && (
+              <div className="hidden print:block">
+                <DataTable columns={columns} rows={printRows.map((r, i) => ({ ...r, no: i + 1 }))} getRowKey={(r) => r.studentId} />
+              </div>
+            )}
           </Card>
         </>
       )}

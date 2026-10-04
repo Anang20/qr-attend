@@ -1,6 +1,6 @@
 import { Link, router } from '@inertiajs/react';
 import { ArrowLeft, Search } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { DataTable, type DataTableColumn } from '@/components/app/data-table';
 import { fieldA11y, FormField } from '@/components/app/form-field';
@@ -11,10 +11,11 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { useFilters } from '@/hooks/use-filters';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { formatDate } from '@/lib/utils';
-import type { Option, SessionSummary } from '@/types';
+import type { Option, Paginated, SessionSummary } from '@/types';
 
 interface StudentRow {
   studentId: number;
@@ -28,7 +29,8 @@ interface StudentRow {
 interface Props {
   session: SessionSummary;
   canEdit: boolean;
-  students: StudentRow[];
+  students: Paginated<StudentRow>;
+  search: string;
   statuses: Option[];
 }
 
@@ -37,16 +39,11 @@ interface PendingChange {
   status: string;
 }
 
-export default function ManualAttendance({ session, canEdit, students, statuses }: Props) {
-  const [search, setSearch] = useState('');
+export default function ManualAttendance({ session, canEdit, students, search, statuses }: Props) {
+  const { filters, setFilter } = useFilters(`/dosen/presensi/${session.id}/manual`, { q: search });
   const [pending, setPending] = useState<PendingChange | null>(null);
   const [reason, setReason] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-
-  const filtered = useMemo(() => {
-    const q = search.toLowerCase();
-    return students.filter((s) => s.name.toLowerCase().includes(q) || s.nim.includes(q));
-  }, [students, search]);
 
   const statusLabel = (value: string) => statuses.find((s) => s.value === value)?.label ?? value;
 
@@ -118,10 +115,10 @@ export default function ManualAttendance({ session, canEdit, students, statuses 
       <Card className="gap-4">
         <div className="relative max-w-sm">
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-          <Input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari nama atau NIM" aria-label="Cari nama atau NIM" className="pl-9" />
+          <Input type="search" value={filters.q ?? ''} onChange={(e) => setFilter('q', e.target.value)} placeholder="Cari nama atau NIM" aria-label="Cari nama atau NIM" className="pl-9" />
         </div>
 
-        <DataTable columns={columns} rows={filtered} getRowKey={(s) => s.studentId} emptyMessage="Mahasiswa tidak ditemukan." />
+        <DataTable columns={columns} rows={students} getRowKey={(s) => s.studentId} emptyMessage="Mahasiswa tidak ditemukan." />
       </Card>
 
       <Dialog open={pending !== null} onOpenChange={(open) => !open && setPending(null)}>

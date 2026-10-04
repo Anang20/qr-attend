@@ -11,7 +11,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/ca
 import { useCountdown } from '@/hooks/use-countdown';
 import AppLayout from '@/layouts/app-layout';
 import { formatDate, formatNumber } from '@/lib/utils';
-import type { SessionSummary } from '@/types';
+import type { Paginated, SessionSummary } from '@/types';
 
 interface SessionDetail extends SessionSummary {
   openedAt: string | null;
@@ -34,7 +34,7 @@ interface LiveRow {
 }
 
 interface Live {
-  rows: LiveRow[];
+  rows: Paginated<LiveRow>;
   counts: { total: number; present: number; late: number; excused: number; absent: number; notYet: number };
 }
 

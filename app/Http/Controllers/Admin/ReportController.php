@@ -15,9 +15,11 @@ use App\Models\Course;
 use App\Models\Lecturer;
 use App\Models\Student;
 use App\Support\Days;
+use App\Support\Paginate;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Support\PerPage;
 
 /**
  * Laporan Presensi per pertemuan (FR-RPT-03). Filter berjenjang:
@@ -63,6 +65,7 @@ class ReportController extends Controller
         $session = $sessions->firstWhere('id', $sessionId) ?? $sessions->first();
 
         $report = null;
+        $exportRows = [];
         if ($schedule && $session) {
             $students = Student::query()->with('user:id,name')
                 ->where('class_group_id', $schedule->class_group_id)->where('status', StudentStatus::Active)
@@ -112,8 +115,13 @@ class ReportController extends Controller
                     'excused' => $count('excused'),
                     'rate' => $total > 0 ? (int) round($attended / $total * 100) : 0,
                 ],
-                'rows' => $all->when($status, fn ($c, string $s) => $c->where('status', $s))->values(),
             ];
+
+            $filtered = $all->when($status, fn ($c, string $s) => $c->where('status', $s))->values();
+            $exportRows = $filtered->map(fn (array $r, int $i): array => [...$r, 'no' => $i + 1])->all();
+            $page = Paginate::collection($filtered, $request);
+            $page->through(fn (array $r, int $i): array => [...$r, 'no' => $page->firstItem() + $i]);
+            $report['rows'] = $page;
         }
 
         return Inertia::render('admin/reports/index', [
@@ -140,6 +148,8 @@ class ReportController extends Controller
                 'statuses' => AttendanceStatus::options(),
             ],
             'report' => $report,
+            // Seluruh baris hanya dimuat saat ekspor Excel/PDF diminta.
+            'exportRows' => Inertia::optional(fn (): array => $exportRows),
         ]);
     }
 }

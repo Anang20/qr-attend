@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Support\PerPage;
 
 class AcademicPeriodController extends Controller
 {
@@ -27,7 +28,7 @@ class AcademicPeriodController extends Controller
             ->when($filters['q'] ?? null, fn ($q, string $s) => $q->where('academic_year', 'like', "%{$s}%"))
             ->when($filters['status'] ?? null, fn ($q, string $s) => $q->where('status', $s))
             ->orderByDesc('start_date')
-            ->paginate(10)
+            ->paginate(PerPage::from($request))
             ->withQueryString()
             ->through(fn (AcademicPeriod $p): array => [
                 'id' => $p->id,

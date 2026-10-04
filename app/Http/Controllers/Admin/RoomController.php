@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Support\PerPage;
 
 /**
  * Master Ruang & Titik Presensi. Koordinat tiap ruang menjadi acuan
@@ -43,7 +44,7 @@ class RoomController extends Controller
             });
 
         $rooms = $query->orderBy('building_id')->orderBy('code')
-            ->paginate(10)
+            ->paginate(PerPage::from($request))
             ->withQueryString()
             ->through(fn (Room $r): array => [
                 'id' => $r->id,

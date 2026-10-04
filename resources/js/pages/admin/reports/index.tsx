@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/react';
 import { FileDown, Printer } from 'lucide-react';
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 
 import { DataTable, type DataTableColumn } from '@/components/app/data-table';
 import { PageHeader } from '@/components/app/page-header';
@@ -11,12 +11,14 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { ALL } from '@/hooks/use-filters';
+import { useLoadAll } from '@/hooks/use-load-all';
 import AppLayout from '@/layouts/app-layout';
 import { downloadXlsx, printAsPdf } from '@/lib/export';
-import { formatDate } from '@/lib/utils';
-import type { Option } from '@/types';
+import { cn, formatDate } from '@/lib/utils';
+import type { Option, Paginated } from '@/types';
 
 interface ReportRow {
+  no: number;
   nim: string;
   name: string;
   time: string | null;
@@ -43,7 +45,7 @@ interface Report {
     generatedAt: string;
   };
   tiles: { total: number; present: number; late: number; absent: number; excused: number; rate: number };
-  rows: ReportRow[];
+  rows: Paginated<ReportRow>;
 }
 
 interface Filters {
@@ -63,7 +65,7 @@ interface Props {
 
 const URL = '/admin/laporan-presensi';
 
-const columns: DataTableColumn<ReportRow & { no: number }>[] = [
+const columns: DataTableColumn<ReportRow>[] = [
   { key: 'no', header: 'No.', className: 'tabular-nums text-muted-foreground', cell: (r) => r.no },
   { key: 'nim', header: 'NIM', className: 'tabular-nums', cell: (r) => r.nim },
   { key: 'name', header: 'Nama mahasiswa', className: 'font-semibold', cell: (r) => r.name },
@@ -76,6 +78,15 @@ export default function Reports({ filters: initial, options, report }: Props) {
   // Filter diterapkan lewat tombol "Terapkan" (bukan otomatis), sesuai desain.
   const [filters, setFilters] = useState<Filters>(initial);
   const [isExporting, setIsExporting] = useState(false);
+  const [printRows, setPrintRows] = useState<ReportRow[] | null>(null);
+  const exportAll = useLoadAll<ReportRow>('exportRows');
+
+  // PDF: muat seluruh baris, tampilkan sebagai tabel khusus cetak, lalu buka dialog cetak.
+  useEffect(() => {
+    if (!printRows) return;
+    printAsPdf();
+    setPrintRows(null);
+  }, [printRows]);
 
   const change = (key: keyof Filters, value: string) => {
     const v = value === ALL ? null : value;
@@ -107,14 +118,14 @@ export default function Reports({ filters: initial, options, report }: Props) {
 
   const reset = () => router.get(URL, {}, { preserveScroll: true });
 
-  const rows = (report?.rows ?? []).map((r, i) => ({ ...r, no: i + 1 }));
-  const hasData = rows.length > 0;
+  const hasData = (report?.rows.total ?? 0) > 0;
 
   const exportExcel = async () => {
     if (!report) return;
     setIsExporting(true);
     try {
       const m = report.meta;
+      const rows = await exportAll.load();
       await downloadXlsx(m.reference, 'Laporan', {
         title: [
           'Universitas Pamulang · Fakultas Ilmu Komputer',
@@ -149,7 +160,7 @@ export default function Reports({ filters: initial, options, report }: Props) {
               <FileDown aria-hidden />
               {isExporting ? 'Menyiapkan…' : 'Ekspor Excel'}
             </Button>
-            <Button onClick={printAsPdf} disabled={!hasData}>
+            <Button onClick={async () => setPrintRows(await exportAll.load())} disabled={!hasData || exportAll.isLoading}>
               <Printer aria-hidden />
               Ekspor PDF
             </Button>
@@ -225,14 +236,15 @@ export default function Reports({ filters: initial, options, report }: Props) {
               ))}
             </dl>
 
-            <DataTable columns={columns} rows={rows} getRowKey={(r) => r.nim} emptyMessage="Tidak ada mahasiswa dengan status ini." pageSize={15} itemLabel="mahasiswa" />
+            <div className={cn(printRows && 'print:hidden')}>
+              <DataTable columns={columns} rows={report.rows} getRowKey={(r) => r.nim} emptyMessage="Tidak ada mahasiswa dengan status ini." />
+            </div>
+            {printRows && (
+              <div className="hidden print:block">
+                <DataTable columns={columns} rows={printRows} getRowKey={(r) => r.nim} />
+              </div>
+            )}
 
-            <footer className="flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
-              <span>
-                Dibuat {formatDate(report.meta.generatedAt)} oleh {report.meta.generatedBy} · QR Attend
-              </span>
-              <span>{rows.length} baris</span>
-            </footer>
           </Card>
         </>
       )}

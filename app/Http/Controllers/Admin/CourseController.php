@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Support\PerPage;
 
 class CourseController extends Controller
 {
@@ -29,7 +30,7 @@ class CourseController extends Controller
             ->when($filters['semester'] ?? null, fn ($q, string $v) => $q->where('semester', $v))
             ->when($filters['status'] ?? null, fn ($q, string $v) => $q->where('status', $v))
             ->orderBy('code')
-            ->paginate(10)
+            ->paginate(PerPage::from($request))
             ->withQueryString()
             ->through(fn (Course $c): array => [
                 'id' => $c->id,

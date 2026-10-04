@@ -16,6 +16,7 @@ use App\Services\ScheduleConflicts;
 use App\Services\ScheduleSessions;
 use App\Support\Days;
 use App\Support\Options;
+use App\Support\Paginate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -113,6 +114,8 @@ class ClassScheduleController extends Controller
                 'studentsCount' => Student::query()->where('class_group_id', $selected->id)->count(),
             ] : null,
             'schedules' => $schedules,
+            // Tabel dipaginasi server; daftar penuh di atas tetap dipakai untuk jadwal mingguan, total SKS, dan form.
+            'schedulesPage' => Paginate::collection($schedules, $request),
             'slots' => $slots,
             'copySource' => $period && $selected && $schedules->isEmpty() && $period->status !== PeriodStatus::Finished
                 ? $this->copySource($period, $selected->id)

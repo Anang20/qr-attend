@@ -14,11 +14,13 @@ use App\Models\Student;
 use App\Services\AttendanceSessions;
 use App\Services\Settings;
 use App\Support\Options;
+use App\Support\Paginate;
 use App\Support\SessionPresenter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Support\PerPage;
 
 /**
  * Sesi presensi dosen: daftar pertemuan, mulai presensi (QR), pantau, selesaikan.
@@ -45,7 +47,7 @@ class SessionController extends Controller
                 'attendances as attended_count' => fn ($q) => $q->whereIn('status', [AttendanceStatus::Present, AttendanceStatus::Late, AttendanceStatus::Excused]),
                 'attendances as records_count',
             ])
-            ->paginate(12)
+            ->paginate(PerPage::from($request))
             ->withQueryString()
             ->through(fn (AttendanceSession $s): array => [
                 ...SessionPresenter::summary($s),
@@ -88,7 +90,7 @@ class SessionController extends Controller
             ],
             // QR hanya dikirim selama sesi dibuka.
             'qrPayload' => $session->status === SessionStatus::Open ? AttendanceSessions::qrPayload($session) : null,
-            'live' => fn () => $this->live($session),
+            'live' => fn () => $this->live($session, $request),
             'serverNow' => now()->toIso8601String(),
             'devTools' => (bool) config('attendance.dev_tools'),
         ]);
@@ -111,7 +113,7 @@ class SessionController extends Controller
     }
 
     /** Daftar mahasiswa + status presensi (diperbarui lewat polling 3 detik). @return array<string, mixed> */
-    private function live(AttendanceSession $session): array
+    private function live(AttendanceSession $session, Request $request): array
     {
         $students = Student::query()
             ->with('user:id,name')
@@ -144,7 +146,7 @@ class SessionController extends Controller
         $count = fn (AttendanceStatus $s): int => $records->where('status', $s)->count();
 
         return [
-            'rows' => $rows,
+            'rows' => Paginate::collection($rows, $request),
             'counts' => [
                 'total' => $students->count(),
                 'present' => $count(AttendanceStatus::Present),

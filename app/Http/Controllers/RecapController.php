@@ -8,6 +8,7 @@ use App\Models\ClassGroup;
 use App\Models\ClassSchedule;
 use App\Models\Course;
 use App\Services\AttendanceRecap;
+use App\Support\Paginate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -48,6 +49,19 @@ class RecapController extends Controller
                 ->where('course_id', $courseId)->where('class_group_id', $classId)->first()
             : null;
 
+        $recap = $schedule ? AttendanceRecap::forSchedule($schedule) : null;
+        $search = trim((string) $request->query('q'));
+        $chip = in_array($request->query('chip'), ['ineligible', 'warning', 'safe'], true) ? (string) $request->query('chip') : 'all';
+
+        // Pencarian, saringan status, dan halaman dihitung di server; ringkasan tetap atas seluruh kelas.
+        $page = $recap ? Paginate::collection(
+            collect($recap['rows'])
+                ->when($search !== '', fn ($c) => $c->filter(fn (array $r): bool => str_contains(mb_strtolower($r['name']), mb_strtolower($search)) || str_contains($r['nim'], $search)))
+                ->when($chip !== 'all', fn ($c) => $c->filter(fn (array $r): bool => $chip === 'safe' ? in_array($r['status'], ['safe', 'eligible'], true) : $r['status'] === $chip)),
+            $request,
+        ) : null;
+        $page?->through(fn (array $r, int $i): array => [...$r, 'no' => $page->firstItem() + $i]);
+
         return Inertia::render('shared/attendance-recap', [
             'role' => $user->role->value,
             'baseUrl' => $isLecturer ? '/dosen/rekap-kehadiran' : '/admin/rekap-kehadiran',
@@ -55,6 +69,8 @@ class RecapController extends Controller
                 'period_id' => $periodId ? (string) $periodId : null,
                 'course_id' => $courseId ? (string) $courseId : null,
                 'class_group_id' => $classId ? (string) $classId : null,
+                'q' => $search,
+                'chip' => $chip,
             ],
             'options' => [
                 'periods' => AcademicPeriod::query()->orderByDesc('start_date')->get()
@@ -68,7 +84,9 @@ class RecapController extends Controller
                 'classGroup' => $schedule->classGroup->code,
                 'lecturer' => $schedule->lecturer->user->name,
             ] : null,
-            'recap' => $schedule ? AttendanceRecap::forSchedule($schedule) : null,
+            'recap' => $recap ? ['summary' => $recap['summary'], 'rows' => $page] : null,
+            // Seluruh baris hanya dimuat saat ekspor Excel/PDF diminta.
+            'exportRows' => Inertia::optional(fn (): array => $recap['rows'] ?? []),
         ]);
     }
 }

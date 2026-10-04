@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Support\PerPage;
 
 class StudentController extends Controller
 {
@@ -33,7 +34,7 @@ class StudentController extends Controller
             ->when($filters['class_group_id'] ?? null, fn ($q, string $v) => $q->where('class_group_id', $v))
             ->when($filters['status'] ?? null, fn ($q, string $v) => $q->where('status', $v))
             ->orderBy('nim')
-            ->paginate(10)
+            ->paginate(PerPage::from($request))
             ->withQueryString()
             ->through(fn (Student $s): array => [
                 'id' => $s->id,

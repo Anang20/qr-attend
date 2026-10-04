@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Support\PerPage;
 
 class ClassGroupController extends Controller
 {
@@ -25,7 +26,7 @@ class ClassGroupController extends Controller
             ->when($filters['cohort_year'] ?? null, fn ($q, string $v) => $q->where('cohort_year', $v))
             ->when($filters['status'] ?? null, fn ($q, string $v) => $q->where('status', $v))
             ->orderBy('code')
-            ->paginate(10)
+            ->paginate(PerPage::from($request))
             ->withQueryString()
             ->through(fn (ClassGroup $c): array => [
                 'id' => $c->id,

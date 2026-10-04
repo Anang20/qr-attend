@@ -1,6 +1,5 @@
 import { Link, router } from '@inertiajs/react';
 import { ArrowLeft, Search, UsersRound } from 'lucide-react';
-import { useMemo, useState } from 'react';
 
 import { DataTable, type DataTableColumn } from '@/components/app/data-table';
 import { PageHeader } from '@/components/app/page-header';
@@ -9,8 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useFilters } from '@/hooks/use-filters';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
+import type { Paginated } from '@/types';
 
 interface ClassCard {
   id: number;
@@ -32,16 +33,12 @@ interface Props {
   classes: ClassCard[];
   selectedClass: ClassCard | null;
   courses: { id: number; name: string }[];
-  rows: StudentRow[];
+  rows: Paginated<StudentRow> | null;
+  search: string;
 }
 
-export default function LecturerStudents({ period, classes, selectedClass, courses, rows }: Props) {
-  const [search, setSearch] = useState('');
-
-  const filtered = useMemo(() => {
-    const q = search.toLowerCase();
-    return rows.filter((r) => r.name.toLowerCase().includes(q) || r.nim.includes(q));
-  }, [rows, search]);
+export default function LecturerStudents({ period, classes, selectedClass, courses, rows, search }: Props) {
+  const { filters, setFilter } = useFilters('/dosen/mahasiswa', { q: search }, { class_group_id: selectedClass ? String(selectedClass.id) : undefined });
 
   const columns: DataTableColumn<StudentRow>[] = [
     { key: 'nim', header: 'NIM', className: 'tabular-nums', cell: (r) => r.nim },
@@ -119,9 +116,9 @@ export default function LecturerStudents({ period, classes, selectedClass, cours
       <Card className={cn('gap-4')}>
         <div className="relative max-w-sm">
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-          <Input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari nama atau NIM" aria-label="Cari nama atau NIM" className="pl-9" />
+          <Input type="search" value={filters.q ?? ''} onChange={(e) => setFilter('q', e.target.value)} placeholder="Cari nama atau NIM" aria-label="Cari nama atau NIM" className="pl-9" />
         </div>
-        <DataTable columns={columns} rows={filtered} getRowKey={(r) => r.studentId} emptyMessage="Mahasiswa tidak ditemukan." pageSize={10} itemLabel="mahasiswa" />
+        {rows && <DataTable columns={columns} rows={rows} getRowKey={(r) => r.studentId} emptyMessage="Mahasiswa tidak ditemukan." />}
       </Card>
     </AppLayout>
   );

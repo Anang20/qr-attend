@@ -8,6 +8,7 @@ use App\Models\AcademicPeriod;
 use App\Models\ClassSchedule;
 use App\Models\Student;
 use App\Services\AttendanceRecap;
+use App\Support\Paginate;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -43,7 +44,8 @@ class StudentController extends Controller
         $selected = $selectedId ? $classes->firstWhere('id', $selectedId) : null;
 
         $courses = [];
-        $rows = [];
+        $rows = null;
+        $search = trim((string) $request->query('q'));
         if ($selected !== null) {
             $classSchedules = $schedules->where('class_group_id', $selectedId)->values();
             $byStudent = [];
@@ -60,7 +62,11 @@ class StudentController extends Controller
                 }
             }
 
-            $rows = collect($byStudent)->sortBy('nim')->values()->all();
+            $rows = Paginate::collection(
+                collect($byStudent)->sortBy('nim')->values()
+                    ->when($search !== '', fn ($c) => $c->filter(fn (array $r): bool => str_contains(mb_strtolower($r['name']), mb_strtolower($search)) || str_contains($r['nim'], $search))),
+                $request,
+            );
         }
 
         return Inertia::render('lecturer/students', [
@@ -69,6 +75,7 @@ class StudentController extends Controller
             'selectedClass' => $selected,
             'courses' => $courses,
             'rows' => $rows,
+            'search' => $search,
         ]);
     }
 }

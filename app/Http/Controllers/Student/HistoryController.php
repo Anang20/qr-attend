@@ -13,6 +13,7 @@ use App\Support\SessionPresenter;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Support\PerPage;
 
 /** Riwayat & detail presensi mahasiswa (periode aktif). */
 class HistoryController extends Controller
@@ -36,7 +37,7 @@ class HistoryController extends Controller
             ->join('attendance_sessions', 'attendance_sessions.id', '=', 'attendances.attendance_session_id')
             ->orderByDesc('attendance_sessions.session_date')
             ->select('attendances.*')
-            ->paginate(10)
+            ->paginate(PerPage::from($request))
             ->withQueryString()
             ->through(fn (Attendance $a): array => [
                 'id' => $a->id,

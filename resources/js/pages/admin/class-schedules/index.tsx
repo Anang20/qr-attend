@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { useResourceForm } from '@/hooks/use-resource-form';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
-import type { Option } from '@/types';
+import type { Option, Paginated } from '@/types';
 
 interface PeriodOption extends Option {
   status: string;
@@ -75,6 +75,7 @@ interface Props {
   classes: ClassItem[];
   selectedClass: { id: number; code: string; studentsCount: number } | null;
   schedules: ScheduleRow[];
+  schedulesPage: Paginated<ScheduleRow>;
   slots: Slot[];
   copySource: { periodId: number; label: string; count: number } | null;
   options: { courses: CourseOption[]; lecturers: Option[]; rooms: RoomOption[]; days: Option[] };
@@ -102,7 +103,7 @@ function addMinutes(time: string, minutes: number): string {
 
 const overlaps = (a: Pick<Slot, 'start_time' | 'end_time'>, b: Pick<Slot, 'start_time' | 'end_time'>) => a.start_time < b.end_time && b.start_time < a.end_time;
 
-export default function ClassSchedulesIndex({ periods, period, classes, selectedClass, schedules, slots, copySource, options }: Props) {
+export default function ClassSchedulesIndex({ periods, period, classes, selectedClass, schedules, schedulesPage, slots, copySource, options }: Props) {
   const [classSearch, setClassSearch] = useState('');
   const isReadOnly = period?.isReadOnly ?? true;
 
@@ -297,7 +298,7 @@ export default function ClassSchedulesIndex({ periods, period, classes, selected
                 </Alert>
               )}
 
-              <DataTable columns={columns} rows={schedules} getRowKey={(s) => s.id} emptyMessage="Belum ada mata kuliah yang dipetakan." pageSize={10} itemLabel="pemetaan" />
+              <DataTable columns={columns} rows={schedulesPage} getRowKey={(s) => s.id} emptyMessage="Belum ada mata kuliah yang dipetakan." />
 
               <WeekGrid schedules={schedules} />
             </Card>

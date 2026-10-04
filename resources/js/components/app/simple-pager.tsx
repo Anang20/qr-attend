@@ -1,3 +1,4 @@
+import { pageItems } from '@/components/app/pagination';
 import { cn } from '@/lib/utils';
 
 interface SimplePagerProps {
@@ -21,7 +22,12 @@ export function SimplePager({ page, pageCount, total, pageSize, onPageChange, no
       </p>
       {pageCount > 1 && (
         <nav aria-label="Halaman" className="flex items-center gap-1">
-          {Array.from({ length: pageCount }, (_, i) => i + 1).map((p) => (
+          {pageItems(page, pageCount).map((p, i) =>
+            p === 'gap' ? (
+              <span key={`gap-${i}`} aria-hidden className="flex h-9 min-w-6 items-center justify-center text-sm text-muted-foreground">
+                …
+              </span>
+            ) : (
             <button
               key={p}
               type="button"
@@ -34,7 +40,8 @@ export function SimplePager({ page, pageCount, total, pageSize, onPageChange, no
             >
               {p}
             </button>
-          ))}
+            ),
+          )}
         </nav>
       )}
     </div>

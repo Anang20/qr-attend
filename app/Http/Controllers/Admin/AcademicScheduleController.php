@@ -10,6 +10,7 @@ use App\Support\Options;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Support\PerPage;
 
 /**
  * Jadwal Akademik: tampilan read-only dari Pemetaan Kelas (BR-19).
@@ -29,7 +30,7 @@ class AcademicScheduleController extends Controller
             ->when($filters['class_group_id'] ?? null, fn ($q, string $v) => $q->where('class_group_id', $v))
             ->when($filters['lecturer_id'] ?? null, fn ($q, string $v) => $q->where('lecturer_id', $v))
             ->orderBy('day_of_week')->orderBy('start_time')
-            ->paginate(15)
+            ->paginate(PerPage::from($request))
             ->withQueryString()
             ->through(fn (ClassSchedule $s): array => [
                 'id' => $s->id,

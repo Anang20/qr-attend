@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Support\PerPage;
 
 /**
  * Presensi manual (BR-11): dosen mengubah status setelah konfirmasi; setiap perubahan tercatat di log.
@@ -33,15 +34,22 @@ class ManualAttendanceController extends Controller
         $this->authorizeSession($request, $session);
         AttendanceSessions::expireIfDue($session);
 
-        $records = Attendance::query()->where('attendance_session_id', $session->id)->get()->keyBy('student_id');
+        $search = trim((string) $request->query('q'));
         $students = Student::query()->with('user:id,name')
             ->where('class_group_id', $session->classSchedule->class_group_id)
-            ->orderBy('nim')->get(['id', 'user_id', 'nim']);
+            ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w->where('nim', 'like', "%{$search}%")
+                ->orWhereHas('user', fn ($u) => $u->where('name', 'like', "%{$search}%"))))
+            ->orderBy('nim')
+            ->paginate(PerPage::from($request), ['id', 'user_id', 'nim'])
+            ->withQueryString();
+        $records = Attendance::query()->where('attendance_session_id', $session->id)
+            ->whereIn('student_id', $students->pluck('id'))->get()->keyBy('student_id');
 
         return Inertia::render('lecturer/sessions/manual', [
             'session' => SessionPresenter::summary($session),
             'canEdit' => $this->canEdit($session),
-            'students' => $students->map(function (Student $st) use ($records): array {
+            'search' => $search,
+            'students' => $students->through(function (Student $st) use ($records): array {
                 /** @var Attendance|null $a */
                 $a = $records->get($st->id);
 
