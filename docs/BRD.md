@@ -59,7 +59,7 @@ Dosen membuka sesi presensi pada jam kuliah → sistem membuat **QR sekali per s
 ## 2. Ruang Lingkup
 
 ### 2.1 Termasuk (MVP)
-- Autentikasi: masuk (deteksi peran otomatis), daftar (Mahasiswa/Dosen), lupa kata sandi.
+- Autentikasi: masuk (deteksi peran otomatis), daftar (Mahasiswa/Dosen, email bebas tanpa verifikasi), persetujuan akun oleh admin.
 - Ikat perangkat mahasiswa + permintaan reset perangkat.
 - Master data: Periode Akademik, Mahasiswa, Dosen, Mata Kuliah, Kelas, Ruang & Titik Presensi.
 - Pemetaan Kelas (sumber tunggal jadwal) dan Jadwal Akademik (read-only).
@@ -75,7 +75,7 @@ Dosen membuka sesi presensi pada jam kuliah → sistem membuat **QR sekali per s
 - Presensi dosen (kehadiran mengajar) dan honorarium.
 - Mahasiswa mengulang mata kuliah di kelas lain (lihat [Asumsi A-03](#171-asumsi)).
 - Aplikasi native; mahasiswa memakai web responsif (mobile), dosen & admin desktop.
-- Push notification ke ponsel (MVP memakai notifikasi in-app + email).
+- Push notification ke ponsel maupun email; MVP ini hanya memakai notifikasi in-app (badge, kartu, pesan flash).
 
 ---
 
@@ -87,7 +87,7 @@ Dosen membuka sesi presensi pada jam kuliah → sistem membuat **QR sekali per s
 |---|---|---|
 | **Admin** (Bagian Akademik) | Mengelola master data, periode, pemetaan, laporan, pengaturan, persetujuan akun dosen & reset perangkat | Dibuat langsung di database (seeder) — tidak ada pendaftaran publik |
 | **Dosen** | Membuka sesi presensi, presensi manual, menyetujui izin, melihat rekap mata kuliah yang diampu | Daftar → menunggu persetujuan admin prodi |
-| **Mahasiswa** | Memindai QR, melihat riwayat, mengajukan izin/sakit, mengelola profil | Daftar → verifikasi email kampus → ikat perangkat saat masuk pertama |
+| **Mahasiswa** | Memindai QR, melihat riwayat, mengajukan izin/sakit, mengelola profil | Daftar → menunggu persetujuan admin akademik → ikat perangkat saat masuk pertama |
 | **Sistem** | Membuat sesi terjadwal, menutup sesi kedaluwarsa, menandai Tidak Hadir, menghitung rekap, mengirim notifikasi | — |
 
 ### 3.2 Matriks hak akses
@@ -177,23 +177,21 @@ Urutan siklus satu semester:
 flowchart TD
   S([Mulai]) --> R{Punya akun?}
   R -->|Belum| T{Tab daftar}
-  T -->|Mahasiswa| RM[Isi: nama, NIM 12 digit, prodi, angkatan,<br/>kelas, email @student.unpam.ac.id, HP, sandi]
-  T -->|Dosen| RD[Isi: nama & gelar, NIDN/NUPTK 10 digit,<br/>prodi homebase, email @unpam.ac.id, HP, sandi]
+  T -->|Mahasiswa| RM[Isi: nama, NIM 12 digit, prodi, angkatan,<br/>kelas, email bebas, HP, sandi]
+  T -->|Dosen| RD[Isi: nama & gelar, NIDN/NUPTK 10 digit,<br/>prodi homebase, email bebas, HP, sandi]
   RM --> VM{Valid & NIM belum terdaftar?}
   VM -->|Tidak| RM
-  VM -->|Ya| EM[Kirim tautan verifikasi ke email kampus]
-  EM --> CL[Mahasiswa klik tautan → akun Aktif]
+  VM -->|Ya| PD[Akun Menunggu persetujuan]
   RD --> VD{Valid & NIDN belum terdaftar?}
   VD -->|Tidak| RD
-  VD -->|Ya| PD[Akun Menunggu persetujuan]
-  PD --> AA{Admin prodi menyetujui?}
-  AA -->|Ya| AK[Akun Aktif + email pemberitahuan]
+  VD -->|Ya| PD
+  PD --> AA{Admin menyetujui?}
+  AA -->|Ya| AK[Akun Aktif]
   AA -->|Tidak| RJ[Ditolak + alasan]
   R -->|Sudah| L[Masuk: NIM / NIDN / email + sandi]
-  CL --> L
   AK --> L
   L --> DR{Deteksi peran dari identitas}
-  DR -->|"12 digit / email student"| MS[Mahasiswa]
+  DR -->|"12 digit / email mahasiswa"| MS[Mahasiswa]
   DR -->|"10 digit / email dosen"| DS[Dasbor Dosen]
   DR -->|"akun admin"| AD[Dasbor Admin]
   MS --> DB{Perangkat sudah terikat?}
@@ -204,7 +202,8 @@ flowchart TD
 
 Catatan:
 - Peran ditentukan dari data akun di database; pola identitas hanya membantu memilih kolom pencarian (NIM / NIDN / email).
-- Lupa kata sandi: masukkan email kampus atau NIM → tautan atur ulang berlaku **30 menit**.
+- Email tidak dikunci ke domain kampus dan tidak memerlukan verifikasi — gerbang aktivasi akun sepenuhnya di tangan admin (persetujuan), bukan email.
+- Tidak ada fitur lupa kata sandi; pengguna yang lupa sandi menghubungi admin untuk direset manual.
 
 ### 5.3 Persiapan akademik (Admin)
 
@@ -401,7 +400,7 @@ stateDiagram-v2
 ```
 
 ### 6.5 Akun & perangkat
-- Akun: `Menunggu verifikasi` (mahasiswa) / `Menunggu persetujuan` (dosen) → `Aktif` → `Nonaktif`.
+- Akun: `Menunggu persetujuan` (mahasiswa & dosen) → `Aktif` → `Nonaktif` / `Ditolak`.
 - Perangkat: `Terikat` → `Menunggu reset` → `Dicabut` (lalu perangkat baru `Terikat`).
 
 ---
@@ -434,10 +433,9 @@ stateDiagram-v2
 | **BR-22** | Ruang Nonaktif tidak bisa dipetakan; ruang yang masih dipakai pemetaan tidak bisa dihapus/dinonaktifkan | Ruang & Titik |
 | **BR-23** | Titik presensi maks. **500 m** dari pusat kampus; lat & lng diisi keduanya atau kosong keduanya | Ruang & Titik |
 | **BR-24** | Data master yang sudah dipakai transaksi (mis. punya sesi presensi) **tidak bisa dihapus**, hanya dinonaktifkan | Semua master |
-| **BR-25** | Akun Admin dibuat dari database; pendaftaran publik hanya Mahasiswa & Dosen; akun Dosen perlu persetujuan | Auth |
+| **BR-25** | Akun Admin dibuat dari database; pendaftaran publik hanya Mahasiswa & Dosen; email bebas (tidak dikunci ke domain kampus, tanpa verifikasi email); keduanya berstatus **Menunggu** sampai disetujui admin, baru bisa masuk | Auth |
 | **BR-26** | Kata sandi min. 8 karakter, berisi huruf besar, huruf kecil, dan angka; sandi baru ≠ sandi lama | Auth, Profil |
-| **BR-27** | Tautan atur ulang kata sandi berlaku **30 menit** | Lupa Kata Sandi |
-| **BR-28** | Email kampus terkunci (tidak bisa diubah pengguna); No. HP format 08…, 10–13 digit | Profil |
+| **BR-28** | Email terkunci (tidak bisa diubah pengguna); No. HP format 08…, 10–13 digit | Profil |
 
 ---
 
@@ -446,10 +444,9 @@ stateDiagram-v2
 ### 8.1 Autentikasi (FR-AUTH)
 | Kode | Kebutuhan |
 |---|---|
-| FR-AUTH-01 | Masuk dengan satu kolom identitas (NIM / NIDN / email kampus) + kata sandi, tanpa tab peran dan tanpa "tetap masuk" |
+| FR-AUTH-01 | Masuk dengan satu kolom identitas (NIM / NIDN / email) + kata sandi, tanpa tab peran dan tanpa "tetap masuk" |
 | FR-AUTH-02 | Daftar dengan tab Mahasiswa / Dosen, validasi per kolom, ringkasan galat di atas form, persetujuan (consent) wajib |
-| FR-AUTH-03 | Verifikasi email mahasiswa; antrean persetujuan akun dosen untuk admin |
-| FR-AUTH-04 | Lupa kata sandi via email kampus atau NIM |
+| FR-AUTH-03 | Mahasiswa & Dosen berstatus Menunggu setelah daftar; admin menyetujui/menolak dari panel Mahasiswa/Dosen masing-masing sebelum akun bisa masuk |
 | FR-AUTH-05 | Ikat perangkat saat mahasiswa pertama kali masuk |
 
 ### 8.2 Master data (FR-MST)
@@ -784,7 +781,7 @@ Kolom `created_at` / `updated_at` ada di semua tabel kecuali disebut lain.
 |---|---|---|---|
 | id | BIGINT UNSIGNED PK | ✔ | |
 | name | VARCHAR(150) | ✔ | Untuk dosen termasuk gelar, mis. "Gusmayeni, S.Kom., M.Kom" |
-| email | VARCHAR(150) UNIQUE | ✔ | `@unpam.ac.id` / `@student.unpam.ac.id` |
+| email | VARCHAR(150) UNIQUE | ✔ | Bebas (tidak dikunci ke domain kampus); tidak perlu verifikasi |
 | phone | VARCHAR(13) | | 08…, 10–13 digit |
 | password | VARCHAR(255) | ✔ | bcrypt/argon2 |
 | role | ENUM('admin','lecturer','student') | ✔ | |
@@ -1000,15 +997,14 @@ Dua pemetaan bentrok bila periode sama, `day_of_week` sama, `start1 < end2 AND s
 
 | Pemicu | Penerima | Kanal |
 |---|---|---|
-| Pendaftaran mahasiswa | Mahasiswa | Email verifikasi |
-| Pendaftaran dosen | Admin | In-app (antrean persetujuan) |
-| Akun dosen disetujui/ditolak | Dosen | Email |
+| Pendaftaran mahasiswa & dosen | Admin | In-app (banner & badge "menunggu persetujuan" di dasbor, menu Mahasiswa/Dosen) |
+| Akun disetujui/ditolak | Mahasiswa / Dosen | Tidak ada notifikasi aktif; diketahui saat mencoba masuk |
 | Pengajuan izin baru | Dosen pengampu | In-app (badge "Persetujuan Izin") |
-| Izin disetujui/ditolak | Mahasiswa | In-app + email |
+| Izin disetujui/ditolak/Urungkan | Mahasiswa | In-app (flash saat membuka halaman terkait) |
 | Status UAS berubah ke Waspada / Tidak memenuhi | Mahasiswa, Dosen | In-app (kartu aksi dasbor) |
-| Permintaan reset perangkat | Admin | In-app |
-| Ringkasan sesi (opsional) | Dosen | Email (bila diaktifkan di Pengaturan) |
-| Lupa kata sandi | Pengguna | Email (tautan 30 menit) |
+| Permintaan reset perangkat | Admin | In-app (kartu di dasbor) |
+
+Catatan: MVP ini tidak mengirim email maupun push notification sama sekali (lihat [§2.2](#22-tidak-termasuk-di-luar-mvp)) — semua notifikasi berupa badge, kartu peringatan, atau pesan flash di dalam aplikasi.
 
 ---
 
