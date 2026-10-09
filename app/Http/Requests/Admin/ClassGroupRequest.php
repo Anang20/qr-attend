@@ -29,7 +29,7 @@ class ClassGroupRequest extends FormRequest
         $class = $this->route('classGroup');
 
         return [
-            'code' => ['required', 'regex:/^[A-Z]{2,4}-\d[A-Z]$/', Rule::unique('class_groups', 'code')->ignore($class instanceof ClassGroup ? $class->id : null)],
+            'code' => ['required', 'string', 'max:10', Rule::unique('class_groups', 'code')->ignore($class instanceof ClassGroup ? $class->id : null)],
             'study_program_id' => ['required', 'integer', 'exists:study_programs,id'],
             'cohort_year' => ['required', 'integer', 'between:2015,'.((int) date('Y') + 1)],
             'advisor_lecturer_id' => ['nullable', 'integer', 'exists:lecturers,id'],
@@ -42,7 +42,7 @@ class ClassGroupRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'code.regex' => 'Kode kelas berformat seperti SI-5A.',
+            'code.max' => 'Kode kelas maksimal 10 karakter.',
             'code.unique' => 'Kode kelas sudah dipakai.',
         ];
     }

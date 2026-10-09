@@ -120,7 +120,7 @@ export default function ClassGroupsIndex({ classGroups, filters: initialFilters,
       </Card>
 
       <FormSheet isOpen={crud.isOpen} onOpenChange={crud.setIsOpen} title={crud.isEditing ? 'Ubah kelas' : 'Tambah kelas'} onSubmit={crud.submit} isProcessing={processing} errorCount={Object.keys(errors).length}>
-        <FormField id="code" label="Kode kelas" error={errors.code} hint="Contoh: SI-5A" isRequired>
+        <FormField id="code" label="Kode kelas" error={errors.code} hint="Bebas, maksimal 10 karakter. Contoh: SI-5A" isRequired>
           <Input {...fieldA11y('code', errors.code)} value={data.code} onChange={(e) => setData('code', e.target.value.toUpperCase())} maxLength={10} />
         </FormField>
         <FormField id="study_program_id" label="Program studi" error={errors.study_program_id} isRequired>
