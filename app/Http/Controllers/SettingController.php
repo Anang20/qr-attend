@@ -22,9 +22,19 @@ class SettingController extends Controller
 {
     /** Item yang boleh diubah admin beserta aturannya. */
     private const EDITABLE = [
-        'late_after_minutes' => ['required', 'integer', 'in:5,10,15'],
+        'late_after_minutes' => ['required', 'integer', 'in:5,10,15,20'],
         'allow_manual_attendance' => ['required', 'boolean'],
         'email_session_summary' => ['required', 'boolean'],
+    ];
+
+    /** Batas akurasi GPS saat memindai; admin boleh menyesuaikan (mis. untuk uji coba di perangkat tanpa GPS). */
+    private const ACCURACY = ['max_location_accuracy_m' => ['required', 'integer', 'between:5,200']];
+
+    /** Pusat kampus (acuan validasi titik ruang, BR-23): bukan kebijakan terkunci, admin boleh mengubah. */
+    private const CAMPUS = [
+        'campus_center_lat' => ['required', 'numeric', 'between:-90,90'],
+        'campus_center_lng' => ['required', 'numeric', 'between:-180,180'],
+        'campus_max_distance_m' => ['required', 'integer', 'between:50,5000'],
     ];
 
     public function show(Request $request): Response
@@ -37,8 +47,8 @@ class SettingController extends Controller
             ['key' => 'qr_validity_minutes', 'title' => 'Masa berlaku QR Code', 'description' => 'QR otomatis nonaktif saat timer berakhir.', 'kind' => 'value', 'value' => Settings::int('qr_validity_minutes').' menit'],
             ['key' => 'qr_once_per_session', 'title' => 'Pembuatan QR', 'description' => 'Dosen tidak dapat memperbarui atau membuat ulang QR untuk sesi yang sama.', 'kind' => 'value', 'value' => 'Sekali per sesi'],
             ['key' => 'default_radius_m', 'title' => 'Radius default titik presensi', 'description' => 'Dipakai untuk ruang baru. Radius tiap ruang bisa diatur di Ruang & Titik Presensi.', 'kind' => 'value', 'value' => Settings::int('default_radius_m').' meter'],
-            ['key' => 'max_location_accuracy_m', 'title' => 'Batas akurasi lokasi', 'description' => 'Pindaian dengan akurasi GPS lebih buruk dari batas ini ditolak dan mahasiswa diminta mengulang.', 'kind' => 'value', 'value' => Settings::int('max_location_accuracy_m').' meter'],
-            ['key' => 'late_after_minutes', 'title' => 'Tandai Terlambat setelah', 'description' => 'Pindaian setelah menit ini dalam jendela QR dicatat Terlambat.', 'kind' => 'select', 'value' => (string) Settings::int('late_after_minutes'), 'options' => [['value' => '5', 'label' => '5 menit'], ['value' => '10', 'label' => '10 menit'], ['value' => '15', 'label' => '15 menit']]],
+            ['key' => 'max_location_accuracy_m', 'title' => 'Batas akurasi lokasi', 'description' => 'Pindaian dengan akurasi GPS lebih buruk dari batas ini ditolak dan mahasiswa diminta mengulang. Semakin kecil semakin ketat; 5–200 meter.', 'kind' => 'number', 'value' => Settings::int('max_location_accuracy_m'), 'unit' => 'meter'],
+            ['key' => 'late_after_minutes', 'title' => 'Tandai Terlambat setelah', 'description' => 'Pindaian setelah menit ini dalam jendela QR dicatat Terlambat.', 'kind' => 'select', 'value' => (string) Settings::int('late_after_minutes'), 'options' => [['value' => '5', 'label' => '5 menit'], ['value' => '10', 'label' => '10 menit'], ['value' => '15', 'label' => '15 menit'], ['value' => '20', 'label' => '20 menit']]],
             ['key' => 'min_attendance_percent', 'title' => 'Batas minimal kehadiran', 'description' => 'Syarat ikut UAS. Izin dan sakit yang disetujui dihitung hadir. Dipakai di Rekap Kehadiran.', 'kind' => 'value', 'value' => Settings::int('min_attendance_percent').'%'],
             ['key' => 'leave_window', 'title' => 'Batas pengajuan izin/sakit', 'description' => "Mahasiswa bisa mengajukan mulai {$before} hari sebelum sampai {$after} hari setelah pertemuan.", 'kind' => 'value', 'value' => "H-{$before} s.d. H+{$after}"],
             ['key' => 'only_during_class_hours', 'title' => 'Hanya pada jam kuliah', 'description' => 'Sesi tidak bisa dimulai, dan QR tidak berlaku, di luar jadwal kuliah.', 'kind' => 'switch', 'value' => (bool) Settings::get('only_during_class_hours')],
@@ -51,8 +61,13 @@ class SettingController extends Controller
             'policies' => array_map(fn (array $p): array => [
                 ...$p,
                 // leave_window gabungan dua setting terkunci.
-                'isLocked' => $p['key'] === 'leave_window' ? true : (bool) ($locked[$p['key']] ?? ! array_key_exists($p['key'], self::EDITABLE)),
+                'isLocked' => $p['key'] === 'leave_window' ? true : ($p['key'] === 'max_location_accuracy_m' ? false : (bool) ($locked[$p['key']] ?? ! array_key_exists($p['key'], self::EDITABLE))),
             ], $policies),
+            'campus' => [
+                'latitude' => Settings::float('campus_center_lat'),
+                'longitude' => Settings::float('campus_center_lng'),
+                'maxDistance' => Settings::int('campus_max_distance_m'),
+            ],
             'rooms' => [
                 'ready' => Room::query()->where('status', ActiveStatus::Active)->whereNotNull('latitude')->count(),
                 'missing' => Room::query()->where('status', ActiveStatus::Active)->whereNull('latitude')->pluck('name'),
@@ -65,22 +80,29 @@ class SettingController extends Controller
     {
         abort_unless($request->user()->role === UserRole::Admin, 403);
 
-        $request->validate(self::EDITABLE);
+        $request->validate([...self::EDITABLE, ...self::ACCURACY, ...self::CAMPUS]);
         $data = [
             'late_after_minutes' => $request->integer('late_after_minutes'),
             'allow_manual_attendance' => $request->boolean('allow_manual_attendance'),
             'email_session_summary' => $request->boolean('email_session_summary'),
         ];
-        $locked = Setting::query()->whereIn('key', array_keys($data))->where('is_locked', true)->pluck('key');
+        $locked = Setting::query()->whereIn('key', array_keys($data))->whereNotIn('key', [...array_keys(self::CAMPUS), ...array_keys(self::ACCURACY)])->where('is_locked', true)->pluck('key');
         if ($locked->isNotEmpty()) {
             return back()->with('error', 'Kebijakan kampus tidak bisa diubah dari aplikasi.');
         }
+
+        $data += [
+            'max_location_accuracy_m' => $request->integer('max_location_accuracy_m'),
+            'campus_center_lat' => (float) $request->input('campus_center_lat'),
+            'campus_center_lng' => (float) $request->input('campus_center_lng'),
+            'campus_max_distance_m' => $request->integer('campus_max_distance_m'),
+        ];
 
         DB::transaction(function () use ($data, $request): void {
             foreach ($data as $key => $value) {
                 Setting::query()->updateOrCreate(['key' => $key], [
                     'value' => is_bool($value) ? ($value ? 'true' : 'false') : (string) $value,
-                    'type' => is_bool($value) ? 'bool' : 'int',
+                    'type' => is_bool($value) ? 'bool' : (is_float($value) ? 'float' : 'int'),
                     'updated_by' => $request->user()->id,
                 ]);
             }

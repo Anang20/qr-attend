@@ -2,10 +2,12 @@ import { Link, useForm } from '@inertiajs/react';
 import { ArrowRight, Lock } from 'lucide-react';
 import type { FormEvent } from 'react';
 
+import { fieldA11y, FormField } from '@/components/app/form-field';
 import { PageHeader } from '@/components/app/page-header';
 import { SelectField } from '@/components/app/select-field';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
@@ -21,11 +23,13 @@ interface PolicyBase {
 type Policy =
   | (PolicyBase & { kind: 'value'; value: string })
   | (PolicyBase & { kind: 'select'; value: string; options: Option[] })
-  | (PolicyBase & { kind: 'switch'; value: boolean });
+  | (PolicyBase & { kind: 'switch'; value: boolean })
+  | (PolicyBase & { kind: 'number'; value: number; unit: string });
 
 interface Props {
   canEdit: boolean;
   policies: Policy[];
+  campus: { latitude: number; longitude: number; maxDistance: number };
   rooms: { ready: number; missing: string[]; inactive: number };
 }
 
@@ -34,21 +38,29 @@ interface SettingsForm {
   late_after_minutes: string;
   allow_manual_attendance: boolean;
   email_session_summary: boolean;
+  max_location_accuracy_m: string;
+  campus_center_lat: string;
+  campus_center_lng: string;
+  campus_max_distance_m: string;
 }
 
-function initialForm(policies: Policy[]): SettingsForm {
+function initialForm(policies: Policy[], campus: Props['campus']): SettingsForm {
   const find = (key: string) => policies.find((p) => p.key === key)?.value;
   return {
     late_after_minutes: String(find('late_after_minutes') ?? '15'),
     allow_manual_attendance: find('allow_manual_attendance') === true,
     email_session_summary: find('email_session_summary') === true,
+    max_location_accuracy_m: String(find('max_location_accuracy_m') ?? '25'),
+    campus_center_lat: String(campus.latitude),
+    campus_center_lng: String(campus.longitude),
+    campus_max_distance_m: String(campus.maxDistance),
   };
 }
 
-const isFormKey = (key: string): key is keyof SettingsForm => key === 'late_after_minutes' || key === 'allow_manual_attendance' || key === 'email_session_summary';
+const isFormKey = (key: string): key is 'late_after_minutes' | 'allow_manual_attendance' | 'email_session_summary' => key === 'late_after_minutes' || key === 'allow_manual_attendance' || key === 'email_session_summary';
 
-export default function Settings({ canEdit, policies, rooms }: Props) {
-  const form = useForm<SettingsForm>(initialForm(policies));
+export default function Settings({ canEdit, policies, campus, rooms }: Props) {
+  const form = useForm<SettingsForm>(initialForm(policies, campus));
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
@@ -61,6 +73,27 @@ export default function Settings({ canEdit, policies, rooms }: Props) {
 
     if (p.kind === 'value') {
       return <span className="rounded-xl border bg-muted/40 px-5 py-2.5 text-sm font-bold whitespace-nowrap">{p.value}</span>;
+    }
+    if (p.kind === 'number') {
+      return (
+        <div className="flex items-center gap-2">
+          <Input
+            aria-labelledby={labelId}
+            aria-invalid={form.errors.max_location_accuracy_m ? true : undefined}
+            className="w-24 text-right"
+            inputMode="numeric"
+            disabled={!canEdit || p.isLocked}
+            value={form.data.max_location_accuracy_m}
+            onChange={(e) => form.setData('max_location_accuracy_m', e.target.value)}
+          />
+          <span className="text-sm text-muted-foreground">{p.unit}</span>
+          {form.errors.max_location_accuracy_m && (
+            <span role="alert" className="text-sm text-destructive">
+              {form.errors.max_location_accuracy_m}
+            </span>
+          )}
+        </div>
+      );
     }
     if (p.kind === 'select') {
       return (
@@ -126,6 +159,25 @@ export default function Settings({ canEdit, policies, rooms }: Props) {
             ))}
           </Card>
 
+          <div className="flex flex-col gap-4">
+          <Card>
+            <div className="flex flex-col gap-2">
+              <h2 className="text-lg font-bold">Pusat kampus</h2>
+              <p className="text-sm text-muted-foreground">Acuan pemeriksaan titik ruang: titik yang lebih jauh dari batas ini ditolak. Salin koordinat dari Google Maps (klik kanan pada lokasi).</p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField id="campus_center_lat" label="Latitude" error={form.errors.campus_center_lat} isRequired>
+                <Input {...fieldA11y('campus_center_lat', form.errors.campus_center_lat)} inputMode="decimal" disabled={!canEdit} value={form.data.campus_center_lat} onChange={(e) => form.setData('campus_center_lat', e.target.value)} />
+              </FormField>
+              <FormField id="campus_center_lng" label="Longitude" error={form.errors.campus_center_lng} isRequired>
+                <Input {...fieldA11y('campus_center_lng', form.errors.campus_center_lng)} inputMode="decimal" disabled={!canEdit} value={form.data.campus_center_lng} onChange={(e) => form.setData('campus_center_lng', e.target.value)} />
+              </FormField>
+            </div>
+            <FormField id="campus_max_distance_m" label="Jarak maksimal titik ruang (meter)" error={form.errors.campus_max_distance_m} hint="50–5000 m" isRequired>
+              <Input {...fieldA11y('campus_max_distance_m', form.errors.campus_max_distance_m)} inputMode="numeric" disabled={!canEdit} value={form.data.campus_max_distance_m} onChange={(e) => form.setData('campus_max_distance_m', e.target.value)} />
+            </FormField>
+          </Card>
+
           <Card>
             <div className="flex flex-col gap-2">
               <h2 className="text-lg font-bold">Titik presensi ruang</h2>
@@ -157,6 +209,7 @@ export default function Settings({ canEdit, policies, rooms }: Props) {
               </Button>
             )}
           </Card>
+          </div>
         </div>
       </form>
     </AppLayout>
