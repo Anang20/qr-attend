@@ -14,7 +14,9 @@ export const ALL = 'all';
 export function useFilters(url: string, initial: Filters, fixed: Filters = {}) {
   const [filters, setFilters] = useState<Filters>(initial);
   const first = useRef(true);
-  const fixedKey = JSON.stringify(fixed);
+  // Terbaru dibaca saat request dikirim; perubahan `fixed` saja tidak memicu request baru.
+  const fixedRef = useRef(fixed);
+  fixedRef.current = fixed;
 
   useEffect(() => {
     if (first.current) {
@@ -25,12 +27,12 @@ export function useFilters(url: string, initial: Filters, fixed: Filters = {}) {
     const timer = window.setTimeout(() => {
       // Batas baris per halaman yang dipilih pengguna tidak hilang saat mencari/menyaring.
       const perPage = new URLSearchParams(window.location.search).get('per_page');
-      const query = Object.fromEntries(Object.entries({ ...(JSON.parse(fixedKey) as Filters), ...filters, ...(perPage ? { per_page: perPage } : {}) }).filter(([, v]) => v !== undefined && v !== null && v !== '' && v !== ALL));
+      const query = Object.fromEntries(Object.entries({ ...fixedRef.current, ...filters, ...(perPage ? { per_page: perPage } : {}) }).filter(([, v]) => v !== undefined && v !== null && v !== '' && v !== ALL));
       router.get(url, query, { preserveState: true, preserveScroll: true, replace: true });
     }, 350);
 
     return () => window.clearTimeout(timer);
-  }, [filters, url, fixedKey]);
+  }, [filters, url]);
 
   const setFilter = (key: string, value: string) => setFilters((prev) => ({ ...prev, [key]: value }));
   const reset = () => setFilters({});

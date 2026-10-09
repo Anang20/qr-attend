@@ -1,6 +1,6 @@
-import { Link, router } from '@inertiajs/react';
+import { InfiniteScroll, Link, router } from '@inertiajs/react';
 import { AlertTriangle, CheckCircle2, Copy, Lock, Plus, XCircle } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { ConfirmDialog } from '@/components/app/confirm-dialog';
 import { DataTable, type DataTableColumn } from '@/components/app/data-table';
@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useFilters } from '@/hooks/use-filters';
 import { useResourceForm } from '@/hooks/use-resource-form';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
@@ -72,7 +73,8 @@ interface RoomOption extends Option {
 interface Props {
   periods: PeriodOption[];
   period: { id: number; label: string; status: string; statusLabel: string; isReadOnly: boolean } | null;
-  classes: ClassItem[];
+  classes: { data: ClassItem[] };
+  classSearch: string;
   selectedClass: { id: number; code: string; studentsCount: number } | null;
   schedules: ScheduleRow[];
   schedulesPage: Paginated<ScheduleRow>;
@@ -103,8 +105,9 @@ function addMinutes(time: string, minutes: number): string {
 
 const overlaps = (a: Pick<Slot, 'start_time' | 'end_time'>, b: Pick<Slot, 'start_time' | 'end_time'>) => a.start_time < b.end_time && b.start_time < a.end_time;
 
-export default function ClassSchedulesIndex({ periods, period, classes, selectedClass, schedules, schedulesPage, slots, copySource, options }: Props) {
-  const [classSearch, setClassSearch] = useState('');
+export default function ClassSchedulesIndex({ periods, period, classes, classSearch, selectedClass, schedules, schedulesPage, slots, copySource, options }: Props) {
+  // Pencarian kelas diproses server (debounce); pilihan kelas & periode ikut terkirim agar tidak berubah.
+  const search = useFilters(URL, { class_q: classSearch }, { period_id: period ? String(period.id) : undefined, class_group_id: selectedClass ? String(selectedClass.id) : undefined });
   const isReadOnly = period?.isReadOnly ?? true;
 
   const emptyForm: ScheduleForm = {
@@ -133,6 +136,14 @@ export default function ClassSchedulesIndex({ periods, period, classes, selected
   const visit = (params: Record<string, string | number | undefined>) =>
     router.get(URL, { period_id: period?.id, class_group_id: selectedClass?.id, ...params }, { preserveScroll: true, preserveState: false });
 
+  // Ganti kelas: hanya muat ulang data kelas terpilih; daftar kelas yang sudah di-scroll tetap.
+  const selectClass = (id: number) =>
+    router.get(
+      URL,
+      { period_id: period?.id, class_group_id: id, class_q: search.filters.class_q || undefined },
+      { preserveScroll: true, preserveState: true, only: ['selectedClass', 'schedules', 'schedulesPage', 'slots', 'copySource'] },
+    );
+
   const mappedCourseIds = new Set(schedules.map((s) => s.course_id));
   const courseOptions = options.courses.map((c) => ({
     ...c,
@@ -159,8 +170,6 @@ export default function ClassSchedulesIndex({ periods, period, classes, selected
     const course = options.courses.find((c) => c.value === value);
     setData((d) => ({ ...d, course_id: value, end_time: course ? addMinutes(d.start_time, course.credits * MINUTES_PER_CREDIT) : d.end_time }));
   };
-
-  const filteredClasses = classes.filter((c) => c.code.toLowerCase().includes(classSearch.toLowerCase()));
 
 
   const columns: DataTableColumn<ScheduleRow>[] = [
@@ -238,13 +247,14 @@ export default function ClassSchedulesIndex({ periods, period, classes, selected
 
       <div className="grid gap-4 xl:grid-cols-[260px_minmax(0,1fr)]">
         <Card className="gap-3 p-4">
-          <Input type="search" placeholder="Cari kelas" aria-label="Cari kelas" value={classSearch} onChange={(e) => setClassSearch(e.target.value)} />
-          <nav aria-label="Daftar kelas" className="flex max-h-[560px] flex-col gap-1 overflow-y-auto">
-            {filteredClasses.map((c) => (
+          <Input type="search" placeholder="Cari kelas" aria-label="Cari kelas" value={search.filters.class_q ?? ''} onChange={(e) => search.setFilter('class_q', e.target.value)} />
+          <InfiniteScroll data="classes" as="nav" aria-label="Daftar kelas" className="flex max-h-[560px] flex-col gap-1 overflow-y-auto" loading={<p className="py-2 text-center text-xs text-muted-foreground">Memuat kelas…</p>}>
+            {classes.data.length === 0 && <p className="py-6 text-center text-sm text-muted-foreground">Kelas tidak ditemukan.</p>}
+            {classes.data.map((c) => (
               <button
                 key={c.id}
                 type="button"
-                onClick={() => visit({ class_group_id: c.id })}
+                onClick={() => selectClass(c.id)}
                 aria-current={c.id === selectedClass?.id ? 'true' : undefined}
                 className={cn(
                   'flex items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/40 focus-visible:outline-none',
@@ -261,7 +271,7 @@ export default function ClassSchedulesIndex({ periods, period, classes, selected
                 </span>
               </button>
             ))}
-          </nav>
+          </InfiniteScroll>
         </Card>
 
         <div className="flex min-w-0 flex-col gap-4">
@@ -384,9 +394,9 @@ export default function ClassSchedulesIndex({ periods, period, classes, selected
   );
 }
 
-/** Grid mingguan sederhana Senin–Jumat, 07.00–18.00. */
+/** Grid mingguan sederhana Senin–Sabtu, 07.00–18.00. */
 function WeekGrid({ schedules }: { schedules: ScheduleRow[] }) {
-  const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+  const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
   const startHour = 7;
   const endHour = 18;
   const hourHeight = 36;
@@ -397,7 +407,7 @@ function WeekGrid({ schedules }: { schedules: ScheduleRow[] }) {
 
   return (
     <div className="overflow-x-auto pb-2" aria-label="Jadwal mingguan">
-      <div className="grid min-w-[640px] grid-cols-[48px_repeat(5,minmax(0,1fr))] gap-1">
+      <div className="grid min-w-[720px] grid-cols-[48px_repeat(6,minmax(0,1fr))] gap-1">
         <div />
         {days.map((d) => (
           <div key={d} className="pb-1 text-center text-xs font-bold text-muted-foreground">

@@ -33,18 +33,22 @@ class ClassScheduleController extends Controller
     {
         $period = $this->resolvePeriod($request->integer('period_id') ?: null);
 
-        $classes = ClassGroup::query()
+        // Daftar kelas: infinite scroll, 10 per muat (parameter halaman `kelas_page`), pencarian kode di server.
+        $classSearch = trim((string) $request->query('class_q'));
+        $classQuery = fn () => ClassGroup::query()
             ->where('status', ActiveStatus::Active)
+            ->when($classSearch !== '', fn ($q) => $q->where('code', 'like', "%{$classSearch}%"))
             ->withCount([
                 'classSchedules as schedules_count' => fn ($q) => $q->where('academic_period_id', $period?->id),
                 'classSchedules as issues_count' => fn ($q) => $q->where('academic_period_id', $period?->id)
                     ->whereHas('room', fn ($r) => $r->whereNull('latitude')),
             ])
-            ->orderBy('code')
-            ->get(['id', 'code', 'cohort_year']);
+            ->orderBy('code');
 
-        $selectedId = $request->integer('class_group_id') ?: $classes->first()?->id;
-        $selected = $classes->firstWhere('id', $selectedId);
+        $selectedId = $request->integer('class_group_id');
+        $selected = $classQuery()->whereKey($selectedId)->first(['id', 'code', 'cohort_year'])
+            ?? ClassGroup::query()->where('status', ActiveStatus::Active)->whereKey($selectedId)->first(['id', 'code', 'cohort_year'])
+            ?? $classQuery()->first(['id', 'code', 'cohort_year']);
 
         $schedules = $period && $selected
             ? ClassSchedule::query()
@@ -101,13 +105,17 @@ class ClassScheduleController extends Controller
                 'statusLabel' => $period->status->label(),
                 'isReadOnly' => $period->status === PeriodStatus::Finished,
             ] : null,
-            'classes' => $classes->map(fn (ClassGroup $c): array => [
-                'id' => $c->id,
-                'code' => $c->code,
-                'cohortYear' => $c->cohort_year,
-                'schedulesCount' => $c->schedules_count,
-                'issuesCount' => $c->issues_count,
-            ]),
+            'classSearch' => $classSearch,
+            'classes' => Inertia::scroll(fn () => $classQuery()
+                ->paginate(10, ['id', 'code', 'cohort_year'], 'kelas_page')
+                ->withQueryString()
+                ->through(fn (ClassGroup $c): array => [
+                    'id' => $c->id,
+                    'code' => $c->code,
+                    'cohortYear' => $c->cohort_year,
+                    'schedulesCount' => $c->schedules_count,
+                    'issuesCount' => $c->issues_count,
+                ])),
             'selectedClass' => $selected ? [
                 'id' => $selected->id,
                 'code' => $selected->code,
