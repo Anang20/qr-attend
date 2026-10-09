@@ -52,7 +52,7 @@ class RegisterController extends Controller
                 'phone' => $data['phone'],
                 'password' => $data['password'],
                 'role' => $isStudent ? UserRole::Student : UserRole::Lecturer,
-                // Mahasiswa aktif setelah verifikasi email; dosen setelah disetujui admin.
+                // Mahasiswa & dosen menunggu persetujuan admin sebelum bisa masuk (BR-25).
                 'status' => UserStatus::Pending,
             ]);
 
@@ -76,10 +76,6 @@ class RegisterController extends Controller
 
             return $user;
         });
-
-        if ($isStudent) {
-            $user->sendEmailVerificationNotification();
-        }
 
         return redirect('/daftar')->with('registered', $data['role']);
     }

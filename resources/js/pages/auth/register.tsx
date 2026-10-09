@@ -1,5 +1,5 @@
 import { Link, useForm } from '@inertiajs/react';
-import { CheckCircle2, MailCheck, UserPlus } from 'lucide-react';
+import { CheckCircle2, UserPlus } from 'lucide-react';
 import { type FormEvent, useMemo } from 'react';
 
 import { fieldA11y, FormField } from '@/components/app/form-field';
@@ -43,7 +43,7 @@ interface RegisterForm {
 
 const steps = [
   { title: 'Isi data diri', text: 'Sesuai data di kampus.' },
-  { title: 'Verifikasi', text: 'Mahasiswa lewat tautan di email kampus. Dosen disetujui admin prodi.' },
+  { title: 'Verifikasi', text: 'Mahasiswa & Dosen menunggu persetujuan admin sebelum bisa masuk.' },
   { title: 'Masuk & ikat perangkat', text: 'Ponsel pertama yang dipakai presensi terikat ke akun, untuk mencegah titip absen.' },
 ];
 
@@ -112,14 +112,10 @@ export default function Register({ studyPrograms, classGroups, registered }: Reg
       <AuthLayout title="Pendaftaran Terkirim" aside={aside}>
         <div className="flex flex-col items-start gap-5">
           <span className="flex size-14 items-center justify-center rounded-2xl bg-secondary text-primary">
-            {registered === 'student' ? <MailCheck className="size-7" /> : <CheckCircle2 className="size-7" />}
+            <CheckCircle2 className="size-7" />
           </span>
-          <h2 className="text-3xl font-extrabold tracking-tight">{registered === 'student' ? 'Cek email kampus Anda' : 'Pendaftaran dikirim'}</h2>
-          <p className="text-muted-foreground">
-            {registered === 'student'
-              ? 'Kami sudah mengirim tautan verifikasi. Setelah email terverifikasi, Anda bisa masuk dengan NIM.'
-              : 'Akun Anda menunggu persetujuan admin prodi. Anda akan bisa masuk setelah disetujui.'}
-          </p>
+          <h2 className="text-3xl font-extrabold tracking-tight">Pendaftaran dikirim</h2>
+          <p className="text-muted-foreground">Akun Anda menunggu persetujuan admin. Anda akan bisa masuk setelah disetujui.</p>
           <div className="flex flex-wrap gap-2">
             <Button asChild>
               <Link href="/masuk">Ke halaman masuk</Link>
@@ -200,14 +196,14 @@ export default function Register({ studyPrograms, classGroups, registered }: Reg
             </div>
           )}
 
-          <FormField id="email" label="Email kampus" error={errors.email} isRequired>
+          <FormField id="email" label="Email aktif" error={errors.email} isRequired>
             <Input
               {...fieldA11y('email', errors.email)}
               type="email"
               autoComplete="email"
               value={data.email}
               onChange={(e) => setData('email', e.target.value)}
-              placeholder={isStudent ? 'nama.0032@student.unpam.ac.id' : 'nama@unpam.ac.id'}
+              placeholder="nama@email.com"
             />
           </FormField>
 

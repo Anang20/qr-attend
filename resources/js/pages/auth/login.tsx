@@ -67,12 +67,6 @@ export default function Login() {
             </div>
           </FormField>
 
-          <div className="flex justify-end">
-            <Link href="/lupa-kata-sandi" className="text-sm font-semibold text-primary hover:underline">
-              Lupa kata sandi?
-            </Link>
-          </div>
-
           <Button type="submit" size="lg" disabled={processing}>
             <LogIn aria-hidden />
             {processing ? 'Memeriksa…' : 'Masuk'}

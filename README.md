@@ -12,7 +12,7 @@ Acuan: `docs/BRD.md` di Project "QR Attendance" (alur bisnis, aturan BR-xx, ERD)
 
 | Tahap | Isi | Status |
 |---|---|---|
-| **1** | Kerangka proyek, migrasi 18 tabel (ERD), seeder data contoh, masuk/daftar/lupa sandi/verifikasi email, layout per peran, master data (Periode, Mahasiswa, Dosen + persetujuan akun, Mata Kuliah, Kelas, Ruang & Titik Presensi) | ✅ |
+| **1** | Kerangka proyek, migrasi 18 tabel (ERD), seeder data contoh, masuk/daftar (email bebas, tanpa verifikasi email — mahasiswa & dosen menunggu persetujuan admin sebelum aktif), layout per peran, master data (Periode, Mahasiswa + persetujuan akun, Dosen + persetujuan akun, Mata Kuliah, Kelas, Ruang & Titik Presensi) | ✅ |
 | **2** | Pemetaan Kelas + 16 pertemuan otomatis + salin dari periode lalu, Jadwal Akademik (read-only), dasbor & jadwal dosen, sesi QR (polling 3 detik), pindai & validasi 8 lapis, presensi manual + log, ikat perangkat + reset oleh admin | ✅ |
 | **3** | Pengajuan izin/sakit + lampiran & persetujuan dosen, rekap kehadiran + kelayakan UAS (admin & dosen), daftar mahasiswa dosen, laporan presensi + ekspor Excel/PDF, riwayat & detail presensi mahasiswa, profil (kontak, sandi, perangkat, reset), pengaturan kebijakan, dasbor admin bergrafik | ✅ |
 | **4** | `DataTable` dengan paginasi bawaan (server & klien) di semua tabel; grafik dasbor admin memakai Recharts (komponen chart shadcn/ui) dengan filter global (rentang 7/30/90 hari atau semester, periode, mata kuliah, kelas) dan kontrol per grafik (urutan, Top N, klik legenda) | ✅ |

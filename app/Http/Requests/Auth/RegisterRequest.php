@@ -51,14 +51,12 @@ class RegisterRequest extends FormRequest
                 'nim' => ['required', 'digits:12', 'unique:students,nim'],
                 'cohort_year' => ['required', 'integer', 'between:2015,'.((int) date('Y') + 1)],
                 'class_group_id' => ['required', 'integer', 'exists:class_groups,id'],
-                'email' => [...$common['email'], 'ends_with:'.self::STUDENT_DOMAIN],
             ];
         }
 
         return [
             ...$common,
             'nidn' => ['required', 'digits:10', 'unique:lecturers,nidn'],
-            'email' => [...$common['email'], 'ends_with:'.self::LECTURER_DOMAIN],
         ];
     }
 
@@ -69,9 +67,6 @@ class RegisterRequest extends FormRequest
             'nim.unique' => 'NIM ini sudah terdaftar.',
             'nidn.unique' => 'NIDN ini sudah terdaftar.',
             'phone.regex' => 'No. HP harus diawali 08 dan berisi 10–13 digit.',
-            'email.ends_with' => $this->input('role') === 'student'
-                ? 'Gunakan email kampus '.self::STUDENT_DOMAIN.'.'
-                : 'Gunakan email kampus '.self::LECTURER_DOMAIN.'.',
         ];
     }
 

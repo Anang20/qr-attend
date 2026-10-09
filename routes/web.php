@@ -2,9 +2,7 @@
 
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeaveAttachmentController;
 use App\Http\Controllers\ProfileController;
@@ -27,16 +25,7 @@ Route::middleware('guest')->group(function (): void {
 
     Route::get('/daftar', [RegisterController::class, 'create'])->name('register');
     Route::post('/daftar', [RegisterController::class, 'store'])->middleware('throttle:6,1');
-
-    Route::get('/lupa-kata-sandi', [PasswordResetController::class, 'create'])->name('password.request');
-    Route::post('/lupa-kata-sandi', [PasswordResetController::class, 'send'])->middleware('throttle:6,1')->name('password.email');
-    Route::get('/atur-ulang-kata-sandi/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
-    Route::post('/atur-ulang-kata-sandi', [PasswordResetController::class, 'update'])->name('password.update');
 });
-
-Route::get('/email/verifikasi/{id}/{hash}', VerifyEmailController::class)
-    ->middleware(['signed', 'throttle:6,1'])
-    ->name('verification.verify');
 
 Route::post('/keluar', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
 

@@ -69,7 +69,7 @@ class HandleInertiaRequests extends Middleware
             ],
             UserRole::Admin => [
                 'dashboard' => DeviceResetRequest::query()->where('status', RequestStatus::Pending)->count()
-                    + User::query()->where('role', UserRole::Lecturer)->where('status', UserStatus::Pending)->count(),
+                    + User::query()->whereIn('role', [UserRole::Lecturer, UserRole::Student])->where('status', UserStatus::Pending)->count(),
             ],
             UserRole::Student => [],
         };

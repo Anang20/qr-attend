@@ -22,7 +22,7 @@ Aplikasi presensi mahasiswa berbasis pindai QR + validasi lokasi untuk **Univers
 
 | Tahap | Isi | Status |
 |---|---|---|
-| 1 | Kerangka, migrasi 18 tabel ERD, seeder, auth (masuk/daftar/lupa sandi/verifikasi email), master data admin (Periode, Mahasiswa, Dosen + persetujuan, Mata Kuliah, Kelas, Ruang & Titik) | ✅ |
+| 1 | Kerangka, migrasi 18 tabel ERD, seeder, auth (masuk/daftar, email bebas tanpa verifikasi — mahasiswa & dosen menunggu persetujuan admin sebelum aktif), master data admin (Periode, Mahasiswa + persetujuan, Dosen + persetujuan, Mata Kuliah, Kelas, Ruang & Titik) | ✅ |
 | 2 | Pemetaan Kelas (+16 pertemuan otomatis, salin periode lalu), Jadwal Akademik read-only, dasbor/jadwal/sesi dosen, QR 20 menit, pindai + validasi 8 lapis, presensi manual + log, ikat perangkat + reset admin | ✅ |
 | 3 | Pengajuan izin/sakit + persetujuan dosen, rekap kehadiran + kelayakan UAS (admin & dosen), laporan presensi + ekspor Excel/PDF, riwayat & detail presensi mahasiswa, profil (semua peran), Pengaturan kebijakan, dasbor admin bergrafik | ✅ |
 | 4 | Paginasi bawaan di `DataTable` (server & klien) untuk semua tabel; grafik dasbor pakai Recharts (komponen chart shadcn) + filter global (rentang, periode, mata kuliah, kelas) & kontrol per grafik | ✅ |

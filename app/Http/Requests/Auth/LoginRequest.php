@@ -87,7 +87,7 @@ class LoginRequest extends FormRequest
             UserStatus::Active => null,
             UserStatus::Pending => $user->role === UserRole::Lecturer
                 ? 'Akun Anda masih menunggu persetujuan admin prodi.'
-                : 'Email belum diverifikasi. Buka tautan verifikasi di email kampus Anda.',
+                : 'Akun Anda masih menunggu persetujuan admin akademik.',
             UserStatus::Rejected => 'Pendaftaran akun Anda ditolak. Hubungi admin prodi.',
             UserStatus::Inactive => 'Akun Anda nonaktif. Hubungi admin akademik.',
         };
