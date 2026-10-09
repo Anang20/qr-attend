@@ -16,7 +16,7 @@ import { cn, formatDate, formatNumber } from '@/lib/utils';
 interface AdminDashboardProps {
   period: { label: string; start: string; end: string; week: number } | null;
   stats: { students: number; lecturers: number; courses: number; classGroups: number };
-  tasks: { pendingLecturers: number; roomsWithoutPoint: number };
+  tasks: { pendingLecturers: number; pendingStudents: number; roomsWithoutPoint: number };
   attendance: {
     rate: number | null;
     today: number;
@@ -88,7 +88,7 @@ export default function AdminDashboard({ period, stats, tasks, attendance, reset
         </Alert>
       )}
 
-      {(tasks.pendingLecturers > 0 || tasks.roomsWithoutPoint > 0) && (
+      {(tasks.pendingLecturers > 0 || tasks.pendingStudents > 0 || tasks.roomsWithoutPoint > 0) && (
         <div className="grid gap-3 md:grid-cols-2">
           {tasks.pendingLecturers > 0 && (
             <div className="flex items-center justify-between gap-4 rounded-2xl border border-amber-200 bg-warning-soft p-5">
@@ -100,6 +100,19 @@ export default function AdminDashboard({ period, stats, tasks, attendance, reset
               </div>
               <Button asChild size="sm" variant="outline">
                 <Link href="/admin/dosen?account=pending">Tinjau</Link>
+              </Button>
+            </div>
+          )}
+          {tasks.pendingStudents > 0 && (
+            <div className="flex items-center justify-between gap-4 rounded-2xl border border-amber-200 bg-warning-soft p-5">
+              <div className="flex items-center gap-3">
+                <GraduationCap className="size-5 text-warning" aria-hidden />
+                <p className="text-sm">
+                  <strong>{tasks.pendingStudents} pendaftaran mahasiswa</strong> menunggu persetujuan.
+                </p>
+              </div>
+              <Button asChild size="sm" variant="outline">
+                <Link href="/admin/mahasiswa?account=pending">Tinjau</Link>
               </Button>
             </div>
           )}

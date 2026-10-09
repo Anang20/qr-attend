@@ -45,6 +45,7 @@ class DashboardController extends Controller
             ],
             'tasks' => [
                 'pendingLecturers' => User::query()->where('role', UserRole::Lecturer)->where('status', UserStatus::Pending)->count(),
+                'pendingStudents' => User::query()->where('role', UserRole::Student)->where('status', UserStatus::Pending)->count(),
                 'roomsWithoutPoint' => Room::query()->where('status', ActiveStatus::Active)->whereNull('latitude')->count(),
             ],
             'attendance' => $filter ? [

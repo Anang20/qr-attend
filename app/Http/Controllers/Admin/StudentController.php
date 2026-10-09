@@ -22,7 +22,7 @@ class StudentController extends Controller
 {
     public function index(Request $request): Response
     {
-        $filters = $request->only(['q', 'cohort_year', 'class_group_id', 'status']);
+        $filters = $request->only(['q', 'cohort_year', 'class_group_id', 'status', 'account']);
 
         $students = Student::query()
             ->with(['user:id,name,email,phone,status', 'classGroup:id,code', 'studyProgram:id,name'])
@@ -33,6 +33,9 @@ class StudentController extends Controller
             ->when($filters['cohort_year'] ?? null, fn ($q, string $v) => $q->where('cohort_year', $v))
             ->when($filters['class_group_id'] ?? null, fn ($q, string $v) => $q->where('class_group_id', $v))
             ->when($filters['status'] ?? null, fn ($q, string $v) => $q->where('status', $v))
+            ->when($filters['account'] ?? null, fn ($q, string $v) => $q->whereHas('user', fn ($u) => $u->where('status', $v)))
+            // Akun menunggu persetujuan tampil paling atas.
+            ->orderByRaw("(select case when users.status = 'pending' then 0 else 1 end from users where users.id = students.user_id)")
             ->orderBy('nim')
             ->paginate(PerPage::from($request))
             ->withQueryString()
@@ -57,11 +60,13 @@ class StudentController extends Controller
         return Inertia::render('admin/students/index', [
             'students' => $students,
             'filters' => $filters,
+            'pendingCount' => User::query()->where('role', UserRole::Student)->where('status', UserStatus::Pending)->count(),
             'options' => [
                 'studyPrograms' => Options::studyPrograms(),
                 'classGroups' => Options::classGroups(),
                 'cohortYears' => Options::cohortYears(),
                 'statuses' => StudentStatus::options(),
+                'accountStatuses' => UserStatus::options(),
             ],
         ]);
     }
@@ -135,6 +140,37 @@ class StudentController extends Controller
         return back()->with($count > 0 ? 'success' : 'error', $count > 0
             ? 'Perangkat '.$student->user->name.' direset. Perangkat berikutnya yang dipakai masuk akan diikat.'
             : $student->user->name.' belum punya perangkat terikat.');
+    }
+
+    /** Setujui pendaftaran mahasiswa (BR-25). */
+    public function approve(Student $student): RedirectResponse
+    {
+        $user = $student->user;
+
+        if ($user->status !== UserStatus::Pending) {
+            return back()->with('error', 'Akun ini tidak sedang menunggu persetujuan.');
+        }
+
+        $user->forceFill([
+            'status' => UserStatus::Active,
+            'approved_by' => auth()->id(),
+            'approved_at' => now(),
+        ])->save();
+
+        return back()->with('success', 'Akun '.$user->name.' disetujui dan sudah bisa masuk.');
+    }
+
+    public function reject(Student $student): RedirectResponse
+    {
+        $user = $student->user;
+
+        if ($user->status !== UserStatus::Pending) {
+            return back()->with('error', 'Akun ini tidak sedang menunggu persetujuan.');
+        }
+
+        $user->forceFill(['status' => UserStatus::Rejected, 'approved_by' => auth()->id(), 'approved_at' => now()])->save();
+
+        return back()->with('success', 'Pendaftaran '.$user->name.' ditolak.');
     }
 
     /**

@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react';
-import { Plus, Smartphone } from 'lucide-react';
+import { Check, Plus, Smartphone, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { ConfirmDialog } from '@/components/app/confirm-dialog';
@@ -10,6 +10,7 @@ import { FormSheet } from '@/components/app/form-sheet';
 import { PageHeader } from '@/components/app/page-header';
 import { RowActions } from '@/components/app/row-actions';
 import { SelectField } from '@/components/app/select-field';
+import { Alert } from '@/components/ui/alert';
 import { Badge, type BadgeVariant } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -56,8 +57,11 @@ interface ClassOption extends Option {
 interface Props {
   students: Paginated<StudentRow>;
   filters: Filters;
-  options: { studyPrograms: Option[]; classGroups: ClassOption[]; cohortYears: Option[]; statuses: Option[] };
+  pendingCount: number;
+  options: { studyPrograms: Option[]; classGroups: ClassOption[]; cohortYears: Option[]; statuses: Option[]; accountStatuses: Option[] };
 }
+
+type Decision = { student: StudentRow; action: 'approve' | 'reject' };
 
 const URL = '/admin/mahasiswa';
 
@@ -65,8 +69,9 @@ const statusVariant: Record<string, BadgeVariant> = { active: 'success', leave: 
 
 const emptyForm: StudentForm = { nim: '', name: '', email: '', phone: '', study_program_id: '', cohort_year: '', class_group_id: '', status: 'active' };
 
-export default function StudentsIndex({ students, filters: initialFilters, options }: Props) {
+export default function StudentsIndex({ students, filters: initialFilters, pendingCount, options }: Props) {
   const { filters, setFilter, reset, isDirty } = useFilters(URL, initialFilters);
+  const [decision, setDecision] = useState<Decision | null>(null);
   const crud = useResourceForm<StudentRow, StudentForm>(URL, emptyForm, (s) => ({
     nim: s.nim,
     name: s.name,
@@ -79,6 +84,12 @@ export default function StudentsIndex({ students, filters: initialFilters, optio
   }));
   const { data, setData, errors, processing } = crud.form;
   const [resetting, setResetting] = useState<StudentRow | null>(null);
+
+  const decide = () => {
+    if (!decision) return;
+    const path = decision.action === 'approve' ? 'setujui' : 'tolak';
+    router.post(`${URL}/${decision.student.id}/${path}`, {}, { preserveScroll: true, onFinish: () => setDecision(null) });
+  };
 
   const formClassOptions = useMemo(
     () => options.classGroups.filter((c) => c.studyProgramId === data.study_program_id && c.cohortYear === data.cohort_year),
@@ -124,7 +135,20 @@ export default function StudentsIndex({ students, filters: initialFilters, optio
       header: 'Aksi',
       isHeaderHidden: true,
       headClassName: 'w-24',
-      cell: (s) => <RowActions name={s.name} onEdit={() => crud.openEdit(s)} onDelete={() => crud.setDeleting(s)} />,
+      cell: (s) =>
+        s.accountStatus === 'pending' ? (
+          <div className="flex justify-end gap-1">
+            <Button size="sm" onClick={() => setDecision({ student: s, action: 'approve' })}>
+              <Check aria-hidden />
+              Setujui
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => setDecision({ student: s, action: 'reject' })} aria-label={`Tolak ${s.name}`}>
+              <X aria-hidden />
+            </Button>
+          </div>
+        ) : (
+          <RowActions name={s.name} onEdit={() => crud.openEdit(s)} onDelete={() => crud.setDeleting(s)} />
+        ),
     },
   ];
 
@@ -141,11 +165,23 @@ export default function StudentsIndex({ students, filters: initialFilters, optio
         }
       />
 
+      {pendingCount > 0 && filters.account !== 'pending' && (
+        <Alert variant="warning" className="items-center justify-between">
+          <span>
+            <strong>{pendingCount} pendaftaran mahasiswa</strong> menunggu persetujuan.
+          </span>
+          <Button size="sm" variant="outline" onClick={() => setFilter('account', 'pending')}>
+            Tampilkan
+          </Button>
+        </Alert>
+      )}
+
       <Card className="gap-4">
         <DataToolbar search={filters.q ?? ''} onSearchChange={(v) => setFilter('q', v)} searchPlaceholder="Cari nama atau NIM" isDirty={isDirty} onReset={reset} total={students.total}>
           <SelectField aria-label="Filter angkatan" className="w-40" value={filters.cohort_year} options={options.cohortYears} allLabel="Semua angkatan" onValueChange={(v) => setFilter('cohort_year', v)} />
           <SelectField aria-label="Filter kelas" className="w-36" value={filters.class_group_id} options={options.classGroups} allLabel="Semua kelas" onValueChange={(v) => setFilter('class_group_id', v)} />
           <SelectField aria-label="Filter status" className="w-36" value={filters.status} options={options.statuses} allLabel="Semua status" onValueChange={(v) => setFilter('status', v)} />
+          <SelectField aria-label="Filter status akun" className="w-40" value={filters.account} options={options.accountStatuses} allLabel="Semua akun" onValueChange={(v) => setFilter('account', v)} />
         </DataToolbar>
 
         <DataTable columns={columns} rows={students} getRowKey={(s) => s.id} />
@@ -203,6 +239,16 @@ export default function StudentsIndex({ students, filters: initialFilters, optio
         description="Perangkat lama dicabut. Ponsel berikutnya yang dipakai mahasiswa untuk masuk akan diikat ke akunnya."
         confirmLabel="Reset perangkat"
         onConfirm={() => resetting && router.post(`${URL}/${resetting.id}/reset-perangkat`, {}, { preserveScroll: true, onFinish: () => setResetting(null) })}
+      />
+
+      <ConfirmDialog
+        isOpen={decision !== null}
+        onOpenChange={(open) => !open && setDecision(null)}
+        title={decision?.action === 'approve' ? `Setujui ${decision.student.name}?` : `Tolak ${decision?.student.name ?? ''}?`}
+        description={decision?.action === 'approve' ? 'Mahasiswa bisa langsung masuk dengan NIM atau email.' : 'Mahasiswa tidak bisa masuk dan perlu menghubungi admin akademik.'}
+        confirmLabel={decision?.action === 'approve' ? 'Setujui' : 'Tolak'}
+        isDestructive={decision?.action === 'reject'}
+        onConfirm={decide}
       />
     </AppLayout>
   );
