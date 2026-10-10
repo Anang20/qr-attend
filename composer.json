@@ -4,7 +4,7 @@
     "description": "QR Attend \u2014 Sistem Presensi Mahasiswa Berbasis QR (Universitas Pamulang)",
     "license": "proprietary",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "inertiajs/inertia-laravel": "^3.0",
         "laravel/framework": "^13.0"
     },
