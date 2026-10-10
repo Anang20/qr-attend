@@ -56,9 +56,13 @@ final class ScheduleSessions
         $offset = ($schedule->day_of_week - $start->dayOfWeekIso + 7) % 7;
         $first = $start->addDays($offset);
 
+        // Model yang baru dibuat belum memuat default kolom dari database (total_meetings = null);
+        // tanpa cadangan ini range(0, -1) hanya menghasilkan 2 pertemuan bertanggal salah.
+        $total = (int) ($schedule->total_meetings ?: Settings::int('total_meetings'));
+
         return array_map(
             fn (int $week): CarbonImmutable => $first->addWeeks($week),
-            range(0, $schedule->total_meetings - 1),
+            range(0, max($total, 1) - 1),
         );
     }
 }
