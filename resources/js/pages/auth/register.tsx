@@ -148,7 +148,7 @@ export default function Register({ studyPrograms, classGroups, registered }: Reg
 
         <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
           <FormField id="name" label={isStudent ? 'Nama lengkap' : 'Nama lengkap & gelar'} error={errors.name} isRequired>
-            <Input {...fieldA11y('name', errors.name)} autoComplete="name" value={data.name} onChange={(e) => setData('name', e.target.value)} placeholder={isStudent ? 'Ray Pengki' : 'Gusmayeni, S.Kom., M.Kom'} />
+            <Input {...fieldA11y('name', errors.name)} autoComplete="name" value={data.name} onChange={(e) => setData('name', e.target.value)} placeholder={'Masukkan nama lengkap'} />
           </FormField>
 
           {isStudent ? (
