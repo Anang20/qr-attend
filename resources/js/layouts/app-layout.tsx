@@ -25,7 +25,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
   return (
     <>
       <Head title={title} />
-      <div className="mx-auto flex min-h-screen max-w-[1440px] gap-4 p-4 print:block print:p-0">
+      <div className="flex min-h-screen w-full gap-4 p-4 print:block print:p-0">
         <AppSidebar />
 
         <div className="flex min-w-0 flex-1 flex-col gap-4">
