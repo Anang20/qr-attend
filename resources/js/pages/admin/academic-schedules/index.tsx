@@ -69,7 +69,7 @@ export default function AcademicSchedulesIndex({ schedules, filters: initialFilt
         actions={
           <Button asChild variant="outline">
             <Link href="/admin/pemetaan-kelas">
-              Kelola di Pemetaan Kelas
+              Kelola di Pemetaan Jadwal Akademik
               <ArrowRight aria-hidden />
             </Link>
           </Button>
@@ -78,7 +78,7 @@ export default function AcademicSchedulesIndex({ schedules, filters: initialFilt
 
       <Alert variant="info">
         <Info aria-hidden />
-        <span>Jadwal dibuat otomatis dari Pemetaan Kelas, jadi halaman ini hanya untuk dilihat. Ubah jadwal lewat Pemetaan Kelas.</span>
+        <span>Jadwal dibuat otomatis dari Pemetaan Jadwal Akademik, jadi halaman ini hanya untuk dilihat. Ubah jadwal lewat Pemetaan Jadwal Akademik.</span>
       </Alert>
 
       <Card className="gap-4">

@@ -13,7 +13,7 @@ use Inertia\Response;
 use App\Support\PerPage;
 
 /**
- * Jadwal Akademik: tampilan read-only dari Pemetaan Kelas (BR-19).
+ * Jadwal Akademik: tampilan read-only dari Pemetaan Jadwal Akademik (BR-19).
  */
 class AcademicScheduleController extends Controller
 {

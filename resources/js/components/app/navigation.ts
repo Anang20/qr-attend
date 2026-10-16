@@ -57,7 +57,7 @@ export const navigation: Record<UserRole, NavGroup[]> = {
         { label: 'Mata Kuliah', icon: BookOpen, href: '/admin/mata-kuliah' },
         { label: 'Kelas', icon: UsersRound, href: '/admin/kelas' },
         { label: 'Ruang & Titik', icon: MapPin, href: '/admin/ruang' },
-        { label: 'Pemetaan Kelas', icon: Waypoints, href: '/admin/pemetaan-kelas' },
+        { label: 'Pemetaan Jadwal Akademik', icon: Waypoints, href: '/admin/pemetaan-kelas' },
         { label: 'Jadwal Akademik', icon: CalendarDays, href: '/admin/jadwal-akademik' },
       ],
     },

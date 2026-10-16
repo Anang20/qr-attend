@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/** Pemetaan Kelas: satu MK di satu kelas pada satu periode (sumber tunggal jadwal). */
+/** Pemetaan Jadwal Akademik: satu MK di satu kelas pada satu periode (sumber tunggal jadwal). */
 class ClassSchedule extends Model
 {
     protected $fillable = ['academic_period_id', 'class_group_id', 'course_id', 'lecturer_id', 'room_id', 'day_of_week', 'start_time', 'end_time', 'total_meetings'];

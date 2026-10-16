@@ -13,7 +13,7 @@ Acuan: `docs/BRD.md` di Project "QR Attendance" (alur bisnis, aturan BR-xx, ERD)
 | Tahap | Isi | Status |
 |---|---|---|
 | **1** | Kerangka proyek, migrasi 18 tabel (ERD), seeder data contoh, masuk/daftar (email bebas, tanpa verifikasi email — mahasiswa & dosen menunggu persetujuan admin sebelum aktif), layout per peran, master data (Periode, Mahasiswa + persetujuan akun, Dosen + persetujuan akun, Mata Kuliah, Kelas, Ruang & Titik Presensi) | ✅ |
-| **2** | Pemetaan Kelas + 16 pertemuan otomatis + salin dari periode lalu, Jadwal Akademik (read-only), dasbor & jadwal dosen, sesi QR (polling 3 detik), pindai & validasi 8 lapis, presensi manual + log, ikat perangkat + reset oleh admin | ✅ |
+| **2** | Pemetaan Jadwal Akademik + 16 pertemuan otomatis + salin dari periode lalu, Jadwal Akademik (read-only), dasbor & jadwal dosen, sesi QR (polling 3 detik), pindai & validasi 8 lapis, presensi manual + log, ikat perangkat + reset oleh admin | ✅ |
 | **3** | Pengajuan izin/sakit + lampiran & persetujuan dosen, rekap kehadiran + kelayakan UAS (admin & dosen), daftar mahasiswa dosen, laporan presensi + ekspor Excel/PDF, riwayat & detail presensi mahasiswa, profil (kontak, sandi, perangkat, reset), pengaturan kebijakan, dasbor admin bergrafik | ✅ |
 | **4** | `DataTable` dengan paginasi bawaan (server & klien) di semua tabel; grafik dasbor admin memakai Recharts (komponen chart shadcn/ui) dengan filter global (rentang 7/30/90 hari atau semester, periode, mata kuliah, kelas) dan kontrol per grafik (urutan, Top N, klik legenda) | ✅ |
 
@@ -215,7 +215,7 @@ useFlashToast → toast sukses/galat/peringatan
 | BR-08 | Pindai setelah 15 menit sejak dibuka = Terlambat | `ScanValidator` |
 | BR-09 | Sesi berakhir → yang belum presensi = Tidak Hadir | `AttendanceSessions::markAbsentees` |
 | BR-10–11 | Metode tercatat; presensi manual dikonfirmasi & masuk log | `ManualAttendanceController`, `attendance_logs` |
-| BR-19–21 | Jadwal dari Pemetaan Kelas; bentrok kelas/dosen/ruang; periode Selesai read-only | `ClassScheduleRequest`, `ScheduleConflicts` |
+| BR-19–21 | Jadwal dari Pemetaan Jadwal Akademik; bentrok kelas/dosen/ruang; periode Selesai read-only | `ClassScheduleRequest`, `ScheduleConflicts` |
 
 Token QR tidak disimpan mentah: dihitung ulang dengan HMAC (id sesi + waktu dibuka + `APP_KEY`), dan isi QR berformat `QRATTEND:{id}:{token}`. Semua pindaian (berhasil maupun gagal) tercatat di `scan_logs`.
 

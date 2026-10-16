@@ -139,7 +139,7 @@ export default function AcademicPeriodsIndex({ periods, filters: initialFilters,
         isOpen={crud.deleting !== null}
         onOpenChange={(open) => !open && crud.setDeleting(null)}
         title={`Hapus ${crud.deleting?.label ?? ''}?`}
-        description="Periode yang sudah punya pemetaan kelas atau berstatus Aktif tidak bisa dihapus."
+        description="Periode yang sudah punya pemetaan jadwal akademik atau berstatus Aktif tidak bisa dihapus."
         onConfirm={crud.confirmDelete}
       />
     </AppLayout>

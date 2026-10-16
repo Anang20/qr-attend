@@ -218,9 +218,9 @@ export default function ClassSchedulesIndex({ periods, period, classes, classSea
   ];
 
   return (
-    <AppLayout title="Pemetaan Kelas">
+    <AppLayout title="Pemetaan Jadwal Akademik">
       <PageHeader
-        title="Pemetaan Kelas"
+        title="Pemetaan Jadwal Akademik"
         description={
           <>
             Sumber tunggal jadwal: setiap pemetaan otomatis membuat 16 pertemuan dan tampil di{' '}
@@ -287,7 +287,7 @@ export default function ClassSchedulesIndex({ periods, period, classes, classSea
                 {!isReadOnly && (
                   <Button onClick={crud.openCreate}>
                     <Plus aria-hidden />
-                    Petakan mata kuliah
+                    Petakan jadwal akademik
                   </Button>
                 )}
               </div>
@@ -319,7 +319,7 @@ export default function ClassSchedulesIndex({ periods, period, classes, classSea
       <FormSheet
         isOpen={crud.isOpen}
         onOpenChange={crud.setIsOpen}
-        title={crud.isEditing ? 'Ubah pemetaan' : `Petakan mata kuliah · ${selectedClass?.code ?? ''}`}
+        title={crud.isEditing ? 'Ubah pemetaan' : `Petakan jadwal akademik · ${selectedClass?.code ?? ''}`}
         onSubmit={crud.submit}
         isProcessing={processing}
         errorCount={Object.keys(errors).length}

@@ -24,7 +24,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Pemetaan Kelas: sumber tunggal jadwal (BR-19). Setiap pemetaan otomatis
+ * Pemetaan Jadwal Akademik: sumber tunggal jadwal (BR-19). Setiap pemetaan otomatis
  * membuat 16 pertemuan; Jadwal Akademik hanya membaca tabel ini.
  */
 class ClassScheduleController extends Controller
@@ -182,7 +182,7 @@ class ClassScheduleController extends Controller
         return back()->with('success', $schedule->course->name.' dilepas dari kelas.');
     }
 
-    /** Salin pemetaan kelas dari periode sebelumnya; slot yang bentrok dilewati. */
+    /** Salin pemetaan jadwal akademik dari periode sebelumnya; slot yang bentrok dilewati. */
     public function copy(Request $request): RedirectResponse
     {
         $data = $request->validate([

@@ -73,7 +73,7 @@ class AcademicPeriodController extends Controller
 
         // BR-24: data yang sudah dipakai tidak bisa dihapus.
         if ($period->classSchedules()->exists()) {
-            return back()->with('error', 'Periode '.$period->label().' tidak bisa dihapus karena sudah punya pemetaan kelas.');
+            return back()->with('error', 'Periode '.$period->label().' tidak bisa dihapus karena sudah punya pemetaan jadwal akademik.');
         }
 
         $period->delete();

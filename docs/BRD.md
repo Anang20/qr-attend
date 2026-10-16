@@ -62,7 +62,7 @@ Dosen membuka sesi presensi pada jam kuliah → sistem membuat **QR sekali per s
 - Autentikasi: masuk (deteksi peran otomatis), daftar (Mahasiswa/Dosen, email bebas tanpa verifikasi), persetujuan akun oleh admin.
 - Ikat perangkat mahasiswa + permintaan reset perangkat.
 - Master data: Periode Akademik, Mahasiswa, Dosen, Mata Kuliah, Kelas, Ruang & Titik Presensi.
-- Pemetaan Kelas (sumber tunggal jadwal) dan Jadwal Akademik (read-only).
+- Pemetaan Jadwal Akademik (sumber tunggal jadwal) dan Jadwal Akademik (read-only).
 - Sesi presensi QR (dosen), pemindaian & validasi (mahasiswa), presensi manual.
 - Pengajuan izin/sakit (mahasiswa) dan persetujuan (dosen).
 - Rekap kehadiran per semester + batas minimal UAS.
@@ -101,7 +101,7 @@ Legenda: **C** buat · **R** lihat · **U** ubah · **D** hapus · **A** setujui
 | Dosen | CRUD + A (akun baru) | R (diri sendiri) | — |
 | Mata Kuliah / Kelas | CRUD | R (yang diampu) | R (kelasnya) |
 | Ruang & Titik Presensi | CRUD | R | R (saat pindai) |
-| Pemetaan Kelas | CRUD (periode tidak Selesai) | — | — |
+| Pemetaan Jadwal Akademik | CRUD (periode tidak Selesai) | — | — |
 | Jadwal Akademik | R | R (jadwal sendiri) | R (Kelas Hari Ini) |
 | Sesi Presensi (buka QR) | R | C/R (sesi miliknya) | — |
 | Presensi (pindai) | R | R | C (dirinya) |
@@ -119,7 +119,7 @@ Legenda: **C** buat · **R** lihat · **U** ubah · **D** hapus · **A** setujui
 | Istilah | Arti |
 |---|---|
 | Periode Akademik | Satu semester (Ganjil/Genap/Antara) dalam satu tahun ajaran, mis. Ganjil 2026/2027 |
-| Pemetaan Kelas | Penugasan mata kuliah + dosen + ruang + hari/jam ke sebuah kelas dalam satu periode. Sumber tunggal jadwal |
+| Pemetaan Jadwal Akademik | Penugasan mata kuliah + dosen + ruang + hari/jam ke sebuah kelas dalam satu periode. Sumber tunggal jadwal |
 | Pertemuan | Satu dari 16 tatap muka sebuah pemetaan |
 | Sesi Presensi | Jendela 20 menit sejak dosen menekan "Mulai Presensi" pada satu pertemuan |
 | Titik Presensi | Koordinat (latitude, longitude) + radius sebuah ruang tempat QR ditayangkan |
@@ -139,7 +139,7 @@ flowchart LR
   subgraph ADM[Admin]
     A1[Periode Akademik] --> A2[Master data<br/>Mahasiswa · Dosen · MK · Kelas]
     A2 --> A3[Ruang & Titik Presensi]
-    A3 --> A4[Pemetaan Kelas]
+    A3 --> A4[Pemetaan Jadwal Akademik]
     A4 --> A5[Jadwal Akademik<br/>read-only]
   end
   subgraph DSN[Dosen]
@@ -427,9 +427,9 @@ stateDiagram-v2
 | **BR-16** | Kelayakan UAS: minimal **75%** dari 16 pertemuan → maksimal **4 kali Tidak Hadir**; Hadir, Terlambat, Izin dihitung hadir | Rekap |
 | **BR-17** | Hanya **satu periode Aktif**; mengaktifkan periode baru otomatis menjadikan yang lama Selesai | Periode Akademik |
 | **BR-18** | Kombinasi tahun ajaran + semester **unik**; rentang tanggal periode **tidak boleh tumpang tindih** | Periode Akademik |
-| **BR-19** | Jadwal punya **satu sumber kebenaran**: Pemetaan Kelas. Jadwal Akademik read-only | Pemetaan, Jadwal |
-| **BR-20** | Bentrok dicek **dalam periode yang sama**: hari sama + jam beririsan pada kelas, dosen, atau ruang | Pemetaan Kelas |
-| **BR-21** | Pemetaan pada periode **Selesai** tidak bisa ditambah/diubah/dihapus | Pemetaan Kelas |
+| **BR-19** | Jadwal punya **satu sumber kebenaran**: Pemetaan Jadwal Akademik. Jadwal Akademik read-only | Pemetaan, Jadwal |
+| **BR-20** | Bentrok dicek **dalam periode yang sama**: hari sama + jam beririsan pada kelas, dosen, atau ruang | Pemetaan Jadwal Akademik |
+| **BR-21** | Pemetaan pada periode **Selesai** tidak bisa ditambah/diubah/dihapus | Pemetaan Jadwal Akademik |
 | **BR-22** | Ruang Nonaktif tidak bisa dipetakan; ruang yang masih dipakai pemetaan tidak bisa dihapus/dinonaktifkan | Ruang & Titik |
 | **BR-23** | Titik presensi maks. **500 m** dari pusat kampus; lat & lng diisi keduanya atau kosong keduanya | Ruang & Titik |
 | **BR-24** | Data master yang sudah dipakai transaksi (mis. punya sesi presensi) **tidak bisa dihapus**, hanya dinonaktifkan | Semua master |
@@ -460,7 +460,7 @@ stateDiagram-v2
 ### 8.3 Penjadwalan (FR-SCH)
 | Kode | Kebutuhan |
 |---|---|
-| FR-SCH-01 | Pemetaan Kelas per periode: pilih kelas → petakan MK, dosen (difilter yang mengampu), hari, jam (otomatis dari SKS), ruang |
+| FR-SCH-01 | Pemetaan Jadwal Akademik per periode: pilih kelas → petakan MK, dosen (difilter yang mengampu), hari, jam (otomatis dari SKS), ruang |
 | FR-SCH-02 | Pemeriksaan otomatis langsung: kelas/dosen/ruang bebas, titik presensi ada, kapasitas ruang ≥ jumlah mahasiswa |
 | FR-SCH-03 | Salin pemetaan dari periode sebelumnya untuk kelas kosong |
 | FR-SCH-04 | Saat pemetaan disimpan, sistem membuat 16 pertemuan terjadwal |
@@ -739,7 +739,7 @@ erDiagram
 |---|---|
 | `users` dipisah dari `students` / `lecturers` | Satu tabel login untuk semua peran; data akademik tiap peran berbeda. Admin cukup di `users` (role=admin) |
 | Nama tabel `class_groups` (bukan `classes`) | `Class` adalah kata kunci PHP, jadi model `Class` tidak bisa dibuat di Laravel |
-| `class_schedules` = **Pemetaan Kelas** | Satu baris = satu MK di satu kelas pada satu periode. Jadwal Akademik cukup **query/view** dari tabel ini (BR-19), tidak ada tabel jadwal terpisah |
+| `class_schedules` = **Pemetaan Jadwal Akademik** | Satu baris = satu MK di satu kelas pada satu periode. Jadwal Akademik cukup **query/view** dari tabel ini (BR-19), tidak ada tabel jadwal terpisah |
 | 16 `attendance_sessions` dibuat di muka | Pengajuan izin H-7 butuh pertemuan yang sudah ada; rekap bisa menampilkan pertemuan "belum terlaksana" |
 | **Snapshot** lat/lng/radius ruang di sesi | Bila titik ruang diukur ulang, presensi lama tetap bisa diaudit dengan titik yang berlaku saat itu |
 | Token QR disimpan sebagai **hash** | Bila database bocor, token tidak bisa dipakai ulang |
@@ -857,7 +857,7 @@ Kolom `created_at` / `updated_at` ada di semua tabel kecuali disebut lain.
 
 Status tampilan ruang (dihitung, bukan kolom): **Siap presensi** (aktif + titik ada) · **Belum ada titik** · **Nonaktif**.
 
-### 10.8 class_schedules (Pemetaan Kelas)
+### 10.8 class_schedules (Pemetaan Jadwal Akademik)
 | Kolom | Tipe | Wajib | Keterangan |
 |---|---|---|---|
 | academic_period_id | FK | ✔ | |
@@ -1049,7 +1049,7 @@ ADMIN (desktop)
 ├── Periode Akademik
 ├── Mahasiswa · Dosen · Mata Kuliah · Kelas
 ├── Ruang & Titik Presensi
-├── Pemetaan Kelas
+├── Pemetaan Jadwal Akademik
 ├── Jadwal Akademik (read-only)
 ├── Laporan Presensi
 ├── Rekap Kehadiran

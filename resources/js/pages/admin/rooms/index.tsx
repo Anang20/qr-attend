@@ -337,7 +337,7 @@ export default function RoomsIndex({ rooms, filters: initialFilters, summary, po
         isOpen={crud.deleting !== null}
         onOpenChange={(open) => !open && crud.setDeleting(null)}
         title={`Hapus ${crud.deleting?.name ?? ''}?`}
-        description="Ruang yang masih dipakai di pemetaan kelas tidak bisa dihapus; ubah statusnya menjadi Nonaktif."
+        description="Ruang yang masih dipakai di pemetaan jadwal akademik tidak bisa dihapus; ubah statusnya menjadi Nonaktif."
         onConfirm={crud.confirmDelete}
       />
     </AppLayout>

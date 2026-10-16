@@ -8,7 +8,7 @@ use App\Models\ClassSchedule;
 use Carbon\CarbonImmutable;
 
 /**
- * Membuat & menyesuaikan 16 pertemuan dari satu pemetaan kelas (BRD FR-SCH-04).
+ * Membuat & menyesuaikan 16 pertemuan dari satu pemetaan jadwal akademik (BRD FR-SCH-04).
  * Pertemuan dibuat di muka agar pengajuan izin H-7 punya pertemuan yang dituju.
  */
 final class ScheduleSessions

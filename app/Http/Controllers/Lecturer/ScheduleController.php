@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-/** Jadwal mengajar mingguan dosen (read-only, dari Pemetaan Kelas). */
+/** Jadwal mengajar mingguan dosen (read-only, dari Pemetaan Jadwal Akademik). */
 class ScheduleController extends Controller
 {
     use OwnsSessions;
