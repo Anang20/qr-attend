@@ -12,7 +12,6 @@ use App\Models\AttendanceSession;
 use App\Models\ClassGroup;
 use App\Models\ClassSchedule;
 use App\Models\Course;
-use App\Models\Lecturer;
 use App\Models\Student;
 use App\Support\Days;
 use App\Support\Paginate;
@@ -31,11 +30,9 @@ class ReportController extends Controller
     public function __invoke(Request $request): Response
     {
         $periodId = $request->integer('period_id') ?: AcademicPeriod::active()?->id;
-        $lecturerId = $request->integer('lecturer_id') ?: null;
         $status = in_array($request->query('status'), AttendanceStatus::values(), true) ? (string) $request->query('status') : null;
 
-        $scheduleScope = fn ($q) => $q->where('academic_period_id', $periodId)
-            ->when($lecturerId, fn ($w, int $id) => $w->where('lecturer_id', $id));
+        $scheduleScope = fn ($q) => $q->where('academic_period_id', $periodId);
 
         $courses = Course::query()->whereHas('classSchedules', $scheduleScope)->orderBy('name')->get(['id', 'name', 'code']);
         $courseId = $request->integer('course_id');
@@ -72,13 +69,14 @@ class ReportController extends Controller
                 ->orderBy('nim')->get(['id', 'user_id', 'nim']);
             $records = Attendance::query()->where('attendance_session_id', $session->id)->get()->keyBy('student_id');
 
-            $all = $students->map(function (Student $st) use ($records): array {
+            $all = $students->map(function (Student $st) use ($records, $schedule): array {
                 /** @var Attendance|null $a */
                 $a = $records->get($st->id);
 
                 return [
                     'nim' => $st->nim,
                     'name' => $st->user->name,
+                    'lecturer' => $schedule->lecturer->user->name,
                     'time' => $a && $a->status !== AttendanceStatus::Absent ? $a->recorded_at->format('H.i.s') : null,
                     'method' => $a && $a->status !== AttendanceStatus::Absent ? $a->method->label() : null,
                     'status' => $a?->status->value ?? 'absent',
@@ -127,7 +125,6 @@ class ReportController extends Controller
         return Inertia::render('admin/reports/index', [
             'filters' => [
                 'period_id' => $periodId ? (string) $periodId : null,
-                'lecturer_id' => $lecturerId ? (string) $lecturerId : null,
                 'course_id' => $courseId ? (string) $courseId : null,
                 'class_group_id' => $classId ? (string) $classId : null,
                 'session_id' => $session ? (string) $session->id : null,
@@ -136,9 +133,6 @@ class ReportController extends Controller
             'options' => [
                 'periods' => AcademicPeriod::query()->orderByDesc('start_date')->get()
                     ->map(fn (AcademicPeriod $p): array => ['value' => (string) $p->id, 'label' => $p->label()]),
-                'lecturers' => Lecturer::query()->with('user:id,name')
-                    ->whereHas('classSchedules', fn ($q) => $q->where('academic_period_id', $periodId))->get()
-                    ->map(fn (Lecturer $l): array => ['value' => (string) $l->id, 'label' => $l->user->name])->sortBy('label')->values(),
                 'courses' => $courses->map(fn (Course $c): array => ['value' => (string) $c->id, 'label' => $c->name]),
                 'classGroups' => $classes->map(fn (ClassGroup $c): array => ['value' => (string) $c->id, 'label' => $c->code]),
                 'sessions' => $sessions->map(fn (AttendanceSession $s): array => [

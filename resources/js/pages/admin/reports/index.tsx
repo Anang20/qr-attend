@@ -21,6 +21,7 @@ interface ReportRow {
   no: number;
   nim: string;
   name: string;
+  lecturer: string;
   time: string | null;
   method: string | null;
   status: string;
@@ -50,7 +51,6 @@ interface Report {
 
 interface Filters {
   period_id: string | null;
-  lecturer_id: string | null;
   course_id: string | null;
   class_group_id: string | null;
   session_id: string | null;
@@ -59,7 +59,7 @@ interface Filters {
 
 interface Props {
   filters: Filters;
-  options: { periods: Option[]; lecturers: Option[]; courses: Option[]; classGroups: Option[]; sessions: Option[]; statuses: Option[] };
+  options: { periods: Option[]; courses: Option[]; classGroups: Option[]; sessions: Option[]; statuses: Option[] };
   report: Report | null;
 }
 
@@ -69,13 +69,14 @@ const columns: DataTableColumn<ReportRow>[] = [
   { key: 'no', header: 'No.', className: 'tabular-nums text-muted-foreground', cell: (r) => r.no },
   { key: 'nim', header: 'NIM', className: 'tabular-nums', cell: (r) => r.nim },
   { key: 'name', header: 'Nama mahasiswa', className: 'font-semibold', cell: (r) => r.name },
+  { key: 'lecturer', header: 'Dosen', cell: (r) => r.lecturer },
   { key: 'time', header: 'Waktu presensi', className: 'tabular-nums', cell: (r) => r.time ?? '—' },
   { key: 'method', header: 'Metode', cell: (r) => r.method ?? '—' },
   { key: 'status', header: 'Status', cell: (r) => <AttendanceBadge status={r.status} /> },
 ];
 
 export default function Reports({ filters: initial, options, report }: Props) {
-  // Filter diterapkan lewat tombol "Terapkan" (bukan otomatis), sesuai desain.
+  // Setiap perubahan filter langsung memuat ulang laporan; tombol "Terapkan" tetap ada sebagai cadangan.
   const [filters, setFilters] = useState<Filters>(initial);
   const [isExporting, setIsExporting] = useState(false);
   const [printRows, setPrintRows] = useState<ReportRow[] | null>(null);
@@ -92,8 +93,7 @@ export default function Reports({ filters: initial, options, report }: Props) {
     const v = value === ALL ? null : value;
     // Pilihan bertingkat: mengubah induk mengosongkan pilihan turunan.
     const cascade: Record<keyof Filters, (keyof Filters)[]> = {
-      period_id: ['lecturer_id', 'course_id', 'class_group_id', 'session_id'],
-      lecturer_id: ['course_id', 'class_group_id', 'session_id'],
+      period_id: ['course_id', 'class_group_id', 'session_id'],
       course_id: ['class_group_id', 'session_id'],
       class_group_id: ['session_id'],
       session_id: [],
@@ -102,8 +102,7 @@ export default function Reports({ filters: initial, options, report }: Props) {
     const next = { ...filters, [key]: v };
     cascade[key].forEach((k) => (next[k] = null));
     setFilters(next);
-    // Pilihan induk perlu data opsi baru dari server.
-    if (cascade[key].length > 0) apply(next);
+    apply(next);
   };
 
   const apply = (f: Filters = filters) => {
@@ -133,9 +132,9 @@ export default function Reports({ filters: initial, options, report }: Props) {
           `${m.course} (${m.courseCode}) · ${m.classGroup} · ${m.lecturer}`,
           `${m.day}, ${formatDate(m.date)} · ${m.time} · Pertemuan ${m.meetingNo} · Jendela QR ${m.qrWindow}`,
         ],
-        headers: ['No.', 'NIM', 'Nama mahasiswa', 'Waktu presensi', 'Metode', 'Status'],
-        rows: rows.map((r) => [r.no, r.nim, r.name, r.time, r.method, r.statusLabel]),
-        widths: [6, 16, 30, 16, 12, 14],
+        headers: ['No.', 'NIM', 'Nama mahasiswa', 'Dosen', 'Waktu presensi', 'Metode', 'Status'],
+        rows: rows.map((r) => [r.no, r.nim, r.name, r.lecturer, r.time, r.method, r.statusLabel]),
+        widths: [6, 16, 30, 30, 16, 12, 14],
       });
     } finally {
       setIsExporting(false);
@@ -175,7 +174,6 @@ export default function Reports({ filters: initial, options, report }: Props) {
             {field('session_id', 'Tanggal', options.sessions)}
             {field('course_id', 'Mata kuliah', options.courses)}
             {field('class_group_id', 'Kelas', options.classGroups)}
-            {field('lecturer_id', 'Dosen', options.lecturers, 'Semua dosen')}
             {field('status', 'Status', options.statuses, 'Semua')}
           </div>
           <div className="flex justify-end gap-2 border-t pt-4">
@@ -206,7 +204,6 @@ export default function Reports({ filters: initial, options, report }: Props) {
           <Card className="gap-5 print:border-0 print:p-0">
             <header className="flex flex-wrap items-start justify-between gap-4 border-b-2 border-brand-deep pb-4">
               <div className="flex items-center gap-4">
-                <span className="flex size-14 items-center justify-center rounded-xl border border-dashed text-[10px] font-bold text-muted-foreground">LOGO</span>
                 <div>
                   <p className="text-xl font-extrabold">Universitas Pamulang</p>
                   <p className="text-sm text-muted-foreground">Fakultas Ilmu Komputer · Program Studi Sistem Informasi</p>
