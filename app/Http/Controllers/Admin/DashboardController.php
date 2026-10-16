@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Models\DeviceResetRequest;
 use App\Enums\RequestStatus;
 use App\Models\ClassSchedule;
+use App\Services\AttendanceSessions;
 use App\Services\DashboardStats;
 use App\Support\DashboardFilter;
 use Illuminate\Http\Request;
