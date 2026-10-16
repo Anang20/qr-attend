@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#065F46">
 
+        <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+
         <title inertia>{{ config('app.name', 'QR Attend') }}</title>
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
