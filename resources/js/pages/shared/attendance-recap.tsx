@@ -18,6 +18,13 @@ import { cn, formatDate } from '@/lib/utils';
 import type { Option, Paginated } from '@/types';
 
 type Code = 'H' | 'T' | 'I' | 'A';
+/** Alasan singkat di bawah badge status, dari jumlah Tidak hadir (A) dan jatah maksimal. */
+function statusReason(r: RecapRow, maxAbsent: number): string {
+  const absent = `Tidak hadir ${r.counts.A}× dari maks. ${maxAbsent}×`;
+  if (r.status === 'ineligible') return `${absent} (lewat ${Math.abs(r.remaining)}×)`;
+  return `${absent} · sisa ${r.remaining}×`;
+}
+
 type Chip = 'all' | 'ineligible' | 'warning' | 'safe';
 
 interface RecapRow {
@@ -126,16 +133,24 @@ export default function AttendanceRecap({ baseUrl, filters, options, schedule, r
     ),
     {
       key: 'percent',
-      header: 'Kehadiran',
+      header: 'Kehadiran sejauh ini',
       cell: (r) => (
-        <div className="flex items-center gap-2">
-          <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
-            <div
-              className={cn('h-full', (r.percent ?? 0) >= (recap?.summary.minPercent ?? 75) ? 'bg-emerald-600' : 'bg-amber-500')}
-              style={{ width: `${r.percent ?? 0}%` }}
-            />
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            {/* Warna batang mengikuti status kelayakan (sisa jatah tidak hadir), bukan persentase sementara. */}
+            <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
+              <div
+                className={cn('h-full', r.status === 'ineligible' ? 'bg-red-600' : r.status === 'warning' ? 'bg-amber-500' : 'bg-emerald-600')}
+                style={{ width: `${r.percent ?? 0}%` }}
+              />
+            </div>
+            <span className="text-sm font-bold tabular-nums">{r.percent !== null ? `${r.percent}%` : '—'}</span>
           </div>
-          <span className="text-sm font-bold tabular-nums">{r.percent !== null ? `${r.percent}%` : '—'}</span>
+          {(recap?.summary.held ?? 0) > 0 && (
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {r.counts.H + r.counts.T + r.counts.I} dari {recap?.summary.held} pertemuan
+            </span>
+          )}
         </div>
       ),
     },
@@ -145,7 +160,19 @@ export default function AttendanceRecap({ baseUrl, filters, options, schedule, r
       className: (r) => cn('font-semibold', r.remaining < 0 ? 'text-destructive' : r.remaining <= 1 ? 'text-warning' : ''),
       cell: (r) => (r.remaining < 0 ? `Lewat ${Math.abs(r.remaining)} kali` : `${r.remaining} kali`),
     },
-    { key: 'status', header: 'Status', cell: (r) => <RecapStatusBadge status={r.status} /> },
+    {
+      key: 'status',
+      header: 'Status',
+      cell: (r) => {
+        const reason = statusReason(r, recap?.summary.maxAbsent ?? 4);
+        return (
+          <div className="flex flex-col items-start gap-1" title={reason}>
+            <RecapStatusBadge status={r.status} />
+            <span className="text-xs text-muted-foreground">{reason}</span>
+          </div>
+        );
+      },
+    },
   ];
 
   const exportExcel = async () => {
@@ -249,6 +276,25 @@ export default function AttendanceRecap({ baseUrl, filters, options, schedule, r
                 Batas minimal <strong>{summary.minPercent}%</strong> dari {summary.total} pertemuan · maks. <strong>{summary.maxAbsent} kali</strong> tidak hadir tanpa izin · izin/sakit
                 yang disetujui dihitung hadir.
               </p>
+              <p className="text-xs text-muted-foreground">
+                Status dihitung dari <strong>sisa jatah tidak hadir</strong>, bukan dari persentase. Persentase hanya menunjukkan kehadiran sejauh ini dari pertemuan yang sudah terlaksana ({summary.held} dari {summary.total}).
+              </p>
+              <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground" aria-label="Arti status">
+                <li>
+                  <strong className="text-foreground">Aman</strong>: sisa jatah ≥ 2×
+                </li>
+                <li>
+                  <strong className="text-foreground">Waspada</strong>: sisa jatah 0–1×
+                </li>
+                <li>
+                  <strong className="text-foreground">Tidak memenuhi</strong>: tidak hadir &gt; {summary.maxAbsent}×
+                </li>
+                {summary.isFinished && (
+                  <li>
+                    <strong className="text-foreground">Memenuhi</strong>: tidak hadir ≤ {summary.maxAbsent}× (boleh ikut UAS)
+                  </li>
+                )}
+              </ul>
               <ul className="flex flex-wrap gap-3 text-xs text-muted-foreground" aria-label="Legenda">
                 {(Object.keys(codeStyle) as Code[]).map((c) => (
                   <li key={c} className="flex items-center gap-1.5">
