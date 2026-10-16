@@ -2,8 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\SessionStatus;
-use App\Models\AttendanceSession;
 use App\Services\AttendanceSessions;
 use Illuminate\Console\Command;
 
@@ -20,15 +18,7 @@ class ExpireAttendanceSessions extends Command
 
     public function handle(): int
     {
-        $count = 0;
-
-        AttendanceSession::query()
-            ->where('status', SessionStatus::Open)
-            ->where('expires_at', '<=', now())
-            ->each(function (AttendanceSession $session) use (&$count): void {
-                AttendanceSessions::expireIfDue($session);
-                $count++;
-            });
+        $count = AttendanceSessions::expireAllDue();
 
         $this->info("{$count} sesi ditandai kedaluwarsa.");
 

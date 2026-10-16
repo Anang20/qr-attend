@@ -26,6 +26,9 @@ class DashboardController extends Controller
 {
     public function __invoke(Request $request): Response
     {
+        // Angka dasbor dihitung dari catatan presensi; tandai dulu sesi yang QR-nya sudah lewat.
+        AttendanceSessions::expireAllDue();
+
         $period = AcademicPeriod::active();
         // Filter global grafik: bawaan = periode aktif, seluruh semester, semua mata kuliah & kelas.
         $filter = $period ? DashboardFilter::fromRequest($request, $period) : null;

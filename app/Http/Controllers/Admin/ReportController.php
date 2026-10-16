@@ -13,6 +13,7 @@ use App\Models\ClassGroup;
 use App\Models\ClassSchedule;
 use App\Models\Course;
 use App\Models\Student;
+use App\Services\AttendanceSessions;
 use App\Support\Days;
 use App\Support\Paginate;
 use Illuminate\Http\Request;
@@ -29,6 +30,9 @@ class ReportController extends Controller
 {
     public function __invoke(Request $request): Response
     {
+        // Pastikan sesi yang QR-nya sudah lewat sudah dihitung (Tidak Hadir) sebelum laporan dibuat.
+        AttendanceSessions::expireAllDue();
+
         $periodId = $request->integer('period_id') ?: AcademicPeriod::active()?->id;
         $status = in_array($request->query('status'), AttendanceStatus::values(), true) ? (string) $request->query('status') : null;
 

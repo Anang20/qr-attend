@@ -29,6 +29,8 @@ final class AttendanceRecap
     /** @return array{summary: array<string, mixed>, rows: list<array<string, mixed>>} */
     public static function forSchedule(ClassSchedule $schedule): array
     {
+        AttendanceSessions::expireAllDue();
+
         $total = (int) $schedule->total_meetings;
         $minPercent = Settings::int('min_attendance_percent');
         $maxAbsent = $total - (int) ceil($minPercent * $total / 100);
@@ -119,6 +121,8 @@ final class AttendanceRecap
      */
     public static function forStudent(Student $student, int $periodId): array
     {
+        AttendanceSessions::expireAllDue();
+
         $schedules = ClassSchedule::query()->with('course:id,name')
             ->where('academic_period_id', $periodId)
             ->where('class_group_id', $student->class_group_id)

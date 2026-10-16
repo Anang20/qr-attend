@@ -126,6 +126,27 @@ final class AttendanceSessions
         $session->refresh();
     }
 
+    /**
+     * Tandai semua sesi yang QR-nya sudah lewat sebagai Kedaluwarsa (+ Tidak Hadir). Dipanggil scheduler
+     * dan halaman yang menghitung kehadiran (rekap, laporan, dasbor) agar angkanya tidak tertinggal.
+     *
+     * @return int jumlah sesi yang ditandai
+     */
+    public static function expireAllDue(): int
+    {
+        $count = 0;
+
+        AttendanceSession::query()
+            ->where('status', SessionStatus::Open)
+            ->where('expires_at', '<=', now())
+            ->each(function (AttendanceSession $session) use (&$count): void {
+                self::expireIfDue($session);
+                $count++;
+            });
+
+        return $count;
+    }
+
     /** Ubah status menjadi Kedaluwarsa bila waktunya habis (dipanggil saat diakses & oleh scheduler). */
     public static function expireIfDue(AttendanceSession $session): void
     {
