@@ -56,6 +56,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/mahasiswa', [Admin\StudentController::class, 'index'])->name('students.index');
     Route::post('/mahasiswa', [Admin\StudentController::class, 'store'])->name('students.store');
+    Route::post('/mahasiswa/pindah-kelas', [Admin\StudentController::class, 'moveClass'])->name('students.move-class');
     Route::put('/mahasiswa/{student}', [Admin\StudentController::class, 'update'])->name('students.update');
     Route::delete('/mahasiswa/{student}', [Admin\StudentController::class, 'destroy'])->name('students.destroy');
     Route::post('/mahasiswa/{student}/reset-perangkat', [Admin\StudentController::class, 'resetDevice'])->name('students.reset-device');

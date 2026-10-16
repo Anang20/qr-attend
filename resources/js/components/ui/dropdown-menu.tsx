@@ -37,7 +37,7 @@ function DropdownMenuItem({ className, variant = 'default', ...props }: React.Co
     <DropdownMenuPrimitive.Item
       data-variant={variant}
       className={cn(
-        'relative flex cursor-default items-center gap-2 rounded-lg px-2.5 py-2 text-sm outline-none select-none focus:bg-accent data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[variant=destructive]:text-destructive [&_svg]:size-4',
+        'relative flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm outline-none select-none focus:bg-accent data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[variant=destructive]:text-destructive [&_svg]:size-4',
         className,
       )}
       {...props}

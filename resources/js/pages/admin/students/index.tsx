@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react';
-import { Check, Plus, Smartphone, X } from 'lucide-react';
+import { Check, MoveRight, Plus, Smartphone, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { ConfirmDialog } from '@/components/app/confirm-dialog';
@@ -14,6 +14,8 @@ import { Alert } from '@/components/ui/alert';
 import { Badge, type BadgeVariant } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useFilters } from '@/hooks/use-filters';
 import { useResourceForm } from '@/hooks/use-resource-form';
@@ -57,6 +59,7 @@ interface ClassOption extends Option {
 interface Props {
   students: Paginated<StudentRow>;
   filters: Filters;
+  classInfo: Record<string, { capacity: number; students: number; held: number }>;
   pendingCount: number;
   options: { studyPrograms: Option[]; classGroups: ClassOption[]; cohortYears: Option[]; statuses: Option[]; accountStatuses: Option[] };
 }
@@ -69,7 +72,7 @@ const statusVariant: Record<string, BadgeVariant> = { active: 'success', leave: 
 
 const emptyForm: StudentForm = { nim: '', name: '', email: '', phone: '', study_program_id: '', cohort_year: '', class_group_id: '', status: 'active' };
 
-export default function StudentsIndex({ students, filters: initialFilters, pendingCount, options }: Props) {
+export default function StudentsIndex({ students, filters: initialFilters, classInfo, pendingCount, options }: Props) {
   const { filters, setFilter, reset, isDirty } = useFilters(URL, initialFilters);
   const [decision, setDecision] = useState<Decision | null>(null);
   const crud = useResourceForm<StudentRow, StudentForm>(URL, emptyForm, (s) => ({
@@ -85,6 +88,66 @@ export default function StudentsIndex({ students, filters: initialFilters, pendi
   const { data, setData, errors, processing } = crud.form;
   const [resetting, setResetting] = useState<StudentRow | null>(null);
 
+  // Pilihan baris untuk pindah kelas massal. Disimpan per id (baris utuh) agar tetap ada saat pindah halaman.
+  const [selected, setSelected] = useState<Record<number, StudentRow>>({});
+  const [isMoveOpen, setIsMoveOpen] = useState(false);
+  const [targetClass, setTargetClass] = useState('');
+  const [moveError, setMoveError] = useState<string | null>(null);
+  const [isMoving, setIsMoving] = useState(false);
+  const selectedRows = Object.values(selected);
+  const selectedCount = selectedRows.length;
+  const isPageAllSelected = students.data.length > 0 && students.data.every((s) => selected[s.id]);
+
+  const toggleRow = (s: StudentRow, checked: boolean) =>
+    setSelected((prev) => {
+      const next = { ...prev };
+      if (checked) next[s.id] = s;
+      else delete next[s.id];
+      return next;
+    });
+  const togglePage = () =>
+    setSelected((prev) => {
+      const next = { ...prev };
+      students.data.forEach((s) => (isPageAllSelected ? delete next[s.id] : (next[s.id] = s)));
+      return next;
+    });
+
+  // Kelas tujuan harus sama prodi & angkatannya dengan semua mahasiswa terpilih (aturan yang sama dengan ubah satu mahasiswa),
+  // dan bukan kelas yang sedang dipakai mahasiswa terpilih saat ini.
+  const moveClassOptions = useMemo(() => {
+    const [first] = selectedRows;
+    if (!first || selectedRows.some((s) => s.study_program_id !== first.study_program_id || s.cohort_year !== first.cohort_year)) return [];
+    const currentClasses = new Set(selectedRows.map((s) => s.class_group_id));
+    return options.classGroups.filter((c) => c.studyProgramId === first.study_program_id && c.cohortYear === first.cohort_year && !currentClasses.has(c.value));
+  }, [selectedRows, options.classGroups]);
+  // Peringatan kelas tujuan: kapasitas (memblokir) dan pertemuan yang sudah terlaksana (mengingatkan).
+  const target = targetClass ? classInfo[targetClass] : undefined;
+  const incoming = selectedRows.filter((s) => s.class_group_id !== targetClass).length;
+  const isOverCapacity = target !== undefined && target.students + incoming > target.capacity;
+  const isMixed = selectedCount > 0 && moveClassOptions.length === 0 && new Set(selectedRows.map((s) => `${s.study_program_id}-${s.cohort_year}`)).size > 1;
+
+  const openMove = () => {
+    setTargetClass('');
+    setMoveError(null);
+    setIsMoveOpen(true);
+  };
+  const submitMove = () => {
+    setIsMoving(true);
+    router.post(
+      `${URL}/pindah-kelas`,
+      { student_ids: selectedRows.map((s) => s.id), class_group_id: targetClass },
+      {
+        preserveScroll: true,
+        onSuccess: () => {
+          setSelected({});
+          setIsMoveOpen(false);
+        },
+        onError: (e) => setMoveError(e.class_group_id ?? e.student_ids ?? 'Gagal memindahkan mahasiswa.'),
+        onFinish: () => setIsMoving(false),
+      },
+    );
+  };
+
   const decide = () => {
     if (!decision) return;
     const path = decision.action === 'approve' ? 'setujui' : 'tolak';
@@ -98,6 +161,13 @@ export default function StudentsIndex({ students, filters: initialFilters, pendi
 
 
   const columns: DataTableColumn<StudentRow>[] = [
+    {
+      key: 'select',
+      header: 'Pilih',
+      headClassName: 'w-10',
+      headerCell: <Checkbox aria-label="Pilih semua mahasiswa di halaman ini" checked={isPageAllSelected} onCheckedChange={togglePage} />,
+      cell: (s) => <Checkbox aria-label={`Pilih ${s.name}`} checked={!!selected[s.id]} onCheckedChange={(v) => toggleRow(s, v === true)} />,
+    },
     {
       key: 'name',
       header: 'Mahasiswa',
@@ -177,6 +247,20 @@ export default function StudentsIndex({ students, filters: initialFilters, pendi
       )}
 
       <Card className="gap-4">
+        {selectedCount > 0 && (
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-secondary px-4 py-3" role="status">
+            <p className="text-sm font-semibold text-primary">{selectedCount} mahasiswa dipilih</p>
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" variant="ghost" onClick={() => setSelected({})}>
+                Batalkan semua pilihan
+              </Button>
+              <Button size="sm" onClick={openMove}>
+                <MoveRight aria-hidden />
+                Pindahkan kelas
+              </Button>
+            </div>
+          </div>
+        )}
         <DataToolbar search={filters.q ?? ''} onSearchChange={(v) => setFilter('q', v)} searchPlaceholder="Cari nama atau NIM" isDirty={isDirty} onReset={reset} total={students.total}>
           <SelectField aria-label="Filter angkatan" className="w-40" value={filters.cohort_year} options={options.cohortYears} allLabel="Semua angkatan" onValueChange={(v) => setFilter('cohort_year', v)} />
           <SelectField aria-label="Filter kelas" className="w-36" value={filters.class_group_id} options={options.classGroups} allLabel="Semua kelas" onValueChange={(v) => setFilter('class_group_id', v)} />
@@ -223,6 +307,54 @@ export default function StudentsIndex({ students, filters: initialFilters, pendi
           <SelectField {...fieldA11y('status', errors.status)} isInvalid={!!errors.status} value={data.status} options={options.statuses} onValueChange={(v) => setData('status', v)} />
         </FormField>
       </FormSheet>
+
+      <Dialog open={isMoveOpen} onOpenChange={setIsMoveOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Pindahkan {selectedCount} mahasiswa</DialogTitle>
+            <DialogDescription>Riwayat presensi lama tetap tersimpan. Ke depan mahasiswa mengikuti jadwal kelas barunya.</DialogDescription>
+          </DialogHeader>
+          {isMixed ? (
+            <Alert variant="warning">Mahasiswa terpilih berbeda prodi atau angkatan. Pindahkan per angkatan dan prodi yang sama.</Alert>
+          ) : (
+            <FormField id="move-class" label="Kelas tujuan" error={moveError ?? undefined} isRequired>
+              <SelectField
+                {...fieldA11y('move-class', moveError ?? undefined)}
+                isInvalid={!!moveError}
+                value={targetClass || undefined}
+                options={moveClassOptions}
+                isDisabled={moveClassOptions.length === 0}
+                placeholder={moveClassOptions.length === 0 ? 'Tidak ada kelas lain yang sesuai' : 'Pilih kelas'}
+                onValueChange={(v) => {
+                  setTargetClass(v);
+                  setMoveError(null);
+                }}
+              />
+            </FormField>
+          )}
+          {target && (
+            <div className="flex flex-col gap-2 text-sm">
+              <p className="text-muted-foreground">
+                Kelas tujuan terisi {target.students} dari {target.capacity} mahasiswa; {incoming} mahasiswa akan masuk.
+              </p>
+              {isOverCapacity && <Alert variant="destructive">Melebihi kapasitas kelas. Naikkan kapasitas di menu Kelas atau pilih kelas lain.</Alert>}
+              {target.held > 0 && (
+                <Alert variant="warning">
+                  Kelas tujuan sudah punya {target.held} pertemuan terlaksana di periode ini. Riwayat kehadiran mahasiswa akan terpecah antara dua kelas.
+                </Alert>
+              )}
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsMoveOpen(false)}>
+              Batal
+            </Button>
+            <Button onClick={submitMove} disabled={!targetClass || isOverCapacity || isMoving || isMixed}>
+              {isMoving ? 'Memindahkan…' : 'Pindahkan'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <ConfirmDialog
         isOpen={crud.deleting !== null}

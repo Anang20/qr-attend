@@ -436,6 +436,7 @@ stateDiagram-v2
 | **BR-25** | Akun Admin dibuat dari database; pendaftaran publik hanya Mahasiswa & Dosen; email bebas (tidak dikunci ke domain kampus, tanpa verifikasi email); keduanya berstatus **Menunggu** sampai disetujui admin, baru bisa masuk | Auth |
 | **BR-26** | Kata sandi min. 8 karakter, berisi huruf besar, huruf kecil, dan angka; sandi baru ≠ sandi lama | Auth, Profil |
 | **BR-28** | Email terkunci (tidak bisa diubah pengguna); No. HP format 08…, 10–13 digit | Profil |
+| **BR-29** | **Pindah kelas** mahasiswa (massal, dari menu Mahasiswa): kelas tujuan harus **Aktif**, **prodi dan angkatan sama** dengan mahasiswa, **tidak melebihi kapasitas**, bukan kelas yang sedang dipakai, dan **ditolak bila ada sesi presensi yang sedang dibuka** di kelas asal/tujuan. Riwayat presensi lama tetap tersimpan di kelas asalnya; jadwal ke depan mengikuti kelas baru. Setiap pemindahan dicatat di log aplikasi (pelaku, kelas asal → tujuan) tanpa tabel/kolom baru | Mahasiswa |
 
 ---
 
@@ -456,6 +457,7 @@ stateDiagram-v2
 | FR-MST-02 | CRUD Mahasiswa, Dosen, Mata Kuliah, Kelas: pencarian, filter, panel detail, konfirmasi hapus, Urungkan, paginasi |
 | FR-MST-03 | CRUD Ruang & Titik Presensi: ambil lokasi (multi-sampel), input manual lat/lng, radius, pratinjau peta, tautan Google Maps |
 | FR-MST-04 | Penjaga hapus: data yang sudah dipakai ditolak dengan pesan jelas |
+| FR-MST-05 | Pindah kelas massal di menu Mahasiswa: pilih baris (checkbox, pilih semua per halaman, pilihan tetap saat pindah halaman), pilih kelas tujuan (hanya kelas sesuai prodi & angkatan, bukan kelas saat ini), peringatan kapasitas dan pertemuan terlaksana (BR-29) |
 
 ### 8.3 Penjadwalan (FR-SCH)
 | Kode | Kebutuhan |

@@ -38,6 +38,7 @@ Semua menu di `resources/js/components/app/navigation.ts` sudah punya `href`. Me
 - Kebijakan presensi dibaca lewat `Settings::int('key')`, cadangan di `config/attendance.php`.
 - Nama tabel kelas `class_groups` (bukan `classes`, karena `Class` kata kunci PHP). Pemetaan = `class_schedules`.
 - Data master yang sudah dipakai tidak dihapus (BR-24) → tampilkan flash `error`, sarankan Nonaktif.
+- Pindah kelas mahasiswa massal (`POST /admin/mahasiswa/pindah-kelas`, `MoveStudentsClassRequest`, BR-29): prodi & angkatan sama, kapasitas, tolak bila ada sesi dibuka; jejaknya hanya ke log aplikasi (`Log::info`), **tidak menambah tabel/kolom DB** (keputusan pemilik proyek).
 - Respons: `redirect back()->with('success'|'error'|'warning', '…')`; frontend menampilkannya lewat `useFlashToast`.
 - Paginasi: `->paginate(10)->withQueryString()->through(fn …)`; bentuk TS `Paginated<T>`.
 - Dropdown: value selalu **string** (`Support\Options`).

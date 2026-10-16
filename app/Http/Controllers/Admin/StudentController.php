@@ -6,7 +6,10 @@ use App\Enums\StudentStatus;
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\MoveStudentsClassRequest;
 use App\Http\Requests\Admin\StudentRequest;
+use App\Models\AcademicPeriod;
+use App\Models\ClassGroup;
 use App\Models\Student;
 use App\Models\User;
 use App\Services\DeviceBinding;
@@ -14,6 +17,7 @@ use App\Support\Options;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Support\PerPage;
@@ -60,6 +64,7 @@ class StudentController extends Controller
         return Inertia::render('admin/students/index', [
             'students' => $students,
             'filters' => $filters,
+            'classInfo' => $this->classInfo(),
             'pendingCount' => User::query()->where('role', UserRole::Student)->where('status', UserStatus::Pending)->count(),
             'options' => [
                 'studyPrograms' => Options::studyPrograms(),
@@ -110,6 +115,57 @@ class StudentController extends Controller
         });
 
         return back()->with('success', 'Data '.$data['name'].' disimpan.');
+    }
+
+    /**
+     * Info kelas untuk peringatan di dialog pindah kelas: kapasitas, terisi, dan jumlah pertemuan
+     * yang sudah terlaksana di periode aktif.
+     *
+     * @return array<string, array{capacity: int, students: int, held: int}>
+     */
+    private function classInfo(): array
+    {
+        $held = DB::table('attendance_sessions as s')
+            ->join('class_schedules as cs', 'cs.id', '=', 's.class_schedule_id')
+            ->where('cs.academic_period_id', AcademicPeriod::active()?->id)
+            ->whereIn('s.status', ['expired', 'closed'])
+            ->groupBy('cs.class_group_id')
+            ->selectRaw('cs.class_group_id as id, count(*) as total')
+            ->pluck('total', 'id');
+
+        return ClassGroup::query()->withCount('students')->get(['id', 'capacity'])
+            ->mapWithKeys(fn (ClassGroup $c): array => [(string) $c->id => [
+                'capacity' => (int) $c->capacity,
+                'students' => (int) $c->students_count,
+                'held' => (int) ($held[$c->id] ?? 0),
+            ]])
+            ->all();
+    }
+
+    /** Pindahkan banyak mahasiswa ke satu kelas sekaligus. Riwayat presensi lama tetap tersimpan. */
+    public function moveClass(MoveStudentsClassRequest $request): RedirectResponse
+    {
+        $class = ClassGroup::query()->findOrFail($request->integer('class_group_id'));
+
+        $moved = DB::transaction(function () use ($request, $class): int {
+            $students = Student::query()->lockForUpdate()
+                ->whereIn('id', $request->input('student_ids'))
+                ->where('class_group_id', '!=', $class->id)
+                ->get(['id', 'class_group_id']);
+
+            // Jejak pindah kelas ditulis ke log aplikasi (tanpa tabel/kolom baru): pelaku dan kelas asal → tujuan.
+            Log::info('Pindah kelas mahasiswa', [
+                'moved_by' => $request->user()->id,
+                'to_class' => $class->code,
+                'students' => $students->map(fn (Student $s): array => ['id' => $s->id, 'from_class_group_id' => $s->class_group_id])->all(),
+            ]);
+
+            return Student::query()->whereIn('id', $students->pluck('id'))->update(['class_group_id' => $class->id]);
+        });
+
+        return back()->with($moved > 0 ? 'success' : 'warning', $moved > 0
+            ? "{$moved} mahasiswa dipindahkan ke kelas {$class->code}."
+            : 'Semua mahasiswa terpilih sudah berada di kelas '.$class->code.'.');
     }
 
     public function destroy(Student $student): RedirectResponse

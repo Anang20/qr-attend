@@ -14,6 +14,8 @@ export interface DataTableColumn<T> {
   cell: (row: T) => ReactNode;
   align?: 'left' | 'right';
   isHeaderHidden?: boolean;
+  /** Isi sel header khusus (mis. checkbox "pilih semua"); `header` tetap dipakai sebagai label pembaca layar. */
+  headerCell?: ReactNode;
   /** Kelas untuk <th> (mis. lebar kolom). */
   headClassName?: string;
   /** Kelas untuk <td>; bisa berupa fungsi bila tergantung isi baris. */
@@ -86,7 +88,16 @@ export function DataTable<T>({
           <TableRow>
             {columns.map((col) => (
               <TableHead key={col.key} className={cn(col.align === 'right' && 'text-right', col.headClassName)}>
-                {col.isHeaderHidden ? <span className="sr-only">{col.header}</span> : col.header}
+                {col.headerCell ? (
+                  <>
+                    <span className="sr-only">{col.header}</span>
+                    {col.headerCell}
+                  </>
+                ) : col.isHeaderHidden ? (
+                  <span className="sr-only">{col.header}</span>
+                ) : (
+                  col.header
+                )}
               </TableHead>
             ))}
           </TableRow>
